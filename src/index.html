@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Plantae Filter - Exemplo</title>
-    <script type="module" src="./main.ts"></script>
+    <!-- <script type="module" src="./main.ts"></script> -->
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -51,8 +51,10 @@
 
     <pre id="output"></pre>
 
-    <script>
-        const filter = document.querySelector('plantae-filter');
+    <script type="module">
+        import { PlantaeFilter } from './main.ts'
+        const select = document.querySelector('select');
+        const filter = new PlantaeFilter(select, { label: 'Produtos' });
         const output = document.getElementById('output');
 
         document.getElementById('get-selected').addEventListener('click', () => {

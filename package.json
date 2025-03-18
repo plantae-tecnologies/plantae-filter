@@ -19,8 +19,7 @@
     "./theme/*": "./dist/theme/*",
     ".": {
       "import": "./dist/plantae-filter.es.js",
-      "require": "./dist/plantae-filter.umd.js",
-      "types": "./dist/main.d.ts"
+      "require": "./dist/plantae-filter.umd.js"
     }
   },
   "typesVersions": {

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Plantae Filter - Exemplo (Build)</title>
-    <script type="module" src="./plantae-filter.es.js"></script>
+    <!-- <script type="module" src="./plantae-filter.es.js"></script> -->
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -29,20 +29,18 @@
 <body>
     <h1>Exemplo de Uso - Plantae Filter (Build)</h1>
 
-    <plantae-filter label="Produtos">
-        <select multiple>
-            <optgroup label="Bebidas">
-                <option value="agua">Água</option>
-                <option value="suco">Suco</option>
-                <option value="refrigerante">Refrigerante</option>
-            </optgroup>
-            <optgroup label="Snacks">
-                <option value="biscoito">Biscoito</option>
-                <option value="pipoca">Pipoca</option>
-                <option value="chocolate">Chocolate</option>
-            </optgroup>
-        </select>
-    </plantae-filter>
+    <select multiple>
+        <optgroup label="Bebidas">
+            <option value="agua">Água</option>
+            <option value="suco">Suco</option>
+            <option value="refrigerante">Refrigerante</option>
+        </optgroup>
+        <optgroup label="Snacks">
+            <option value="biscoito">Biscoito</option>
+            <option value="pipoca">Pipoca</option>
+            <option value="chocolate">Chocolate</option>
+        </optgroup>
+    </select>
 
     <button id="get-selected">Obter Selecionados</button>
     <button id="add-option">Adicionar "Café"</button>
@@ -51,8 +49,10 @@
 
     <pre id="output"></pre>
 
-    <script>
-        const filter = document.querySelector('plantae-filter');
+    <script type="module">
+        import { PlantaeFilter } from './plantae-filter.es.js'
+        const select = document.querySelector('select');
+        const filter = new PlantaeFilter(select, { label: 'Produtos' });
         const output = document.getElementById('output');
 
         document.getElementById('get-selected').addEventListener('click', () => {

@@ -26,8 +26,8 @@ yarn add plantae-filter
 import 'plantae-filter';
 
 // opcional, se preferir manualmente:
-import PlantaeFilter from 'plantae-filter';
-customElements.define('plantae-filter', PlantaeFilter);
+import PlantaeFilterElement from 'plantae-filter-element';
+customElements.define('plantae-filter', PlantaeFilterElement);
 ```
 
 ### HTML
