@@ -1,0 +1,42 @@
+{
+  "name": "plantae-filter",
+  "version": "0.0.1",
+  "type": "module",
+  "sideEffects": false,
+  "main": "dist/plantae-filter.umd.js",
+  "module": "dist/plantae-filter.es.js",
+  "types": "dist/main.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build --config vite.config.lib.ts",
+    "prepare:build-demo": "cp example/index.build.html dist/index.html",
+    "preview": "npm run prepare:build-demo && vite preview --open --base=./"
+  },
+  "exports": {
+    "./theme/*": "./dist/theme/*",
+    ".": {
+      "import": "./dist/plantae-filter.es.js",
+      "require": "./dist/plantae-filter.umd.js",
+      "types": "./dist/main.d.ts"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "*": ["dist/*"],
+      "theme/*": ["dist/theme/*"]
+    }
+  },
+  "devDependencies": {
+    "typescript": "~5.7.2",
+    "vite": "^6.2.0",
+    "vite-plugin-dts": "^4.5.3",
+    "vite-plugin-static-copy": "^2.3.0"
+  },
+  "dependencies": {
+    "clusterize.js": "^1.0.0",
+    "fuse.js": "^7.1.0"
+  }
+}

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plantae Filter - Exemplo</title>
+    <script type="module" src="./main.ts"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 2rem;
+        }
+        plantae-filter {
+            max-width: 400px;
+            display: block;
+            margin-bottom: 1rem;
+        }
+        button {
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        pre {
+            background: #f4f4f4;
+            padding: 1rem;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Exemplo de Uso - Plantae Filter</h1>
+
+    <plantae-filter label="Produtos">
+        <select multiple>
+            <optgroup label="Bebidas">
+                <option value="agua">Água</option>
+                <option value="suco">Suco</option>
+                <option value="refrigerante">Refrigerante</option>
+            </optgroup>
+            <optgroup label="Snacks">
+                <option value="biscoito">Biscoito</option>
+                <option value="pipoca">Pipoca</option>
+                <option value="chocolate">Chocolate</option>
+            </optgroup>
+        </select>
+    </plantae-filter>
+
+    <button id="get-selected">Obter Selecionados</button>
+    <button id="add-option">Adicionar "Café"</button>
+    <button id="remove-option">Remover "Refrigerante"</button>
+    <button id="clear-all">Remover Todas</button>
+
+    <pre id="output"></pre>
+
+    <script>
+        const filter = document.querySelector('plantae-filter');
+        const output = document.getElementById('output');
+
+        document.getElementById('get-selected').addEventListener('click', () => {
+            const selected = filter.getSelected();
+            output.textContent = JSON.stringify(selected, null, 2);
+        });
+
+        document.getElementById('add-option').addEventListener('click', () => {
+            filter.addOption({ value: 'cafe', text: 'Café', group: 'Bebidas' });
+        });
+
+        document.getElementById('remove-option').addEventListener('click', () => {
+            filter.removeOptions(['refrigerante']);
+        });
+
+        document.getElementById('clear-all').addEventListener('click', () => {
+            filter.removeAllOptions();
+        });
+    </script>
+</body>
+</html>
