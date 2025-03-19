@@ -95,8 +95,15 @@ import 'plantae-filter/theme/bootstrap5-theme.css';
 ## 🌐 Uso via CDN (Vanilla)
 
 ```html
-<script src="https://unpkg.com/plantae-filter@latest/dist/plantae-filter.umd.js"></script>
+<script src="https://plantae-tecnologies.github.io/plantae-filter/dist/plantae-filter.umd.js"></script>
+<link rel="stylesheet" href="https://plantae-tecnologies.github.io/plantae-filter/dist/theme/default.css">
 <script>
   const pf = new PlantaeFilter(document.querySelector('select'), { label: 'Categorias' });
 </script>
+```
+
+Exemplo real usando o GitHub Pages:
+
+```html
+<script src="https://plantae-tecnologies.github.io/plantae-filter/dist/plantae-filter.umd.js"></script>
 ```
