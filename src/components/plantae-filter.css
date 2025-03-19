@@ -7,7 +7,7 @@
     position: relative;
 }
 
-.badge {
+.filter {
     background-color: #ffffff;
     color: #333;
     padding: 5px 10px;
@@ -24,7 +24,7 @@
     font-size: 0.8em;
 }
 
-.badge-text-wrapper {
+.filter-text-wrapper {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -169,7 +169,7 @@ ul.clusterize-no-data {
     cursor: not-allowed;
 }
 
-.counter-badge {
+.counter-filter {
     background: #d33;
     color: white;
     font-size: 0.7rem;

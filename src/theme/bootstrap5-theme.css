@@ -3,7 +3,7 @@
 }
 
 /* Badge inspirado em Bootstrap */
-::part(badge) {
+::part(filter) {
     display: inline-flex;
     align-items: center;
     padding: 0.375rem 0.75rem; /* equivalente a px-3 py-2 */
@@ -17,14 +17,14 @@
     cursor: pointer;
 }
 
-::part(badge-text-wrapper) {
+::part(filter-text-wrapper) {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
     flex: 1;
 }
 
-/* Botão de limpar (badge close) */
+/* Botão de limpar (filter close) */
 ::part(clear-button) {
     background: none;
     border: none;
@@ -151,7 +151,7 @@
 }
 
 /* Badge contador */
-::part(counter-badge) {
+::part(counter-filter) {
     background: var(--bs-danger, red);
     color: #fff;
     font-size: 0.7rem;

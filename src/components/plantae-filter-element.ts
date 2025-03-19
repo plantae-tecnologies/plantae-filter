@@ -38,7 +38,7 @@ class PlantaeFilterElement extends HTMLElement {
             this.initClusterize();
             this.populateOptions(this.options);
             this.syncSelectElement();
-            this.updateBadge();
+            this.updateFilter();
         });
     }
 
@@ -132,7 +132,7 @@ class PlantaeFilterElement extends HTMLElement {
         this.clusterize.update(rows);
     }
 
-    private updateBadge(): void {
+    private updateFilter(): void {
         const label = this.getAttribute('label') || 'Selecionado';
         const allText = this.getAttribute('all-text') || 'Todos';
         const emptyText = this.getAttribute('empty-text') || 'Selecione';
@@ -144,24 +144,24 @@ class PlantaeFilterElement extends HTMLElement {
             .filter(opt => this.selectedValues.includes(opt.value))
             .map(opt => opt.text);
 
-        const badgeText = this.shadowRoot!.getElementById("badgeText") as HTMLElement;
-        badgeText.innerHTML = count
-            ? `<span class='counter-badge'>${count}</span> <strong>${label}:</strong> ${count === total ? allText : selectedTexts.join(", ")}`
+        const filterText = this.shadowRoot!.getElementById("filterText") as HTMLElement;
+        filterText.innerHTML = count
+            ? `<span class='counter-filter'>${count}</span> <strong>${label}:</strong> ${count === total ? allText : selectedTexts.join(", ")}`
             : `<strong>${label}:</strong> ${emptyText}`;
 
         const clearBtn = this.shadowRoot!.getElementById("clearButton") as HTMLElement;
         clearBtn.style.opacity = count ? '1' : '0.5';
         clearBtn.style.pointerEvents = count ? 'auto' : 'none';
 
-        const badge = this.shadowRoot!.getElementById("badge") as HTMLElement;
-        badge.setAttribute("title", count ? selectedTexts.join(", ") : '');
+        const filter = this.shadowRoot!.getElementById("filter") as HTMLElement;
+        filter.setAttribute("title", count ? selectedTexts.join(", ") : '');
     }
 
     // === EVENT HANDLERS ===
 
     private attachEvents(): void {
         document.addEventListener("keydown", (e: KeyboardEvent) => this.handleEscKey(e));
-        this.shadowRoot!.getElementById("badge")!.addEventListener("click", () => this.openDropdown());
+        this.shadowRoot!.getElementById("filter")!.addEventListener("click", () => this.toggleDropdown());
         this.shadowRoot!.getElementById("clearButton")!.addEventListener("click", (e) => this.clearSelectionInterno(e));
         this.shadowRoot!.getElementById("applyButton")!.addEventListener("click", () => this.applySelection());
         document.addEventListener("click", (e) => this.handleOutsideClick(e));
@@ -248,7 +248,7 @@ class PlantaeFilterElement extends HTMLElement {
     private applySelection(): void {
         this.selectedValues = [...this.pendingValues];
         this.syncSelectElement();
-        this.updateBadge();
+        this.updateFilter();
         this.closeDropdown();
         this.dispatchEvent(new Event("change"));
     }
@@ -259,8 +259,18 @@ class PlantaeFilterElement extends HTMLElement {
         this.pendingValues = [];
         this.populateOptions(this.options);
         this.syncSelectElement();
-        this.updateBadge();
+        this.updateFilter();
         this.dispatchEvent(new Event("change"));
+    }
+
+    private toggleDropdown(): void {
+        const dropdown = this.shadowRoot!.getElementById("dropdown") as HTMLElement;
+        const isOpen = dropdown.style.display === "block";
+        if (isOpen) {
+            this.closeDropdown();
+        } else {
+            this.openDropdown();
+        }
     }
 
     private closeDropdown(): void {
@@ -349,7 +359,7 @@ class PlantaeFilterElement extends HTMLElement {
         this.pendingValues = [...this.selectedValues];
         this.populateOptions(this.options);
         this.syncSelectElement();
-        this.updateBadge();
+        this.updateFilter();
     }
 
     public removeOptions(values: string[]): void {
@@ -361,7 +371,7 @@ class PlantaeFilterElement extends HTMLElement {
 
         this.populateOptions(this.options);
         this.syncSelectElement();
-        this.updateBadge();
+        this.updateFilter();
     }
 
     public removeAllOptions(): void {
@@ -373,7 +383,7 @@ class PlantaeFilterElement extends HTMLElement {
 
         this.populateOptions(this.options);
         this.syncSelectElement();
-        this.updateBadge();
+        this.updateFilter();
     }
 
     public clearSelection(): void {

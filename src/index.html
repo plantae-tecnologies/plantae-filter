@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Plantae Filter - Exemplo</title>
-    <!-- <script type="module" src="./main.ts"></script> -->
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -29,20 +28,18 @@
 <body>
     <h1>Exemplo de Uso - Plantae Filter</h1>
 
-    <plantae-filter label="Produtos">
-        <select multiple>
-            <optgroup label="Bebidas">
-                <option value="agua">Água</option>
-                <option value="suco">Suco</option>
-                <option value="refrigerante">Refrigerante</option>
-            </optgroup>
-            <optgroup label="Snacks">
-                <option value="biscoito">Biscoito</option>
-                <option value="pipoca">Pipoca</option>
-                <option value="chocolate">Chocolate</option>
-            </optgroup>
-        </select>
-    </plantae-filter>
+    <select multiple data-pl-label="Produtos" data-pl-empty-text="Todos">
+        <optgroup label="Bebidas">
+            <option value="agua">Água</option>
+            <option value="suco">Suco</option>
+            <option value="refrigerante">Refrigerante</option>
+        </optgroup>
+        <optgroup label="Snacks">
+            <option value="biscoito">Biscoito</option>
+            <option value="pipoca">Pipoca</option>
+            <option value="chocolate">Chocolate</option>
+        </optgroup>
+    </select>
 
     <button id="get-selected">Obter Selecionados</button>
     <button id="add-option">Adicionar "Café"</button>
@@ -52,9 +49,9 @@
     <pre id="output"></pre>
 
     <script type="module">
-        import { PlantaeFilter } from './main.ts'
+        import PlantaeFilter from './main.ts'
         const select = document.querySelector('select');
-        const filter = new PlantaeFilter(select, { label: 'Produtos' });
+        const filter = new PlantaeFilter(select);
         const output = document.getElementById('output');
 
         document.getElementById('get-selected').addEventListener('click', () => {

@@ -10,8 +10,14 @@ export class PlantaeFilter {
     constructor(select: HTMLSelectElement, attributes: InstanceAttributes = {}) {
         const wrapper = document.createElement('plantae-filter') as PlantaeFilterElement;
 
-        // Aplica atributos no Custom Element
-        Object.entries(attributes).forEach(([key, value]) => {
+        // Pega atributos `data-pl-*` direto do <select>
+        const datasetAttributes = this.getDatasetAttributes(select);
+
+        // Junta com atributos passados via parâmetro
+        const mergedAttributes = { ...datasetAttributes, ...attributes };
+
+        // Aplica no custom element
+        Object.entries(mergedAttributes).forEach(([key, value]) => {
             wrapper.setAttribute(key, value);
         });
 
@@ -22,6 +28,17 @@ export class PlantaeFilter {
         wrapper.appendChild(select);
 
         this.component = wrapper;
+    }
+
+    private getDatasetAttributes(select: HTMLSelectElement): InstanceAttributes {
+        const attrs: InstanceAttributes = {};
+        Array.from(select.attributes).forEach(attr => {
+            if (attr.name.startsWith('data-pl-')) {
+                const key = attr.name.replace('data-pl-', '');
+                attrs[key] = attr.value;
+            }
+        });
+        return attrs;
     }
 
     // Expondo métodos do componente

@@ -7,3 +7,4 @@ vite.config.lib.ts
 vite.config.js
 tsconfig.json
 .vscode/
+!src/
