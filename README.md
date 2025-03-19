@@ -86,6 +86,7 @@ import 'plantae-filter/theme/bootstrap5-theme.css';
 ### Via CDN
 
 ```html
+<!-- é necessário importar o bootstrap5 no projeto para usar esse tema -->
 <link rel="stylesheet" href="https://plantae-tecnologies.github.io/plantae-filter/theme/bootstrap5-theme.css">
 ```
 
