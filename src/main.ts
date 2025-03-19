@@ -6,8 +6,4 @@ if (!customElements.get('plantae-filter')) {
     customElements.define('plantae-filter', PlantaeFilterElement);
 }
 
-// Exporta ambos: a classe do Custom Element e a API amigável
-export {
-    PlantaeFilterElement,
-    PlantaeFilter
-};
+export default PlantaeFilter;

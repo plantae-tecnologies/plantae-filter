@@ -3,6 +3,7 @@ import dts from 'vite-plugin-dts';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 
 export default defineConfig({
+  base: './',
   build: {
     lib: {
       entry: 'src/main.ts', // main.ts agora exporta o instance e o element
@@ -17,7 +18,8 @@ export default defineConfig({
           'clusterize.js': 'Clusterize'
         }
       }
-    }
+    },
+    minify: 'terser'
   },
   plugins: [
     dts(),

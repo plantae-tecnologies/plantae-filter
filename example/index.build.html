@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Plantae Filter - Exemplo (Build)</title>
-    <!-- <script type="module" src="./plantae-filter.es.js"></script> -->
+    <script src="./plantae-filter.umd.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -50,7 +50,6 @@
     <pre id="output"></pre>
 
     <script type="module">
-        import { PlantaeFilter } from './plantae-filter.es.js'
         const select = document.querySelector('select');
         const filter = new PlantaeFilter(select, { label: 'Produtos' });
         const output = document.getElementById('output');

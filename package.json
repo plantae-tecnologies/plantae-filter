@@ -24,11 +24,16 @@
   },
   "typesVersions": {
     "*": {
-      "*": ["dist/*"],
-      "theme/*": ["dist/theme/*"]
+      "*": [
+        "dist/*"
+      ],
+      "theme/*": [
+        "dist/theme/*"
+      ]
     }
   },
   "devDependencies": {
+    "terser": "^5.39.0",
     "typescript": "~5.7.2",
     "vite": "^6.2.0",
     "vite-plugin-dts": "^4.5.3",
