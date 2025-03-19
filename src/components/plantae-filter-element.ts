@@ -134,8 +134,8 @@ class PlantaeFilterElement extends HTMLElement {
 
     private updateBadge(): void {
         const label = this.getAttribute('label') || 'Selecionado';
-        const allText = this.getAttribute('data-all-text') || 'Todos';
-        const emptyText = this.getAttribute('data-empty-text') || 'Selecione';
+        const allText = this.getAttribute('all-text') || 'Todos';
+        const emptyText = this.getAttribute('empty-text') || 'Selecione';
 
         const total = this.options.length;
         const count = this.selectedValues.length;

@@ -20,6 +20,15 @@ yarn add plantae-filter
 
 ## 🚀 Uso básico
 
+### 🔗 Atributos disponíveis (Web Component ou via Controller)
+
+| Atributo      | Descrição                                           | Exemplo        |
+| Pode ser sobrescrito via `new PlantaeFilter(select, { ... })` também |
+| ------------- | --------------------------------------------------- | -------------- |
+| `label`       | Texto do label do badge                             | `Produtos`     |
+| `all-text`    | Texto exibido quando todas as opções estão marcadas | `Todos`        |
+| `empty-text`  | Texto exibido quando nenhuma opção está marcada     | `Selecione`    |
+
 ### 1️⃣ Usando com Controller (JS puro)
 
 ```ts
@@ -86,7 +95,6 @@ import 'plantae-filter/theme/bootstrap5-theme.css';
 ### Via CDN
 
 ```html
-<!-- é necessário importar o bootstrap5 no projeto para usar esse tema -->
 <link rel="stylesheet" href="https://plantae-tecnologies.github.io/plantae-filter/theme/bootstrap5-theme.css">
 ```
 
@@ -105,6 +113,7 @@ import 'plantae-filter/theme/bootstrap5-theme.css';
 
 ```html
 <script src="https://plantae-tecnologies.github.io/plantae-filter/plantae-filter.umd.js"></script>
+<link rel="stylesheet" href="https://plantae-tecnologies.github.io/plantae-filter/theme/default.css">
 <script>
   const pf = new PlantaeFilter(document.querySelector('select'), { label: 'Categorias' });
 </script>
