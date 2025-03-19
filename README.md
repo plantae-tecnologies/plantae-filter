@@ -22,8 +22,9 @@ yarn add plantae-filter
 
 ### 🔗 Atributos disponíveis (Web Component ou via Controller)
 
+> Também pode ser sobrescrito via `new PlantaeFilter(select, { ... })`  
+
 | Atributo      | Descrição                                           | Exemplo        |
-| Pode ser sobrescrito via `new PlantaeFilter(select, { ... })` também |
 | ------------- | --------------------------------------------------- | -------------- |
 | `label`       | Texto do label do badge                             | `Produtos`     |
 | `all-text`    | Texto exibido quando todas as opções estão marcadas | `Todos`        |
