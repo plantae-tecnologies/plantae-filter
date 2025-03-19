@@ -76,9 +76,17 @@ import 'plantae-filter'; // já registra automaticamente
 - Personalização via `::part()` nos elementos `dropdown-item` e `optgroup`.
 - Temas alternativos em `/theme` importáveis via:
 
+### Via NPM ou Yarn
+
 ```ts
 // é necessário importar o bootstrap5 no projeto para usar esse tema
 import 'plantae-filter/theme/bootstrap5-theme.css';
+```
+
+### Via CDN
+
+```html
+<link rel="stylesheet" href="https://plantae-tecnologies.github.io/plantae-filter/theme/bootstrap5-theme.css">
 ```
 
 ---
