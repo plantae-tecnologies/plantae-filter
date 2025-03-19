@@ -1,3 +1,6 @@
+![npm](https://img.shields.io/npm/v/@plantae-tech/plantae-filter?color=green)
+[![Docs](https://img.shields.io/badge/Demo-GitHub%20Pages-blue)](https://plantae-tecnologies.github.io/plantae-filter/)
+
 # Plantae Filter
 
 > Web Component e Controller JS para filtros multi-seleção com busca otimizada.
@@ -7,13 +10,13 @@
 ## 📦 Instalação
 
 ```bash
-npm install plantae-filter
+npm install @plantae-tech/plantae-filter
 ```
 
 ou
 
 ```bash
-yarn add plantae-filter
+yarn add @plantae-tech/plantae-filter
 ```
 
 ---
@@ -22,7 +25,7 @@ yarn add plantae-filter
 
 ### 🔗 Atributos disponíveis (Web Component ou via Controller)
 
-> Também pode ser sobrescrito via `new PlantaeFilter(select, { ... })`  
+> Também pode ser sobrescrito via `new PlantaeFilter(select, { ... })`
 
 | Atributo      | Descrição                                           | Exemplo        |
 | ------------- | --------------------------------------------------- | -------------- |
