@@ -7,11 +7,16 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Node / build folders
 node_modules
+dist
 dist-ssr
 *.local
 
-# Editor directories and files
+# Apenas builda a lib, mas mantém /docs no repositório (para Pages)
+!.docs/**
+
+# Editor / sistema
 .vscode/*
 !.vscode/extensions.json
 .idea

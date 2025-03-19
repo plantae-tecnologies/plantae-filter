@@ -1,0 +1,9 @@
+# Não incluir o exemplo nem o deploy do GitHub Pages no pacote npm
+example/
+docs/
+.github/
+vite.config.example.ts
+vite.config.lib.ts
+vite.config.js
+tsconfig.json
+.vscode/
