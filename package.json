@@ -13,7 +13,8 @@
     "dev": "vite",
     "build": "vite build --config vite.config.lib.ts",
     "prepare:build-demo": "cp example/index.build.html dist/index.html",
-    "preview": "npm run prepare:build-demo && vite preview --open --base=./"
+    "preview": "npm run prepare:build-demo && vite preview --open --base=./",
+    "deploy:gh-pages": "npm run build && npm run prepare:build-demo && git add dist && git commit -m 'update dist' && git push"
   },
   "exports": {
     "./theme/*": "./dist/theme/*",
