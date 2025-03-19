@@ -1,6 +1,6 @@
 # Plantae Filter
 
-> Componente Web Customizado para filtros multi-seleção com pesquisa otimizada.
+> Web Component e Controller JS para filtros multi-seleção com busca otimizada.
 
 ---
 
@@ -20,14 +20,19 @@ yarn add plantae-filter
 
 ## 🚀 Uso básico
 
-### Importando via ES Modules
+### 1️⃣ Usando com Controller (JS puro)
 
 ```ts
-import 'plantae-filter';
+import { PlantaeFilter } from 'plantae-filter';
 
-// opcional, se preferir manualmente:
-import PlantaeFilterElement from 'plantae-filter-element';
-customElements.define('plantae-filter', PlantaeFilterElement);
+const select = document.querySelector('select');
+const pf = new PlantaeFilter(select, { label: 'Produtos' });
+```
+
+### 2️⃣ Usando direto via Web Component
+
+```ts
+import 'plantae-filter'; // já registra automaticamente
 ```
 
 ### HTML
@@ -49,7 +54,7 @@ customElements.define('plantae-filter', PlantaeFilterElement);
 
 ---
 
-## 🔧 API pública disponível
+## 🔧 API pública disponível (`PlantaeFilter`)
 
 | Método                                  | Descrição                                  |
 | --------------------------------------- | ------------------------------------------ |
@@ -58,7 +63,7 @@ customElements.define('plantae-filter', PlantaeFilterElement);
 | `removeOptions(values[])`               | Remove múltiplas opções pelo value.        |
 | `removeAllOptions()`                    | Remove todas as opções e limpa seleção.    |
 | `selectOptions(values[])`               | Seleciona opções programaticamente.        |
-| `clearSelectionAPI()`                   | Limpa todas as opções selecionadas.        |
+| `clearSelection()`                      | Limpa todas as opções selecionadas.        |
 | `setOptionDisabled(values[], disabled)` | Desabilita ou habilita opções visualmente. |
 | `getSelected()`                         | Retorna as opções atualmente selecionadas. |
 | `getAllOptions()`                       | Retorna todas as opções disponíveis.       |
@@ -68,7 +73,13 @@ customElements.define('plantae-filter', PlantaeFilterElement);
 ## 🎨 Estilos
 
 - Estilização baseada em CSS Shadow DOM.
-- Aceita personalização via `::part()` nos elementos `dropdown-item` e `optgroup`.
+- Personalização via `::part()` nos elementos `dropdown-item` e `optgroup`.
+- Temas alternativos em `/theme` importáveis via:
+
+```ts
+// é necessário importar o bootstrap5 no projeto para usar esse tema
+import 'plantae-filter/theme/bootstrap5-theme.css';
+```
 
 ---
 
@@ -76,5 +87,16 @@ customElements.define('plantae-filter', PlantaeFilterElement);
 
 - Busca otimizada com `Fuse.js`
 - Renderização virtualizada com `Clusterize.js`
-- Suporte a grupos (`optgroup`)
+- Suporte a `<optgroup>`
 - Multi-seleção e "Selecionados no topo"
+
+---
+
+## 🌐 Uso via CDN (Vanilla)
+
+```html
+<script src="https://unpkg.com/plantae-filter@latest/dist/plantae-filter.umd.js"></script>
+<script>
+  const pf = new PlantaeFilter(document.querySelector('select'), { label: 'Categorias' });
+</script>
+```
