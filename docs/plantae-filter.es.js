@@ -1,8 +1,8 @@
 var __defProp = Object.defineProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-const templateHtml = '<div class="select-dropdown-wrapper">\n    <div id="filter" class="filter" part="filter">\n        <div class="filter-text-wrapper" part="filter-text-wrapper">\n            <span id="filterText" part="filter-text"></span>\n        </div>\n        <button class="btn-close" id="clearButton" part="clear-button" title="Limpar itens selecionados">✕</button>\n    </div>\n    <div class="select-dropdown" id="dropdown" part="dropdown">\n        <div class="dropdown-header" part="dropdown-header">\n            <input type="text" id="searchInput" part="search-input" placeholder="Buscar...">\n        </div>\n        <div id="scrollArea" class="scroll-area" part="scroll-area">\n            <ul id="contentArea" class="content-area" part="content-area"></ul>\n        </div>\n        <div class="dropdown-footer" part="dropdown-footer">\n            <button id="applyButton" part="apply-button">Aplicar</button>\n        </div>\n    </div>\n</div>';
-const styles = ":host{color-scheme:light}.select-dropdown-wrapper{display:inline-block;position:relative}.filter{background-color:#fff;color:#333;padding:5px 10px;border:1px solid #999;border-radius:4px;cursor:pointer;display:inline-flex;align-items:center;max-width:300px;white-space:nowrap;text-overflow:ellipsis;position:relative;overflow:visible;font-size:.8em}.filter-text-wrapper{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}.btn-close{background:none;border:none;cursor:pointer;font-size:14px;margin-left:8px;color:inherit}.form-control{display:block;width:100%;padding:.4rem .75rem;font-size:.9rem;line-height:1.4;color:#333;background-color:#fff;border:1px solid #ccc;border-radius:4px}.form-control:focus{outline:none;border-color:#777;box-shadow:0 0 0 2px #0000001a}.mb-2{margin-bottom:.5rem}.select-dropdown{display:none;position:absolute;top:100%;left:0;background:#fff;border:1px solid #ccc;box-shadow:0 2px 4px #0000001a;z-index:10;width:100%;min-width:200px;border-radius:4px;font-size:.85em}.scroll-area{max-height:200px;overflow-y:auto}.content-area{padding:0;margin:0;list-style:none}.select-dropdown ul{list-style:none;padding:0;margin:0}.select-dropdown li{padding:5px 10px;cursor:pointer;transition:background .2s}.select-dropdown li.selected{background:#333;color:#fff;font-weight:700}.select-dropdown li:not(.optgroup):hover{background:#555;color:#fff}.select-dropdown li.optgroup{font-weight:700;font-size:.85rem;color:#666;background-color:#f5f5f5;padding:8px 12px;cursor:default}ul.clusterize-no-data{padding:10px;font-size:.85rem;color:#999;font-style:italic}.dropdown-header{display:flex;padding:8px}.dropdown-header input{width:100%;padding:4px 8px}.dropdown-footer{padding:8px;text-align:right;border-top:1px solid #ccc}.btn{display:inline-block;background:#333;color:#fff;padding:.3rem .6rem;font-size:.75rem;border:none;border-radius:4px;cursor:pointer}.btn:hover{background:#555}.btn:focus{outline:none;box-shadow:0 0 0 2px #0003}.btn:disabled{opacity:.6;cursor:not-allowed}.counter-filter{background:#d33;color:#fff;font-size:.7rem;font-weight:700;border-radius:999px;padding:2px 6px;position:absolute;top:0;left:0;transform:translate(-40%,-50%);z-index:20;box-shadow:0 0 2px #0000004d}mark{background:#ff0;color:inherit;border-radius:3px;pointer-events:none}.select-dropdown li.selected mark{color:#333;font-weight:700}.select-dropdown li:not(.optgroup):hover mark{color:#333}";
+const templateHtml = '<div class="select-dropdown-wrapper">\n    <div id="filter" class="filter" part="filter">\n        <div class="filter-text-wrapper" part="filter-text-wrapper">\n            <span id="filterText" part="filter-text"></span>\n        </div>\n        <button class="btn-close" id="clearButton" part="clear-button" title="Limpar itens selecionados">✕</button>\n    </div>\n    <div class="select-dropdown" id="dropdown" part="dropdown">\n        <div class="dropdown-header" part="dropdown-header">\n            <input type="text" id="searchInput" part="search-input" placeholder="">\n        </div>\n        <div id="scrollArea" class="scroll-area" part="scroll-area">\n            <ul id="contentArea" class="content-area" part="content-area"></ul>\n        </div>\n        <div class="dropdown-footer" part="dropdown-footer">\n            <button id="applyButton" part="apply-button"></button>\n        </div>\n    </div>\n</div>';
+const styles = ":host{color-scheme:light}.select-dropdown-wrapper{display:inline-block;position:relative}.filter{background-color:#fff;color:#333;padding:5px 10px;border:1px solid #999;border-radius:4px;cursor:pointer;display:inline-flex;align-items:center;max-width:300px;white-space:nowrap;text-overflow:ellipsis;position:relative;overflow:visible;font-size:.8em}.filter-text-wrapper{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}.btn-close{background:none;border:none;cursor:pointer;font-size:14px;margin-left:8px;color:inherit}.form-control{display:block;width:100%;padding:.4rem .75rem;font-size:.9rem;line-height:1.4;color:#333;background-color:#fff;border:1px solid #ccc;border-radius:4px}.form-control:focus{outline:none;border-color:#777;box-shadow:0 0 0 2px #0000001a}.mb-2{margin-bottom:.5rem}.select-dropdown{display:none;position:absolute;top:100%;left:0;background:#fff;border:1px solid #ccc;box-shadow:0 2px 4px #0000001a;z-index:10;width:100%;min-width:200px;border-radius:4px;font-size:.85em}.scroll-area{max-height:200px;overflow-y:auto}.content-area{padding:0;margin:0;list-style:none}.select-dropdown ul{list-style:none;padding:0;margin:0}.select-dropdown li{padding:5px 10px;cursor:pointer;transition:background .2s}.select-dropdown li.selected{background:#333;color:#fff}.select-dropdown li:not(.optgroup):hover{background:#555;color:#fff}.select-dropdown li.optgroup{font-weight:700;font-size:.85rem;color:#666;background-color:#f5f5f5;padding:8px 12px;cursor:default}ul.clusterize-no-data{padding:10px;font-size:.85rem;color:#999;font-style:italic}.dropdown-header{display:flex;padding:8px}.dropdown-header input{width:100%;padding:4px 8px}.dropdown-footer{padding:8px;text-align:right;border-top:1px solid #ccc}.btn{display:inline-block;background:#333;color:#fff;padding:.3rem .6rem;font-size:.75rem;border:none;border-radius:4px;cursor:pointer}.btn:hover{background:#555}.btn:focus{outline:none;box-shadow:0 0 0 2px #0003}.btn:disabled{opacity:.6;cursor:not-allowed}.counter-filter{background:#d33;color:#fff;font-size:.7rem;font-weight:700;border-radius:999px;padding:2px 6px;position:absolute;top:0;left:0;transform:translate(-40%,-50%);z-index:20;box-shadow:0 0 2px #0000004d}mark{background:#ff03;color:inherit;border-radius:3px;pointer-events:none}";
 function debounce(fn, delay = 300) {
   let timer;
   return (...args) => {
@@ -1627,7 +1627,9 @@ class PlantaeFilterElement extends HTMLElement {
       label: "Filtro",
       allText: "Todos",
       emptyText: "Selecione",
-      groupNameSelecteds: "Selecionados",
+      applyButtonText: "Aplicar",
+      groupSelectedLabel: "Selecionados",
+      searchPlaceholder: "Buscar..",
       fuseOptions: {
         keys: ["text", "value"],
         threshold: 0.3,
@@ -1658,11 +1660,13 @@ class PlantaeFilterElement extends HTMLElement {
     });
   }
   loadConfig() {
-    this.config.label = this.getAttribute("label") || this.config.label;
-    this.config.allText = this.getAttribute("all-text") || this.config.allText;
-    this.config.emptyText = this.getAttribute("empty-text") || this.config.emptyText;
-    this.config.groupNameSelecteds = this.getAttribute("group-name-selecteds") || this.config.groupNameSelecteds;
-    const fuseAttr = this.getAttribute("fuse-options");
+    this.config.label = this.getAttribute("filter-label") || this.config.label;
+    this.config.allText = this.getAttribute("filter-all-text") || this.config.allText;
+    this.config.emptyText = this.getAttribute("filter-empty-text") || this.config.emptyText;
+    this.config.groupSelectedLabel = this.getAttribute("filter-group-selected-label") || this.config.groupSelectedLabel;
+    this.config.applyButtonText = this.getAttribute("filter-apply-button-text") || this.config.applyButtonText;
+    this.config.searchPlaceholder = this.getAttribute("filter-search-placeholder") || this.config.searchPlaceholder;
+    const fuseAttr = this.getAttribute("filter-fuse-options");
     if (fuseAttr) {
       try {
         const parsed = JSON.parse(fuseAttr);
@@ -1671,7 +1675,7 @@ class PlantaeFilterElement extends HTMLElement {
         console.warn("Invalid JSON for fuse-options", err);
       }
     }
-    const clusterizeAttr = this.getAttribute("clusterize-options");
+    const clusterizeAttr = this.getAttribute("filter-clusterize-options");
     if (clusterizeAttr) {
       try {
         const parsed = JSON.parse(clusterizeAttr);
@@ -1712,9 +1716,18 @@ class PlantaeFilterElement extends HTMLElement {
     this.fuse = new Fuse(flatOptions, this.config.fuseOptions);
   }
   loadTemplate() {
+    var _a, _b;
     const template = document.createElement("template");
     template.innerHTML = `<style>${styles}</style>${templateHtml}`;
     this.attachShadow({ mode: "open" }).append(template.content.cloneNode(true));
+    const searchInput = (_a = this.shadowRoot) == null ? void 0 : _a.getElementById("searchInput");
+    if (searchInput instanceof HTMLInputElement) {
+      searchInput.placeholder = this.config.searchPlaceholder;
+    }
+    const applyButton = (_b = this.shadowRoot) == null ? void 0 : _b.getElementById("applyButton");
+    if (applyButton instanceof HTMLElement) {
+      applyButton.innerText = this.config.applyButtonText;
+    }
   }
   populateOptions(optionsToRender) {
     const rows = [];
@@ -1732,7 +1745,7 @@ class PlantaeFilterElement extends HTMLElement {
       let lastIndex = 0;
       mergedIndices.forEach(([start, end]) => {
         highlighted += text.slice(lastIndex, start);
-        highlighted += `<mark>${text.slice(start, end + 1)}</mark>`;
+        highlighted += `<mark part="highlight">${text.slice(start, end + 1)}</mark>`;
         lastIndex = end + 1;
       });
       highlighted += text.slice(lastIndex);
@@ -1761,7 +1774,7 @@ class PlantaeFilterElement extends HTMLElement {
       }
     }
     if (selectedRows.length > 0) {
-      rows.push(`<li class="optgroup">${this.config.groupNameSelecteds} (${selectedRows.length})</li>`);
+      rows.push(`<li class="optgroup">${this.config.groupSelectedLabel} (${selectedRows.length})</li>`);
       rows.push(...selectedRows);
       rows.push(`<li class="optgroup"></li>`);
     }

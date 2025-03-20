@@ -103,7 +103,6 @@
 .select-dropdown li.selected {
     background: #333;
     color: #fff;
-    font-weight: bold;
 }
 
 .select-dropdown li:not(.optgroup):hover {
@@ -185,17 +184,8 @@ ul.clusterize-no-data {
 }
 
 mark {
-    background: yellow;
+    background: rgba(255, 255, 0, .2);
     color: inherit;
     border-radius: 3px;
     pointer-events: none;
-}
-
-.select-dropdown li.selected mark {
-    color: #333;
-    font-weight: bold;
-}
-
-.select-dropdown li:not(.optgroup):hover mark {
-    color: #333;
 }

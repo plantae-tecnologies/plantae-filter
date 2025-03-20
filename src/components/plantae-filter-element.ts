@@ -34,7 +34,9 @@ class PlantaeFilterElement extends HTMLElement {
         label: 'Filtro',
         allText: 'Todos',
         emptyText: 'Selecione',
-        groupNameSelecteds: 'Selecionados',
+        applyButtonText: 'Aplicar',
+        groupSelectedLabel: 'Selecionados',
+        searchPlaceholder: 'Buscar..',
         fuseOptions: {
             keys: ['text', 'value'],
             threshold: 0.3,
@@ -72,13 +74,15 @@ class PlantaeFilterElement extends HTMLElement {
 
     private loadConfig(): void {
         // Texts
-        this.config.label = this.getAttribute('label') || this.config.label;
-        this.config.allText = this.getAttribute('all-text') || this.config.allText;
-        this.config.emptyText = this.getAttribute('empty-text') || this.config.emptyText;
-        this.config.groupNameSelecteds = this.getAttribute('group-name-selecteds') || this.config.groupNameSelecteds;
+        this.config.label = this.getAttribute('filter-label') || this.config.label;
+        this.config.allText = this.getAttribute('filter-all-text') || this.config.allText;
+        this.config.emptyText = this.getAttribute('filter-empty-text') || this.config.emptyText;
+        this.config.groupSelectedLabel = this.getAttribute('filter-group-selected-label') || this.config.groupSelectedLabel;
+        this.config.applyButtonText = this.getAttribute('filter-apply-button-text') || this.config.applyButtonText;
+        this.config.searchPlaceholder = this.getAttribute('filter-search-placeholder') || this.config.searchPlaceholder;
 
         // Fuse Options
-        const fuseAttr = this.getAttribute('fuse-options');
+        const fuseAttr = this.getAttribute('filter-fuse-options');
         if (fuseAttr) {
             try {
                 const parsed = JSON.parse(fuseAttr);
@@ -89,7 +93,7 @@ class PlantaeFilterElement extends HTMLElement {
         }
 
         // Clusterize Options
-        const clusterizeAttr = this.getAttribute('clusterize-options');
+        const clusterizeAttr = this.getAttribute('filter-clusterize-options');
         if (clusterizeAttr) {
             try {
                 const parsed = JSON.parse(clusterizeAttr);
@@ -139,6 +143,16 @@ class PlantaeFilterElement extends HTMLElement {
         const template = document.createElement('template');
         template.innerHTML = `<style>${styles}</style>${templateHtml}`;
         this.attachShadow({ mode: 'open' })!.append(template.content.cloneNode(true));
+
+        const searchInput = this.shadowRoot?.getElementById("searchInput");
+        if (searchInput instanceof HTMLInputElement) {
+            searchInput.placeholder = this.config.searchPlaceholder;
+        }
+
+        const applyButton = this.shadowRoot?.getElementById("applyButton");
+        if (applyButton instanceof HTMLElement) {
+            applyButton.innerText = this.config.applyButtonText;
+        }
     }
 
     private populateOptions(optionsToRender: OptionItem[] | Array<FuseResult<OptionItem>>): void {
@@ -164,7 +178,7 @@ class PlantaeFilterElement extends HTMLElement {
 
             mergedIndices.forEach(([start, end]) => {
                 highlighted += text.slice(lastIndex, start);
-                highlighted += `<mark>${text.slice(start, end + 1)}</mark>`;
+                highlighted += `<mark part="highlight">${text.slice(start, end + 1)}</mark>`;
                 lastIndex = end + 1;
             });
 
@@ -201,7 +215,7 @@ class PlantaeFilterElement extends HTMLElement {
         }
 
         if (selectedRows.length > 0) {
-            rows.push(`<li class="optgroup">${this.config.groupNameSelecteds} (${selectedRows.length})</li>`);
+            rows.push(`<li class="optgroup">${this.config.groupSelectedLabel} (${selectedRows.length})</li>`);
             rows.push(...selectedRows);
             rows.push(`<li class="optgroup"></li>`);
         }
