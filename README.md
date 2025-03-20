@@ -99,11 +99,31 @@ The following attributes can be set directly on the `<select>` element as `data-
 
 | Attribute          | Description                      | Example                          |
 | ------------------ | -------------------------------- | -------------------------------- |
-| data-pl-label      | Label shown on the badge         | `data-pl-label="Produtos"`       |
+| data-pl-label      | Label shown on the filter         | `data-pl-label="Produtos"`       |
 | data-pl-all-text   | Text when all items are selected | `data-pl-all-text="Todos"`       |
 | data-pl-empty-text | Text when no item is selected    | `data-pl-empty-text="Selecione"` |
+| group-name-selecteds | Label shown on group the selecteds | `data-pl-group-name-selecteds="Selecionados"` |
+| fuse-options | Text when no item is selected    | `data-pl-fuse-options="{"threshold": 0.2, "distance": 100}"` |
+| clusterize-options | Text when no item is selected    | `data-pl-clusterize-options="{"rows_in_block": 25, "blocks_in_cluster": 5, "no_data_text": "Nada encontrado"}"` |
 
 > They can also be specified in the custom element `plantae-filter` without the `data-pl-` prefix.
+
+### Exemplo de uso no HTML
+
+```html
+<plantae-filter
+    label="Produtos"
+    all-text="Todos os produtos"
+    empty-text="Escolha"
+    fuse-options='{"threshold": 0.2, "distance": 100}'
+    clusterize-options='{"rows_in_block": 25, "blocks_in_cluster": 5, "no_data_text": "Nada encontrado"}'
+>
+    <select>
+        <!-- options -->
+    </select>
+</plantae-filter>
+
+```
 ---
 
 ## Public API
