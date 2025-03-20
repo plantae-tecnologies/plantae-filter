@@ -1,6 +1,6 @@
 {
     "name": "@plantae-tech/plantae-filter",
-    "version": "0.0.7",
+    "version": "0.0.8",
     "type": "module",
     "sideEffects": false,
     "main": "dist/plantae-filter.umd.js",
