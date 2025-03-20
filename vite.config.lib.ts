@@ -25,11 +25,12 @@ export default defineConfig({
         dts({
             outDir: 'dist',
             insertTypesEntry: true,
-            entryRoot: 'src'
+            entryRoot: 'src',
+            rollupTypes: true
         }),
         viteStaticCopy({
             targets: [
-                { src: 'src/theme', dest: '' }
+                { src: 'src/theme/*', dest: 'theme' }
             ]
         })
     ]

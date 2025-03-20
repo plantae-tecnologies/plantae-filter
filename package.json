@@ -22,18 +22,14 @@
     "exports": {
         "./theme/*": "./dist/theme/*",
         ".": {
+            "types": "./dist/index.d.ts",
             "import": "./dist/plantae-filter.es.js",
             "require": "./dist/plantae-filter.umd.js"
         }
     },
     "typesVersions": {
         "*": {
-            "*": [
-                "dist/*"
-            ],
-            "theme/*": [
-                "dist/theme/*"
-            ]
+            "theme/*": ["dist/theme/*"]
         }
     },
     "repository": {
