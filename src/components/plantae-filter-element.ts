@@ -4,14 +4,16 @@ import { debounce } from '../helpers/utils';
 import Fuse from 'fuse.js';
 import Clusterize from 'clusterize.js';
 
+type OptionValue = string | number;
+
 interface OptionItem {
-    value: string;
+    value: OptionValue;
     text: string;
     group: string | null;
 }
 
 interface NewOption {
-    value: string;
+    value: OptionValue;
     text: string;
     group?: string | null;
     disabled?: boolean;
@@ -58,7 +60,7 @@ class PlantaeFilterElement extends HTMLElement {
                 Array.from(group.children).forEach(option => {
                     const opt = option as HTMLOptionElement;
                     flatOptions.push({
-                        value: opt.value,
+                        value: isNaN(Number(opt.value)) ? opt.value : Number(opt.value),
                         text: opt.text,
                         group: groupLabel
                     });
@@ -66,7 +68,7 @@ class PlantaeFilterElement extends HTMLElement {
             } else if (child.tagName.toLowerCase() === 'option') {
                 const opt = child as HTMLOptionElement;
                 flatOptions.push({
-                    value: opt.value,
+                    value: isNaN(Number(opt.value)) ? opt.value : Number(opt.value),
                     text: opt.text,
                     group: null
                 });
@@ -89,13 +91,13 @@ class PlantaeFilterElement extends HTMLElement {
         const rows: string[] = [];
         const selectedRows: string[] = [];
         const groupedRows: Map<string | null, string[]> = new Map();
-        const pendingSet = new Set(this.pendingValues);
+        const pendingSet = new Set(this.pendingValues.map(String));
 
         const searchInput = this.shadowRoot!.getElementById("searchInput") as HTMLInputElement;
         const isSearching = !!searchInput?.value.trim();
 
         for (const opt of optionsToRender) {
-            const isSelected = pendingSet.has(opt.value);
+            const isSelected = pendingSet.has(String(opt.value));
             const li = `<li part="dropdown-item${isSelected ? ' selected' : ''}" data-value="${opt.value}">${opt.text}</li>`;
 
             if (isSelected) {
@@ -135,7 +137,7 @@ class PlantaeFilterElement extends HTMLElement {
     }
 
     private updateFilter(): void {
-        const label = this.getAttribute('label') || 'Selecionado';
+        const label = this.getAttribute('label') || 'Filtro';
         const allText = this.getAttribute('all-text') || 'Todos';
         const emptyText = this.getAttribute('empty-text') || 'Selecione';
 
@@ -143,7 +145,7 @@ class PlantaeFilterElement extends HTMLElement {
         const count = this.selectedValues.length;
 
         const selectedTexts = this.options
-            .filter(opt => this.selectedValues.includes(opt.value))
+            .filter(opt => this.selectedValues.includes(String(opt.value)))
             .map(opt => opt.text);
 
         const filterText = this.shadowRoot!.getElementById("filterText") as HTMLElement;
@@ -237,10 +239,10 @@ class PlantaeFilterElement extends HTMLElement {
         selectElement.innerHTML = '';
 
         this.options
-            .filter(opt => this.selectedValues.includes(opt.value))
+            .filter(opt => this.selectedValues.includes(String(opt.value)))
             .forEach(opt => {
                 const option = document.createElement('option');
-                option.value = opt.value;
+                option.value = String(opt.value);
                 option.text = opt.text;
                 option.selected = true;
                 selectElement.appendChild(option);
@@ -305,12 +307,12 @@ class PlantaeFilterElement extends HTMLElement {
         });
     }
 
-    private isOptionDisabled(value: string): boolean {
+    private isOptionDisabled(value: OptionValue): boolean {
         const li = this.shadowRoot!.querySelector(`#contentArea li[data-value='${value}']`);
         return li?.classList.contains('disabled') || false;
     }
 
-    private setOptionsDisabled(values: string[], disabled: boolean): void {
+    private setOptionsDisabled(values: OptionValue[], disabled: boolean): void {
         const lis = this.shadowRoot!.querySelectorAll('#contentArea li[data-value]');
         lis.forEach(li => {
             const el = li as HTMLElement;
@@ -367,15 +369,15 @@ class PlantaeFilterElement extends HTMLElement {
         this.syncSelectElement();
     }
 
-    public selectOptions(values: string[]): void {
+    public selectOptions(values: OptionValue[]): void {
         const validValues = values.filter(v => {
             const opt = this.options.find(opt => opt.value === v);
             return opt && !this.isOptionDisabled(opt.value);
         });
 
         validValues.forEach(v => {
-            if (!this.selectedValues.includes(v)) {
-                this.selectedValues.push(v);
+            if (!this.selectedValues.includes(String(v))) {
+                this.selectedValues.push(String(v));
             }
         });
 
@@ -385,7 +387,7 @@ class PlantaeFilterElement extends HTMLElement {
         this.updateFilter();
     }
 
-    public removeOptions(values: string[]): void {
+    public removeOptions(values: OptionValue[]): void {
         this.options = this.options.filter(opt => !values.includes(opt.value));
         this.selectedValues = this.selectedValues.filter(v => !values.includes(v));
         this.pendingValues = this.pendingValues.filter(v => !values.includes(v));
@@ -422,7 +424,7 @@ class PlantaeFilterElement extends HTMLElement {
     }
 
     public getSelected(): OptionItem[] {
-        return this.options.filter(opt => this.selectedValues.includes(opt.value));
+        return this.options.filter(opt => this.selectedValues.includes(String(opt.value)));
     }
 
     public getAllOptions(): OptionItem[] {
