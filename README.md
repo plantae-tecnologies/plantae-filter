@@ -31,9 +31,11 @@ npm install @plantae-tech/plantae-filter
 
 ## Usage
 
-### 1. Using with Custom Element (Vanilla JS)
+### 1. Using with UMD (CDN + Vanilla JS)
 
 ```html
+<script src="https://plantae-tecnologies.github.io/plantae-filter/plantae-filter.umd.js"></script>
+
 <select id="mySelect" data-options="inline" data-pl-label="Produtos">
   <optgroup label="Frutas">
     <option value="maca">Maçã</option>
@@ -42,18 +44,20 @@ npm install @plantae-tech/plantae-filter
   <option value="outro">Outro</option>
 </select>
 
-<script type="module">
-  import { PlantaeFilter } from '@plantae-tech/plantae-filter';
-
+<script>
   const select = document.getElementById('mySelect');
   const pf = new PlantaeFilter(select);
+
+  // API Example
+  pf.addOption({ value: 'uva', text: 'Uva', group: 'Frutas' });
+  pf.selectOptions(['uva']);
 </script>
 ```
 
-### 2. Using programmatically (Node + Vanilla)
+### 2. Using with Bundler (Vite, Webpack, Rollup)
 
 ```typescript
-import { PlantaeFilter } from '@plantae-tech/plantae-filter';
+import PlantaeFilter from '@plantae-tech/plantae-filter';
 
 const select = document.querySelector('select');
 const pf = new PlantaeFilter(select, { label: 'Produtos', all-text: 'Todos', empty-text: 'Selecione' });
@@ -61,6 +65,30 @@ const pf = new PlantaeFilter(select, { label: 'Produtos', all-text: 'Todos', emp
 // API Example
 pf.addOption({ value: 'uva', text: 'Uva', group: 'Frutas' });
 pf.selectOptions(['uva']);
+```
+
+### 2. Initializing `select` with custom element (exemple with UMD)
+
+```html
+<script src="https://plantae-tecnologies.github.io/plantae-filter/plantae-filter.umd.js"></script>
+
+<plantae-filter label="Produtos" empty-text="Selecione..">
+  <select id="mySelect">
+    <optgroup label="Frutas">
+      <option value="maca">Maçã</option>
+      <option value="banana">Banana</option>
+    </optgroup>
+    <option value="outro">Outro</option>
+  </select>
+</plantae-filter>
+
+<script>
+  const pf = document.querySelector('plantae-filter');
+
+  // API Example
+  pf.addOption({ value: 'uva', text: 'Uva', group: 'Frutas' });
+  pf.selectOptions(['uva']);
+</script>
 ```
 
 ---
@@ -75,6 +103,7 @@ The following attributes can be set directly on the `<select>` element as `data-
 | data-pl-all-text   | Text when all items are selected | `data-pl-all-text="Todos"`       |
 | data-pl-empty-text | Text when no item is selected    | `data-pl-empty-text="Selecione"` |
 
+> They can also be specified in the custom element `plantae-filter` without the `data-pl-` prefix.
 ---
 
 ## Public API
@@ -109,7 +138,7 @@ You can apply the official Bootstrap 5 theme by including the stylesheet:
 Plantae Filter exposes parts for full customization:
 
 ```css
-plantae-filter::part(badge) {
+plantae-filter::part(filter) {
   background-color: #f8f9fa;
   border: 1px solid #ced4da;
   border-radius: 0.25rem;
