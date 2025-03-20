@@ -2,7 +2,9 @@ import templateHtml from './plantae-filter.html?raw';
 import styles from './plantae-filter.css?inline';
 import { debounce } from '../helpers/utils';
 import Fuse from 'fuse.js';
+import type { IFuseOptions } from 'fuse.js';
 import Clusterize from 'clusterize.js';
+import type { ClusterizeOptions } from 'clusterize.js';
 
 type OptionValue = string | number;
 
@@ -27,11 +29,33 @@ class PlantaeFilterElement extends HTMLElement {
     private fuse!: Fuse<OptionItem>;
     private clusterize!: Clusterize;
 
+    // === CONFIG ===
+    private config = {
+        label: 'Filtro',
+        allText: 'Todos',
+        emptyText: 'Selecione',
+        groupNameSelecteds: 'Selecionados',
+        fuseOptions: {
+            keys: ['text', 'value'],
+            threshold: 0.3,
+            ignoreDiacritics: true,
+            useExtendedSearch: true,
+            ignoreLocation: true,
+            includeScore: true,
+            includeMatches: true
+        } as IFuseOptions<OptionItem>,
+        clusterizeOptions: {
+            tag: 'ul',
+            no_data_text: "Não encontrado"
+        } as Partial<ClusterizeOptions>
+    };
+
     constructor() {
         super();
     }
 
     connectedCallback(): void {
+        this.loadConfig();
         this.loadTemplate();
         requestAnimationFrame(() => {
             this.extractOptions();
@@ -44,6 +68,36 @@ class PlantaeFilterElement extends HTMLElement {
 
             this.dispatchEvent(new CustomEvent('plantae-filter-ready', { bubbles: false }));
         });
+    }
+
+    private loadConfig(): void {
+        // Texts
+        this.config.label = this.getAttribute('label') || this.config.label;
+        this.config.allText = this.getAttribute('all-text') || this.config.allText;
+        this.config.emptyText = this.getAttribute('empty-text') || this.config.emptyText;
+        this.config.groupNameSelecteds = this.getAttribute('group-name-selecteds') || this.config.groupNameSelecteds;
+
+        // Fuse Options
+        const fuseAttr = this.getAttribute('fuse-options');
+        if (fuseAttr) {
+            try {
+                const parsed = JSON.parse(fuseAttr);
+                this.config.fuseOptions = { ...this.config.fuseOptions, ...parsed };
+            } catch (err) {
+                console.warn("Invalid JSON for fuse-options", err);
+            }
+        }
+
+        // Clusterize Options
+        const clusterizeAttr = this.getAttribute('clusterize-options');
+        if (clusterizeAttr) {
+            try {
+                const parsed = JSON.parse(clusterizeAttr);
+                this.config.clusterizeOptions = { ...this.config.clusterizeOptions, ...parsed };
+            } catch (err) {
+                console.warn("Invalid JSON for clusterize-options", err);
+            }
+        }
     }
 
     // === DOM / TEMPLATE ===
@@ -78,7 +132,7 @@ class PlantaeFilterElement extends HTMLElement {
         this.options = flatOptions;
         selectElement.style.display = "none";
 
-        this.fuse = new Fuse(flatOptions, { keys: ['text', 'value'], threshold: 0.3 });
+        this.fuse = new Fuse(flatOptions, this.config.fuseOptions);
     }
 
     private loadTemplate(): void {
@@ -111,7 +165,7 @@ class PlantaeFilterElement extends HTMLElement {
         }
 
         if (selectedRows.length > 0) {
-            rows.push(`<li class="optgroup">Selecionados (${selectedRows.length})</li>`);
+            rows.push(`<li class="optgroup">${this.config.groupNameSelecteds} (${selectedRows.length})</li>`);
             rows.push(...selectedRows);
             rows.push(`<li class="optgroup"></li>`);
         }
@@ -137,10 +191,6 @@ class PlantaeFilterElement extends HTMLElement {
     }
 
     private updateFilter(): void {
-        const label = this.getAttribute('label') || 'Filtro';
-        const allText = this.getAttribute('all-text') || 'Todos';
-        const emptyText = this.getAttribute('empty-text') || 'Selecione';
-
         const total = this.options.length;
         const count = this.selectedValues.length;
 
@@ -150,8 +200,8 @@ class PlantaeFilterElement extends HTMLElement {
 
         const filterText = this.shadowRoot!.getElementById("filterText") as HTMLElement;
         filterText.innerHTML = count
-            ? `<span class='counter-filter'>${count}</span> <strong>${label}:</strong> ${count === total ? allText : selectedTexts.join(", ")}`
-            : `<strong>${label}:</strong> ${emptyText}`;
+            ? `<span class='counter-filter'>${count}</span> <strong>${this.config.label}:</strong> ${count === total ? this.config.allText : selectedTexts.join(", ")}`
+            : `<strong>${this.config.label}:</strong> ${this.config.emptyText}`;
 
         const clearBtn = this.shadowRoot!.getElementById("clearButton") as HTMLElement;
         clearBtn.style.opacity = count ? '1' : '0.5';
@@ -218,8 +268,7 @@ class PlantaeFilterElement extends HTMLElement {
             rows: [],
             scrollElem: this.shadowRoot!.getElementById('scrollArea') as HTMLElement,
             contentElem: this.shadowRoot!.getElementById('contentArea') as HTMLElement,
-            tag: 'ul',
-            no_data_text: "Não encontrado"
+            ...this.config.clusterizeOptions
         });
 
         this.shadowRoot!.getElementById('contentArea')!.addEventListener('click', (e) => {
