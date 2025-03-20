@@ -183,3 +183,19 @@ ul.clusterize-no-data {
     z-index: 20;
     box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
 }
+
+mark {
+    background: yellow;
+    color: inherit;
+    border-radius: 3px;
+    pointer-events: none;
+}
+
+.select-dropdown li.selected mark {
+    color: #333;
+    font-weight: bold;
+}
+
+.select-dropdown li:not(.optgroup):hover mark {
+    color: #333;
+}

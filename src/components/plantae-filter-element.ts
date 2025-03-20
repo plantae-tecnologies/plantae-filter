@@ -1,8 +1,8 @@
 import templateHtml from './plantae-filter.html?raw';
 import styles from './plantae-filter.css?inline';
-import { debounce } from '../helpers/utils';
+import { debounce, mergeOverlapping } from '../helpers/utils';
 import Fuse from 'fuse.js';
-import type { IFuseOptions } from 'fuse.js';
+import type { IFuseOptions, FuseResult, FuseResultMatch } from 'fuse.js';
 import Clusterize from 'clusterize.js';
 import type { ClusterizeOptions } from 'clusterize.js';
 
@@ -141,7 +141,7 @@ class PlantaeFilterElement extends HTMLElement {
         this.attachShadow({ mode: 'open' })!.append(template.content.cloneNode(true));
     }
 
-    private populateOptions(optionsToRender: OptionItem[]): void {
+    private populateOptions(optionsToRender: OptionItem[] | Array<FuseResult<OptionItem>>): void {
         const rows: string[] = [];
         const selectedRows: string[] = [];
         const groupedRows: Map<string | null, string[]> = new Map();
@@ -150,17 +150,53 @@ class PlantaeFilterElement extends HTMLElement {
         const searchInput = this.shadowRoot!.getElementById("searchInput") as HTMLInputElement;
         const isSearching = !!searchInput?.value.trim();
 
+        const formatTextWithHighlight = (text: string, matches?: readonly FuseResultMatch[]): string => {
+            if (!matches || matches.length === 0) return text;
+
+            const match = matches.find(m => m.key === "text" || m.key === "value");
+            if (!match) return text;
+
+            // Ordena os índices e mescla sobreposições
+            const mergedIndices = mergeOverlapping(match.indices);
+
+            let highlighted = "";
+            let lastIndex = 0;
+
+            mergedIndices.forEach(([start, end]) => {
+                highlighted += text.slice(lastIndex, start);
+                highlighted += `<mark>${text.slice(start, end + 1)}</mark>`;
+                lastIndex = end + 1;
+            });
+
+            highlighted += text.slice(lastIndex);
+            return highlighted;
+        };
+
         for (const opt of optionsToRender) {
-            const isSelected = pendingSet.has(String(opt.value));
-            const li = `<li part="dropdown-item${isSelected ? ' selected' : ''}" data-value="${opt.value}">${opt.text}</li>`;
+            let option: OptionItem;
+            let matches: readonly FuseResultMatch[] | undefined;
+
+            if ('item' in opt) {
+                // Resultado do Fuse
+                option = opt.item;
+                matches = opt.matches;
+            } else {
+                option = opt;
+                matches = undefined;
+            }
+
+            const isSelected = pendingSet.has(String(option.value));
+            const text = isSearching ? formatTextWithHighlight(option.text, matches) : option.text;
+
+            const li = `<li part="dropdown-item${isSelected ? ' selected' : ''}" data-value="${option.value}">${text}</li>`;
 
             if (isSelected) {
                 selectedRows.push(li);
             } else {
-                if (!groupedRows.has(opt.group)) {
-                    groupedRows.set(opt.group, []);
+                if (!groupedRows.has(option.group)) {
+                    groupedRows.set(option.group, []);
                 }
-                groupedRows.get(opt.group)!.push(li);
+                groupedRows.get(option.group)!.push(li);
             }
         }
 
@@ -247,6 +283,7 @@ class PlantaeFilterElement extends HTMLElement {
     private initSearch(): void {
         const input = this.shadowRoot!.getElementById("searchInput") as HTMLInputElement;
 
+
         const handleSearch = () => {
             const searchTerm = input.value.trim();
             if (!searchTerm) {
@@ -254,9 +291,9 @@ class PlantaeFilterElement extends HTMLElement {
                 this.syncPendingWithApplied();
                 return;
             }
-
-            const flatResults = this.fuse.search(searchTerm).map(r => r.item);
-            this.populateOptions(flatResults);
+        
+            const results = this.fuse.search(searchTerm);
+            this.populateOptions(results);
             this.syncPendingWithApplied();
         };
 
@@ -333,8 +370,15 @@ class PlantaeFilterElement extends HTMLElement {
 
     private openDropdown(): void {
         const searchInput = this.shadowRoot!.getElementById("searchInput") as HTMLInputElement;
-        if (searchInput) searchInput.value = "";
         const dropdown = this.shadowRoot!.getElementById("dropdown") as HTMLElement;
+
+        if (searchInput) {
+            searchInput.value = "";
+            requestAnimationFrame(() => {
+                searchInput.focus();
+            });
+        }
+
         dropdown.style.display = "block";
         this.pendingValues = [...this.selectedValues];
         this.populateOptions(this.options);
