@@ -20,7 +20,7 @@ declare class PlantaeFilterElement extends HTMLElement {
     private extractOptions;
     private loadTemplate;
     private populateOptions;
-    private updateBadge;
+    private updateFilter;
     private attachEvents;
     private toggleSelectOption;
     private handleOutsideClick;
@@ -30,17 +30,20 @@ declare class PlantaeFilterElement extends HTMLElement {
     private syncSelectElement;
     private applySelection;
     private clearSelectionInterno;
+    private toggleDropdown;
     private closeDropdown;
     private openDropdown;
     private syncPendingWithApplied;
     private isOptionDisabled;
+    private setOptionsDisabled;
     addOption(option: NewOption): void;
     addOptions(options: NewOption[]): void;
     selectOptions(values: string[]): void;
     removeOptions(values: string[]): void;
     removeAllOptions(): void;
     clearSelection(): void;
-    setOptionDisabled(values: string[], disabled: boolean): void;
+    disableOptions(values: string[]): void;
+    enableOptions(values: string[]): void;
     getSelected(): OptionItem[];
     getAllOptions(): OptionItem[];
 }

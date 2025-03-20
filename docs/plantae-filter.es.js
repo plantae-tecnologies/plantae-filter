@@ -1,8 +1,8 @@
 var __defProp = Object.defineProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-const templateHtml = '<div class="select-dropdown-wrapper">\n    <div id="badge" class="badge" part="badge">\n        <div class="badge-text-wrapper" part="badge-text-wrapper">\n            <span id="badgeText" part="badge-text"></span>\n        </div>\n        <button class="btn-close" id="clearButton" part="clear-button" title="Limpar itens selecionados">✕</button>\n    </div>\n    <div class="select-dropdown" id="dropdown" part="dropdown">\n        <div class="dropdown-header" part="dropdown-header">\n            <input type="text" id="searchInput" part="search-input" placeholder="Buscar...">\n        </div>\n        <div id="scrollArea" class="scroll-area" part="scroll-area">\n            <ul id="contentArea" class="content-area" part="content-area"></ul>\n        </div>\n        <div class="dropdown-footer" part="dropdown-footer">\n            <button id="applyButton" part="apply-button">Aplicar</button>\n        </div>\n    </div>\n</div>';
-const styles = ":host{color-scheme:light}.select-dropdown-wrapper{display:inline-block;position:relative}.badge{background-color:#fff;color:#333;padding:5px 10px;border:1px solid #999;border-radius:4px;cursor:pointer;display:inline-flex;align-items:center;max-width:300px;white-space:nowrap;text-overflow:ellipsis;position:relative;overflow:visible;font-size:.8em}.badge-text-wrapper{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}.btn-close{background:none;border:none;cursor:pointer;font-size:14px;margin-left:8px;color:inherit}.form-control{display:block;width:100%;padding:.4rem .75rem;font-size:.9rem;line-height:1.4;color:#333;background-color:#fff;border:1px solid #ccc;border-radius:4px}.form-control:focus{outline:none;border-color:#777;box-shadow:0 0 0 2px #0000001a}.mb-2{margin-bottom:.5rem}.select-dropdown{display:none;position:absolute;top:100%;left:0;background:#fff;border:1px solid #ccc;box-shadow:0 2px 4px #0000001a;z-index:10;width:100%;min-width:200px;border-radius:4px;font-size:.85em}.scroll-area{max-height:200px;overflow-y:auto}.content-area{padding:0;margin:0;list-style:none}.select-dropdown ul{list-style:none;padding:0;margin:0}.select-dropdown li{padding:5px 10px;cursor:pointer;transition:background .2s}.select-dropdown li.selected{background:#333;color:#fff;font-weight:700}.select-dropdown li:not(.optgroup):hover{background:#555;color:#fff}.select-dropdown li.optgroup{font-weight:700;font-size:.85rem;color:#666;background-color:#f5f5f5;padding:8px 12px;cursor:default}ul.clusterize-no-data{padding:10px;font-size:.85rem;color:#999;font-style:italic}.dropdown-header{display:flex;padding:8px}.dropdown-header input{width:100%;padding:4px 8px}.dropdown-footer{padding:8px;text-align:right;border-top:1px solid #ccc}.btn{display:inline-block;background:#333;color:#fff;padding:.3rem .6rem;font-size:.75rem;border:none;border-radius:4px;cursor:pointer}.btn:hover{background:#555}.btn:focus{outline:none;box-shadow:0 0 0 2px #0003}.btn:disabled{opacity:.6;cursor:not-allowed}.counter-badge{background:#d33;color:#fff;font-size:.7rem;font-weight:700;border-radius:999px;padding:2px 6px;position:absolute;top:0;left:0;transform:translate(-40%,-50%);z-index:20;box-shadow:0 0 2px #0000004d}";
+const templateHtml = '<div class="select-dropdown-wrapper">\n    <div id="filter" class="filter" part="filter">\n        <div class="filter-text-wrapper" part="filter-text-wrapper">\n            <span id="filterText" part="filter-text"></span>\n        </div>\n        <button class="btn-close" id="clearButton" part="clear-button" title="Limpar itens selecionados">✕</button>\n    </div>\n    <div class="select-dropdown" id="dropdown" part="dropdown">\n        <div class="dropdown-header" part="dropdown-header">\n            <input type="text" id="searchInput" part="search-input" placeholder="Buscar...">\n        </div>\n        <div id="scrollArea" class="scroll-area" part="scroll-area">\n            <ul id="contentArea" class="content-area" part="content-area"></ul>\n        </div>\n        <div class="dropdown-footer" part="dropdown-footer">\n            <button id="applyButton" part="apply-button">Aplicar</button>\n        </div>\n    </div>\n</div>';
+const styles = ":host{color-scheme:light}.select-dropdown-wrapper{display:inline-block;position:relative}.filter{background-color:#fff;color:#333;padding:5px 10px;border:1px solid #999;border-radius:4px;cursor:pointer;display:inline-flex;align-items:center;max-width:300px;white-space:nowrap;text-overflow:ellipsis;position:relative;overflow:visible;font-size:.8em}.filter-text-wrapper{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}.btn-close{background:none;border:none;cursor:pointer;font-size:14px;margin-left:8px;color:inherit}.form-control{display:block;width:100%;padding:.4rem .75rem;font-size:.9rem;line-height:1.4;color:#333;background-color:#fff;border:1px solid #ccc;border-radius:4px}.form-control:focus{outline:none;border-color:#777;box-shadow:0 0 0 2px #0000001a}.mb-2{margin-bottom:.5rem}.select-dropdown{display:none;position:absolute;top:100%;left:0;background:#fff;border:1px solid #ccc;box-shadow:0 2px 4px #0000001a;z-index:10;width:100%;min-width:200px;border-radius:4px;font-size:.85em}.scroll-area{max-height:200px;overflow-y:auto}.content-area{padding:0;margin:0;list-style:none}.select-dropdown ul{list-style:none;padding:0;margin:0}.select-dropdown li{padding:5px 10px;cursor:pointer;transition:background .2s}.select-dropdown li.selected{background:#333;color:#fff;font-weight:700}.select-dropdown li:not(.optgroup):hover{background:#555;color:#fff}.select-dropdown li.optgroup{font-weight:700;font-size:.85rem;color:#666;background-color:#f5f5f5;padding:8px 12px;cursor:default}ul.clusterize-no-data{padding:10px;font-size:.85rem;color:#999;font-style:italic}.dropdown-header{display:flex;padding:8px}.dropdown-header input{width:100%;padding:4px 8px}.dropdown-footer{padding:8px;text-align:right;border-top:1px solid #ccc}.btn{display:inline-block;background:#333;color:#fff;padding:.3rem .6rem;font-size:.75rem;border:none;border-radius:4px;cursor:pointer}.btn:hover{background:#555}.btn:focus{outline:none;box-shadow:0 0 0 2px #0003}.btn:disabled{opacity:.6;cursor:not-allowed}.counter-filter{background:#d33;color:#fff;font-size:.7rem;font-weight:700;border-radius:999px;padding:2px 6px;position:absolute;top:0;left:0;transform:translate(-40%,-50%);z-index:20;box-shadow:0 0 2px #0000004d}";
 function debounce(fn, delay = 300) {
   let timer;
   return (...args) => {
@@ -1615,7 +1615,8 @@ class PlantaeFilterElement extends HTMLElement {
       this.initClusterize();
       this.populateOptions(this.options);
       this.syncSelectElement();
-      this.updateBadge();
+      this.updateFilter();
+      this.dispatchEvent(new CustomEvent("plantae-filter-ready", { bubbles: false }));
     });
   }
   // === DOM / TEMPLATE ===
@@ -1695,25 +1696,25 @@ class PlantaeFilterElement extends HTMLElement {
     }
     this.clusterize.update(rows);
   }
-  updateBadge() {
+  updateFilter() {
     const label = this.getAttribute("label") || "Selecionado";
     const allText = this.getAttribute("all-text") || "Todos";
     const emptyText = this.getAttribute("empty-text") || "Selecione";
     const total = this.options.length;
     const count = this.selectedValues.length;
     const selectedTexts = this.options.filter((opt) => this.selectedValues.includes(opt.value)).map((opt) => opt.text);
-    const badgeText = this.shadowRoot.getElementById("badgeText");
-    badgeText.innerHTML = count ? `<span class='counter-badge'>${count}</span> <strong>${label}:</strong> ${count === total ? allText : selectedTexts.join(", ")}` : `<strong>${label}:</strong> ${emptyText}`;
+    const filterText = this.shadowRoot.getElementById("filterText");
+    filterText.innerHTML = count ? `<span class='counter-filter'>${count}</span> <strong>${label}:</strong> ${count === total ? allText : selectedTexts.join(", ")}` : `<strong>${label}:</strong> ${emptyText}`;
     const clearBtn = this.shadowRoot.getElementById("clearButton");
     clearBtn.style.opacity = count ? "1" : "0.5";
     clearBtn.style.pointerEvents = count ? "auto" : "none";
-    const badge = this.shadowRoot.getElementById("badge");
-    badge.setAttribute("title", count ? selectedTexts.join(", ") : "");
+    const filter = this.shadowRoot.getElementById("filter");
+    filter.setAttribute("title", count ? selectedTexts.join(", ") : "");
   }
   // === EVENT HANDLERS ===
   attachEvents() {
     document.addEventListener("keydown", (e) => this.handleEscKey(e));
-    this.shadowRoot.getElementById("badge").addEventListener("click", () => this.openDropdown());
+    this.shadowRoot.getElementById("filter").addEventListener("click", () => this.toggleDropdown());
     this.shadowRoot.getElementById("clearButton").addEventListener("click", (e) => this.clearSelectionInterno(e));
     this.shadowRoot.getElementById("applyButton").addEventListener("click", () => this.applySelection());
     document.addEventListener("click", (e) => this.handleOutsideClick(e));
@@ -1785,7 +1786,7 @@ class PlantaeFilterElement extends HTMLElement {
   applySelection() {
     this.selectedValues = [...this.pendingValues];
     this.syncSelectElement();
-    this.updateBadge();
+    this.updateFilter();
     this.closeDropdown();
     this.dispatchEvent(new Event("change"));
   }
@@ -1795,8 +1796,17 @@ class PlantaeFilterElement extends HTMLElement {
     this.pendingValues = [];
     this.populateOptions(this.options);
     this.syncSelectElement();
-    this.updateBadge();
+    this.updateFilter();
     this.dispatchEvent(new Event("change"));
+  }
+  toggleDropdown() {
+    const dropdown = this.shadowRoot.getElementById("dropdown");
+    const isOpen = dropdown.style.display === "block";
+    if (isOpen) {
+      this.closeDropdown();
+    } else {
+      this.openDropdown();
+    }
   }
   closeDropdown() {
     const dropdown = this.shadowRoot.getElementById("dropdown");
@@ -1828,6 +1838,26 @@ class PlantaeFilterElement extends HTMLElement {
   isOptionDisabled(value) {
     const li = this.shadowRoot.querySelector(`#contentArea li[data-value='${value}']`);
     return (li == null ? void 0 : li.classList.contains("disabled")) || false;
+  }
+  setOptionsDisabled(values, disabled) {
+    const lis = this.shadowRoot.querySelectorAll("#contentArea li[data-value]");
+    lis.forEach((li) => {
+      const el = li;
+      const value = el.dataset.value;
+      if (values.includes(value)) {
+        if (disabled) {
+          el.classList.add("disabled");
+          el.setAttribute("aria-disabled", "true");
+          el.style.pointerEvents = "none";
+          el.style.opacity = "0.5";
+        } else {
+          el.classList.remove("disabled");
+          el.removeAttribute("aria-disabled");
+          el.style.pointerEvents = "";
+          el.style.opacity = "";
+        }
+      }
+    });
   }
   // === PUBLIC API ===
   addOption(option) {
@@ -1870,7 +1900,7 @@ class PlantaeFilterElement extends HTMLElement {
     this.pendingValues = [...this.selectedValues];
     this.populateOptions(this.options);
     this.syncSelectElement();
-    this.updateBadge();
+    this.updateFilter();
   }
   removeOptions(values) {
     this.options = this.options.filter((opt) => !values.includes(opt.value));
@@ -1879,7 +1909,7 @@ class PlantaeFilterElement extends HTMLElement {
     this.fuse.setCollection(this.options);
     this.populateOptions(this.options);
     this.syncSelectElement();
-    this.updateBadge();
+    this.updateFilter();
   }
   removeAllOptions() {
     this.options = [];
@@ -1888,30 +1918,16 @@ class PlantaeFilterElement extends HTMLElement {
     this.fuse.setCollection(this.options);
     this.populateOptions(this.options);
     this.syncSelectElement();
-    this.updateBadge();
+    this.updateFilter();
   }
   clearSelection() {
     this.clearSelectionInterno();
   }
-  setOptionDisabled(values, disabled) {
-    const lis = this.shadowRoot.querySelectorAll("#contentArea li[data-value]");
-    lis.forEach((li) => {
-      const el = li;
-      const value = el.dataset.value;
-      if (values.includes(value)) {
-        if (disabled) {
-          el.classList.add("disabled");
-          el.setAttribute("aria-disabled", "true");
-          el.style.pointerEvents = "none";
-          el.style.opacity = "0.5";
-        } else {
-          el.classList.remove("disabled");
-          el.removeAttribute("aria-disabled");
-          el.style.pointerEvents = "";
-          el.style.opacity = "";
-        }
-      }
-    });
+  disableOptions(values) {
+    this.setOptionsDisabled(values, true);
+  }
+  enableOptions(values) {
+    this.setOptionsDisabled(values, false);
   }
   getSelected() {
     return this.options.filter((opt) => this.selectedValues.includes(opt.value));
@@ -1923,42 +1939,74 @@ class PlantaeFilterElement extends HTMLElement {
 class PlantaeFilter {
   constructor(select, attributes = {}) {
     __publicField(this, "component");
+    __publicField(this, "isReady", false);
+    __publicField(this, "queue", []);
     var _a;
     const wrapper = document.createElement("plantae-filter");
-    Object.entries(attributes).forEach(([key, value]) => {
+    const datasetAttributes = this.getDatasetAttributes(select);
+    const mergedAttributes = { ...datasetAttributes, ...attributes };
+    Object.entries(mergedAttributes).forEach(([key, value]) => {
       wrapper.setAttribute(key, value);
     });
     (_a = select.parentNode) == null ? void 0 : _a.insertBefore(wrapper, select);
     wrapper.appendChild(select);
     this.component = wrapper;
+    wrapper.addEventListener("plantae-filter-ready", () => {
+      this.isReady = true;
+      this.flushQueue();
+    });
+  }
+  flushQueue() {
+    this.queue.forEach((fn) => fn());
+    this.queue = [];
+  }
+  runOrQueue(fn) {
+    if (this.isReady) {
+      fn();
+    } else {
+      this.queue.push(fn);
+    }
+  }
+  getDatasetAttributes(select) {
+    const attrs = {};
+    Array.from(select.attributes).forEach((attr) => {
+      if (attr.name.startsWith("data-pl-")) {
+        const key = attr.name.replace("data-pl-", "");
+        attrs[key] = attr.value;
+      }
+    });
+    return attrs;
   }
   // Expondo métodos do componente
   addOption(option) {
-    this.component.addOption(option);
+    this.runOrQueue(() => this.component.addOption(option));
   }
   addOptions(options) {
-    this.component.addOptions(options);
+    this.runOrQueue(() => this.component.addOptions(options));
   }
   selectOptions(values) {
-    this.component.selectOptions(values);
+    this.runOrQueue(() => this.component.selectOptions(values));
   }
   removeOptions(values) {
-    this.component.removeOptions(values);
+    this.runOrQueue(() => this.component.removeOptions(values));
   }
   removeAllOptions() {
-    this.component.removeAllOptions();
+    this.runOrQueue(() => this.component.removeAllOptions());
   }
   clearSelection() {
-    this.component.clearSelection();
+    this.runOrQueue(() => this.component.clearSelection());
+  }
+  disableOptions(values) {
+    this.runOrQueue(() => this.component.disableOptions(values));
+  }
+  enableOptions(values) {
+    this.runOrQueue(() => this.component.enableOptions(values));
   }
   getSelected() {
     return this.component.getSelected();
   }
   getAllOptions() {
     return this.component.getAllOptions();
-  }
-  setOptionDisabled(values, disabled) {
-    this.component.setOptionDisabled(values, disabled);
   }
 }
 if (!customElements.get("plantae-filter")) {
