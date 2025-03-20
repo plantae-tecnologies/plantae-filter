@@ -67,7 +67,7 @@ pf.addOption({ value: 'uva', text: 'Uva', group: 'Frutas' });
 pf.selectOptions(['uva']);
 ```
 
-### 2. Initializing `select` with custom element (exemple with UMD)
+### 3. Initializing `select` with custom element (exemple with UMD)
 
 ```html
 <script src="https://plantae-tecnologies.github.io/plantae-filter/plantae-filter.umd.js"></script>
