@@ -1,132 +1,135 @@
+# Plantae Filter
+
 ![npm](https://img.shields.io/npm/v/@plantae-tech/plantae-filter?color=green)
 [![Docs](https://img.shields.io/badge/Demo-GitHub%20Pages-blue)](https://plantae-tecnologies.github.io/plantae-filter/)
 
-# Plantae Filter
-
-> Web Component e Controller JS para filtros multi-seleção com busca otimizada.
+A lightweight JavaScript plugin to transform native `<select>` elements into custom dropdown components with search, multi-select, and virtual list rendering (Clusterize.js).
 
 ---
 
-## 📦 Instalação
+## Installation
+
+### NPM
 
 ```bash
 npm install @plantae-tech/plantae-filter
 ```
 
-ou
-
-```bash
-yarn add @plantae-tech/plantae-filter
-```
-
----
-
-## 🚀 Uso básico
-
-### 🔗 Atributos disponíveis (Web Component ou via Controller)
-
-> Também pode ser sobrescrito via `new PlantaeFilter(select, { ... })`
-
-| Atributo      | Descrição                                           | Exemplo        |
-| ------------- | --------------------------------------------------- | -------------- |
-| `label`       | Texto do label do badge                             | `Produtos`     |
-| `all-text`    | Texto exibido quando todas as opções estão marcadas | `Todos`        |
-| `empty-text`  | Texto exibido quando nenhuma opção está marcada     | `Selecione`    |
-
-### 1️⃣ Usando com Controller (JS puro)
-
-```ts
-import { PlantaeFilter } from 'plantae-filter';
-
-const select = document.querySelector('select');
-const pf = new PlantaeFilter(select, { label: 'Produtos' });
-```
-
-### 2️⃣ Usando direto via Web Component
-
-```ts
-import 'plantae-filter'; // já registra automaticamente
-```
-
-### HTML
+### CDN (UMD)
 
 ```html
-<plantae-filter label="Categorias">
-    <select multiple>
-        <optgroup label="Frutas">
-            <option value="maçã">Maçã</option>
-            <option value="banana">Banana</option>
-        </optgroup>
-        <optgroup label="Legumes">
-            <option value="cenoura">Cenoura</option>
-            <option value="batata">Batata</option>
-        </optgroup>
-    </select>
-</plantae-filter>
+<script src="https://plantae-tecnologies.github.io/plantae-filter/plantae-filter.umd.js"></script>
+```
+
+### CDN (ES Module)
+
+```html
+<script type="module" src="https://plantae-tecnologies.github.io/plantae-filter/plantae-filter.es.js"></script>
 ```
 
 ---
 
-## 🔧 API pública disponível (`PlantaeFilter`)
+## Usage
 
-| Método                                  | Descrição                                  |
-| --------------------------------------- | ------------------------------------------ |
-| `addOption(option)`                     | Adiciona uma opção individual.             |
-| `addOptions(options[])`                 | Adiciona várias opções em lote.            |
-| `removeOptions(values[])`               | Remove múltiplas opções pelo value.        |
-| `removeAllOptions()`                    | Remove todas as opções e limpa seleção.    |
-| `selectOptions(values[])`               | Seleciona opções programaticamente.        |
-| `clearSelection()`                      | Limpa todas as opções selecionadas.        |
-| `setOptionDisabled(values[], disabled)` | Desabilita ou habilita opções visualmente. |
-| `getSelected()`                         | Retorna as opções atualmente selecionadas. |
-| `getAllOptions()`                       | Retorna todas as opções disponíveis.       |
+### 1. Using with Custom Element (Vanilla JS)
+
+```html
+<select id="mySelect" data-options="inline" data-pl-label="Produtos">
+  <optgroup label="Frutas">
+    <option value="maca">Maçã</option>
+    <option value="banana">Banana</option>
+  </optgroup>
+  <option value="outro">Outro</option>
+</select>
+
+<script type="module">
+  import { PlantaeFilter } from '@plantae-tech/plantae-filter';
+
+  const select = document.getElementById('mySelect');
+  const pf = new PlantaeFilter(select);
+</script>
+```
+
+### 2. Using programmatically (Node + Vanilla)
+
+```typescript
+import { PlantaeFilter } from '@plantae-tech/plantae-filter';
+
+const select = document.querySelector('select');
+const pf = new PlantaeFilter(select, { label: 'Produtos', all-text: 'Todos', empty-text: 'Selecione' });
+
+// API Example
+pf.addOption({ value: 'uva', text: 'Uva', group: 'Frutas' });
+pf.selectOptions(['uva']);
+```
 
 ---
 
-## 🎨 Estilos
+## Data Attributes
 
-- Estilização baseada em CSS Shadow DOM.
-- Personalização via `::part()` nos elementos `dropdown-item` e `optgroup`.
-- Temas alternativos em `/theme` importáveis via:
+The following attributes can be set directly on the `<select>` element as `data-pl-*`:
 
-### Via NPM ou Yarn
+| Attribute          | Description                      | Example                          |
+| ------------------ | -------------------------------- | -------------------------------- |
+| data-pl-label      | Label shown on the badge         | `data-pl-label="Produtos"`       |
+| data-pl-all-text   | Text when all items are selected | `data-pl-all-text="Todos"`       |
+| data-pl-empty-text | Text when no item is selected    | `data-pl-empty-text="Selecione"` |
 
-```ts
-// é necessário importar o bootstrap5 no projeto para usar esse tema
-import 'plantae-filter/theme/bootstrap5-theme.css';
-```
+---
 
-### Via CDN
+## Public API
+
+| Method                   | Description                     |
+| ------------------------ | ------------------------------- |
+| `addOption(option)`      | Add a single option             |
+| `addOptions(options)`    | Add multiple options            |
+| `selectOptions(values)`  | Select multiple values by value |
+| `removeOptions(values)`  | Remove options by value         |
+| `removeAllOptions()`     | Remove all options              |
+| `clearSelection()`       | Deselect all selected options   |
+| `disableOptions(values)` | Disable options by value        |
+| `enableOptions(values)`  | Enable options by value         |
+| `getSelected()`          | Get all selected options        |
+| `getAllOptions()`        | Get all available options       |
+
+---
+
+## Customization
+
+### 1. Using Bootstrap 5 Theme
+
+You can apply the official Bootstrap 5 theme by including the stylesheet:
 
 ```html
 <link rel="stylesheet" href="https://plantae-tecnologies.github.io/plantae-filter/theme/bootstrap5-theme.css">
 ```
 
----
+### 2. Customizing with `::part()`
 
-## ✨ Recursos internos
+Plantae Filter exposes parts for full customization:
 
-- Busca otimizada com `Fuse.js`
-- Renderização virtualizada com `Clusterize.js`
-- Suporte a `<optgroup>`
-- Multi-seleção e "Selecionados no topo"
+```css
+plantae-filter::part(badge) {
+  background-color: #f8f9fa;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+}
 
----
+plantae-filter::part(dropdown-item) {
+  padding: 0.5rem 1rem;
+}
 
-## 🌐 Uso via CDN (Vanilla)
-
-```html
-<script src="https://plantae-tecnologies.github.io/plantae-filter/plantae-filter.umd.js"></script>
-<link rel="stylesheet" href="https://plantae-tecnologies.github.io/plantae-filter/theme/default.css">
-<script>
-  const pf = new PlantaeFilter(document.querySelector('select'), { label: 'Categorias' });
-</script>
+plantae-filter::part(dropdown-item selected) {
+  background: #0d6efd;
+  color: #fff;
+}
 ```
 
-> Disponível em: [https://plantae-tecnologies.github.io/plantae-filter/](https://plantae-tecnologies.github.io/plantae-filter/)
+Feel free to adapt styles to match your design system.
 
-### Exemplo:
+---
 
-```html
-<script src="https://plantae-tecnologies.github.io/plantae-filter/plantae-filter.umd.js"></script>
-```
+> Powered by Plantae Gestão Agrícola
+
+---
+

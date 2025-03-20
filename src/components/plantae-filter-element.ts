@@ -39,6 +39,8 @@ class PlantaeFilterElement extends HTMLElement {
             this.populateOptions(this.options);
             this.syncSelectElement();
             this.updateFilter();
+
+            this.dispatchEvent(new CustomEvent('plantae-filter-ready', { bubbles: false }));
         });
     }
 
@@ -308,6 +310,27 @@ class PlantaeFilterElement extends HTMLElement {
         return li?.classList.contains('disabled') || false;
     }
 
+    private setOptionsDisabled(values: string[], disabled: boolean): void {
+        const lis = this.shadowRoot!.querySelectorAll('#contentArea li[data-value]');
+        lis.forEach(li => {
+            const el = li as HTMLElement;
+            const value = el.dataset.value!;
+            if (values.includes(value)) {
+                if (disabled) {
+                    el.classList.add('disabled');
+                    el.setAttribute('aria-disabled', 'true');
+                    el.style.pointerEvents = 'none';
+                    el.style.opacity = '0.5';
+                } else {
+                    el.classList.remove('disabled');
+                    el.removeAttribute('aria-disabled');
+                    el.style.pointerEvents = '';
+                    el.style.opacity = '';
+                }
+            }
+        });
+    }
+
     // === PUBLIC API ===
 
     public addOption(option: NewOption): void {
@@ -390,25 +413,12 @@ class PlantaeFilterElement extends HTMLElement {
         this.clearSelectionInterno();
     }
 
-    public setOptionDisabled(values: string[], disabled: boolean): void {
-        const lis = this.shadowRoot!.querySelectorAll('#contentArea li[data-value]');
-        lis.forEach(li => {
-            const el = li as HTMLElement;
-            const value = el.dataset.value!;
-            if (values.includes(value)) {
-                if (disabled) {
-                    el.classList.add('disabled');
-                    el.setAttribute('aria-disabled', 'true');
-                    el.style.pointerEvents = 'none';
-                    el.style.opacity = '0.5';
-                } else {
-                    el.classList.remove('disabled');
-                    el.removeAttribute('aria-disabled');
-                    el.style.pointerEvents = '';
-                    el.style.opacity = '';
-                }
-            }
-        });
+    public disableOptions(values: string[]): void {
+        this.setOptionsDisabled(values, true);
+    }
+    
+    public enableOptions(values: string[]): void {
+        this.setOptionsDisabled(values, false);
     }
 
     public getSelected(): OptionItem[] {
