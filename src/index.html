@@ -53,7 +53,7 @@
     <main class="wrapper">
         <h2>Interactive Example</h2>
 
-        <select multiple></select>
+        <select multiple data-filter-clusterize-options='{"no_data_text": "No data"}'></select>
 
         <div class="div-actions">
             <div class="action-group">
@@ -82,8 +82,7 @@
             "filter-empty-text": "Select options",
             "filter-group-selected-label": "Selected",
             "filter-apply-button-text": "Apply",
-            "filter-search-placeholder": "Find..",
-            "filter-clusterize-options": '{"no_data_text": "No data"}'
+            "filter-search-placeholder": "Find.."
         });
         const output = document.getElementById('output');
 

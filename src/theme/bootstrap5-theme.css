@@ -119,14 +119,21 @@
 }
 
 /* Seleção ativa */
+::part(dropdown-item focused),
+::part(dropdown-item):hover {
+    color: #fff;
+    background: rgba(13, 110, 253, 0.75);
+}
+
 ::part(dropdown-item selected) {
     color: #fff;
     background: var(--bs-primary, #0d6efd);
 }
 
-::part(dropdown-item):hover {
+::part(dropdown-item selected focused),
+::part(dropdown-item selected):hover {
     color: #fff;
-    background: rgba(13, 110, 253, 0.75);
+    background: rgba(13, 110, 253, 0.95);
 }
 
 /* Título de grupo */

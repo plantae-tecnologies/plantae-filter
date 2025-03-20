@@ -36,21 +36,21 @@ npm install @plantae-tech/plantae-filter
 ```html
 <script src="https://plantae-tecnologies.github.io/plantae-filter/plantae-filter.umd.js"></script>
 
-<select id="mySelect" data-options="inline" data-pl-label="Produtos">
-  <optgroup label="Frutas">
-    <option value="maca">Maçã</option>
-    <option value="banana">Banana</option>
-  </optgroup>
-  <option value="outro">Outro</option>
+<select id="mySelect" data-filter-label="Products">
+    <optgroup label="Fruits">
+        <option value="apple">Apple</option>
+        <option value="banana">Banana</option>
+    </optgroup>
+    <option value="other">Other</option>
 </select>
 
 <script>
-  const select = document.getElementById('mySelect');
-  const pf = new PlantaeFilter(select);
+    const select = document.getElementById('mySelect');
+    const pf = new PlantaeFilter(select);
 
-  // API Example
-  pf.addOption({ value: 'uva', text: 'Uva', group: 'Frutas' });
-  pf.selectOptions(['uva']);
+    // API Example
+    pf.addOption({ value: 'grape', text: 'Grape', group: 'Fruits' });
+    pf.selectOptions(['grape']);
 </script>
 ```
 
@@ -60,34 +60,41 @@ npm install @plantae-tech/plantae-filter
 import PlantaeFilter from '@plantae-tech/plantae-filter';
 
 const select = document.querySelector('select');
-const pf = new PlantaeFilter(select, { label: 'Produtos', all-text: 'Todos', empty-text: 'Selecione' });
+const filter = new PlantaeFilter(select, {
+    "filter-label": "Products",
+    "filter-all-text": "All",
+    "filter-empty-text": "Select options",
+    "filter-group-selected-label": "Selected",
+    "filter-apply-button-text": "Apply",
+    "filter-search-placeholder": "Search.."
+});
 
 // API Example
-pf.addOption({ value: 'uva', text: 'Uva', group: 'Frutas' });
-pf.selectOptions(['uva']);
+filter.addOption({ value: 'grape', text: 'Grape', group: 'Fruits' });
+filter.selectOptions(['grape']);
 ```
 
-### 3. Initializing `select` with custom element (exemple with UMD)
+### 3. Initializing `select` with custom element (example with UMD)
 
 ```html
 <script src="https://plantae-tecnologies.github.io/plantae-filter/plantae-filter.umd.js"></script>
 
-<plantae-filter label="Produtos" empty-text="Selecione..">
-  <select id="mySelect">
-    <optgroup label="Frutas">
-      <option value="maca">Maçã</option>
-      <option value="banana">Banana</option>
-    </optgroup>
-    <option value="outro">Outro</option>
-  </select>
+<plantae-filter filter-label="Products" filter-empty-text="Select..">
+    <select id="mySelect">
+        <optgroup label="Fruits">
+            <option value="apple">Apple</option>
+            <option value="banana">Banana</option>
+        </optgroup>
+        <option value="other">Other</option>
+    </select>
 </plantae-filter>
 
 <script>
-  const pf = document.querySelector('plantae-filter');
+    const pf = document.querySelector('plantae-filter');
 
-  // API Example
-  pf.addOption({ value: 'uva', text: 'Uva', group: 'Frutas' });
-  pf.selectOptions(['uva']);
+    // API Example
+    pf.addOption({ value: 'grape', text: 'Grape', group: 'Fruits' });
+    pf.selectOptions(['grape']);
 </script>
 ```
 
@@ -95,35 +102,21 @@ pf.selectOptions(['uva']);
 
 ## Data Attributes
 
-The following attributes can be set directly on the `<select>` element as `data-pl-*`:
+> The `filter-*` attributes should be used directly on the `<plantae-filter>` component.  
+> The `data-*` attributes are alternatives that can be used inside the `<select>` element if you prefer to configure it via the native `<select>`.  
+> If both are provided, the values from `<plantae-filter>` will take priority.
 
-| Attribute          | Description                      | Example                          |
-| ------------------ | -------------------------------- | -------------------------------- |
-| data-pl-label      | Label shown on the filter         | `data-pl-label="Produtos"`       |
-| data-pl-all-text   | Text when all items are selected | `data-pl-all-text="Todos"`       |
-| data-pl-empty-text | Text when no item is selected    | `data-pl-empty-text="Selecione"` |
-| group-name-selecteds | Label shown on group the selecteds | `data-pl-group-name-selecteds="Selecionados"` |
-| fuse-options | Text when no item is selected    | `data-pl-fuse-options="{"threshold": 0.2, "distance": 100}"` |
-| clusterize-options | Text when no item is selected    | `data-pl-clusterize-options="{"rows_in_block": 25, "blocks_in_cluster": 5, "no_data_text": "Nada encontrado"}"` |
+| Attribute (no `<plantae-filter>`)       | Description                                | Example (`<plantae-filter>`)                                    | Example (`<select>`)                                           |
+| --------------------------------------- | ------------------------------------------ | --------------------------------------------------------------- | -------------------------------------------------------------- |
+| `filter-label`                          | Label shown on the filter                  | `filter-label="Products"`                                      | `data-filter-label="Products"`                                |
+| `filter-all-text`                       | Text when all items are selected           | `filter-all-text="All"`                                        | `data-filter-all-text="All"`                                  |
+| `filter-empty-text`                     | Text when no item is selected              | `filter-empty-text="Select"`                                   | `data-filter-empty-text="Select"`                             |
+| `filter-group-selected-label`           | Label shown on the "Selected" group        | `filter-group-selected-label="Selected"`                       | `data-filter-group-selected-label="Selected"`                 |
+| `filter-apply-button-text`              | Label shown on the apply button            | `filter-apply-button-text="Apply"`                             | `data-filter-apply-button-text="Apply"`                       |
+| `filter-search-placeholder`             | Placeholder shown on the search input      | `filter-search-placeholder="Search.."`                         | `data-filter-search-placeholder="Search.."`                   |
+| `filter-fuse-options`                   | JSON string with Fuse.js custom options    | `filter-fuse-options='{"threshold": 0.2, "distance": 100}'`    | `data-filter-fuse-options='{"threshold": 0.2}'`               |
+| `filter-clusterize-options`             | JSON string with Clusterize.js options     | `filter-clusterize-options='{"rows_in_block": 25}'`            | `data-filter-clusterize-options='{"no_data_text": "No data"}'` |
 
-> They can also be specified in the custom element `plantae-filter` without the `data-pl-` prefix.
-
-### Exemplo de uso no HTML
-
-```html
-<plantae-filter
-    label="Produtos"
-    all-text="Todos os produtos"
-    empty-text="Escolha"
-    fuse-options='{"threshold": 0.2, "distance": 100}'
-    clusterize-options='{"rows_in_block": 25, "blocks_in_cluster": 5, "no_data_text": "Nada encontrado"}'
->
-    <select>
-        <!-- options -->
-    </select>
-</plantae-filter>
-
-```
 ---
 
 ## Public API
@@ -159,18 +152,18 @@ Plantae Filter exposes parts for full customization:
 
 ```css
 plantae-filter::part(filter) {
-  background-color: #f8f9fa;
-  border: 1px solid #ced4da;
-  border-radius: 0.25rem;
+    background-color: #f8f9fa;
+    border: 1px solid #ced4da;
+    border-radius: 0.25rem;
 }
 
 plantae-filter::part(dropdown-item) {
-  padding: 0.5rem 1rem;
+    padding: 0.5rem 1rem;
 }
 
 plantae-filter::part(dropdown-item selected) {
-  background: #0d6efd;
-  color: #fff;
+    background: #0d6efd;
+    color: #fff;
 }
 ```
 
@@ -179,6 +172,4 @@ Feel free to adapt styles to match your design system.
 ---
 
 > Powered by Plantae Gestão Agrícola
-
----
 

@@ -2,17 +2,11 @@ declare interface InstanceAttributes {
     [key: string]: string;
 }
 
-declare interface NewOption {
+declare interface OptionItem {
     value: OptionValue;
     text: string;
     group?: string | null;
     disabled?: boolean;
-}
-
-declare interface OptionItem {
-    value: OptionValue;
-    text: string;
-    group: string | null;
 }
 
 declare type OptionValue = string | number;
@@ -40,10 +34,20 @@ export default PlantaeFilter;
 
 declare class PlantaeFilterElement extends HTMLElement {
     private options;
+    private optionMap;
     private selectedValues;
     private pendingValues;
     private fuse;
     private clusterize;
+    private cursorIndex;
+    private searchInput;
+    private applyButton;
+    private clearButton;
+    private dropdown;
+    private filterText;
+    private filter;
+    private scrollArea;
+    private contentArea;
     private config;
     constructor();
     connectedCallback(): void;
@@ -55,8 +59,11 @@ declare class PlantaeFilterElement extends HTMLElement {
     private attachEvents;
     private toggleSelectOption;
     private handleOutsideClick;
-    private handleEscKey;
-    private initSearch;
+    private handleKeyboardNavigation;
+    private updateCursor;
+    private handleSearch;
+    private handleClickitem;
+    private initFuse;
     private initClusterize;
     private syncSelectElement;
     private applySelection;
@@ -64,17 +71,14 @@ declare class PlantaeFilterElement extends HTMLElement {
     private toggleDropdown;
     private closeDropdown;
     private openDropdown;
-    private syncPendingWithApplied;
-    private isOptionDisabled;
-    private setOptionsDisabled;
-    addOption(option: NewOption): void;
-    addOptions(options: NewOption[]): void;
+    addOption(option: OptionItem): void;
+    addOptions(options: OptionItem[]): void;
     selectOptions(values: OptionValue[]): void;
     removeOptions(values: OptionValue[]): void;
     removeAllOptions(): void;
     clearSelection(): void;
-    disableOptions(values: string[]): void;
-    enableOptions(values: string[]): void;
+    disableOptions(values: OptionValue[]): void;
+    enableOptions(values: OptionValue[]): void;
     getSelected(): OptionItem[];
     getAllOptions(): OptionItem[];
 }

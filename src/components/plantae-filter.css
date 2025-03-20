@@ -105,9 +105,15 @@
     color: #fff;
 }
 
+.select-dropdown li:not(.optgroup).focused,
 .select-dropdown li:not(.optgroup):hover {
     background: #555;
     color: #fff;
+}
+
+.select-dropdown li.disabled {
+    pointer-events: none;
+    opacity: 0.5;
 }
 
 .select-dropdown li.optgroup {

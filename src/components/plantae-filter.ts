@@ -52,8 +52,8 @@ export class PlantaeFilter {
     private getDatasetAttributes(select: HTMLSelectElement): InstanceAttributes {
         const attrs: InstanceAttributes = {};
         Array.from(select.attributes).forEach(attr => {
-            if (attr.name.startsWith('data-pl-')) {
-                const key = attr.name.replace('data-pl-', '');
+            if (attr.name.startsWith('data-')) {
+                const key = attr.name.replace('data-', '');
                 attrs[key] = attr.value;
             }
         });
