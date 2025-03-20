@@ -2,13 +2,30 @@ var __defProp = Object.defineProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
 const templateHtml = '<div class="select-dropdown-wrapper">\n    <div id="filter" class="filter" part="filter">\n        <div class="filter-text-wrapper" part="filter-text-wrapper">\n            <span id="filterText" part="filter-text"></span>\n        </div>\n        <button class="btn-close" id="clearButton" part="clear-button" title="Limpar itens selecionados">✕</button>\n    </div>\n    <div class="select-dropdown" id="dropdown" part="dropdown">\n        <div class="dropdown-header" part="dropdown-header">\n            <input type="text" id="searchInput" part="search-input" placeholder="Buscar...">\n        </div>\n        <div id="scrollArea" class="scroll-area" part="scroll-area">\n            <ul id="contentArea" class="content-area" part="content-area"></ul>\n        </div>\n        <div class="dropdown-footer" part="dropdown-footer">\n            <button id="applyButton" part="apply-button">Aplicar</button>\n        </div>\n    </div>\n</div>';
-const styles = ":host{color-scheme:light}.select-dropdown-wrapper{display:inline-block;position:relative}.filter{background-color:#fff;color:#333;padding:5px 10px;border:1px solid #999;border-radius:4px;cursor:pointer;display:inline-flex;align-items:center;max-width:300px;white-space:nowrap;text-overflow:ellipsis;position:relative;overflow:visible;font-size:.8em}.filter-text-wrapper{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}.btn-close{background:none;border:none;cursor:pointer;font-size:14px;margin-left:8px;color:inherit}.form-control{display:block;width:100%;padding:.4rem .75rem;font-size:.9rem;line-height:1.4;color:#333;background-color:#fff;border:1px solid #ccc;border-radius:4px}.form-control:focus{outline:none;border-color:#777;box-shadow:0 0 0 2px #0000001a}.mb-2{margin-bottom:.5rem}.select-dropdown{display:none;position:absolute;top:100%;left:0;background:#fff;border:1px solid #ccc;box-shadow:0 2px 4px #0000001a;z-index:10;width:100%;min-width:200px;border-radius:4px;font-size:.85em}.scroll-area{max-height:200px;overflow-y:auto}.content-area{padding:0;margin:0;list-style:none}.select-dropdown ul{list-style:none;padding:0;margin:0}.select-dropdown li{padding:5px 10px;cursor:pointer;transition:background .2s}.select-dropdown li.selected{background:#333;color:#fff;font-weight:700}.select-dropdown li:not(.optgroup):hover{background:#555;color:#fff}.select-dropdown li.optgroup{font-weight:700;font-size:.85rem;color:#666;background-color:#f5f5f5;padding:8px 12px;cursor:default}ul.clusterize-no-data{padding:10px;font-size:.85rem;color:#999;font-style:italic}.dropdown-header{display:flex;padding:8px}.dropdown-header input{width:100%;padding:4px 8px}.dropdown-footer{padding:8px;text-align:right;border-top:1px solid #ccc}.btn{display:inline-block;background:#333;color:#fff;padding:.3rem .6rem;font-size:.75rem;border:none;border-radius:4px;cursor:pointer}.btn:hover{background:#555}.btn:focus{outline:none;box-shadow:0 0 0 2px #0003}.btn:disabled{opacity:.6;cursor:not-allowed}.counter-filter{background:#d33;color:#fff;font-size:.7rem;font-weight:700;border-radius:999px;padding:2px 6px;position:absolute;top:0;left:0;transform:translate(-40%,-50%);z-index:20;box-shadow:0 0 2px #0000004d}";
+const styles = ":host{color-scheme:light}.select-dropdown-wrapper{display:inline-block;position:relative}.filter{background-color:#fff;color:#333;padding:5px 10px;border:1px solid #999;border-radius:4px;cursor:pointer;display:inline-flex;align-items:center;max-width:300px;white-space:nowrap;text-overflow:ellipsis;position:relative;overflow:visible;font-size:.8em}.filter-text-wrapper{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}.btn-close{background:none;border:none;cursor:pointer;font-size:14px;margin-left:8px;color:inherit}.form-control{display:block;width:100%;padding:.4rem .75rem;font-size:.9rem;line-height:1.4;color:#333;background-color:#fff;border:1px solid #ccc;border-radius:4px}.form-control:focus{outline:none;border-color:#777;box-shadow:0 0 0 2px #0000001a}.mb-2{margin-bottom:.5rem}.select-dropdown{display:none;position:absolute;top:100%;left:0;background:#fff;border:1px solid #ccc;box-shadow:0 2px 4px #0000001a;z-index:10;width:100%;min-width:200px;border-radius:4px;font-size:.85em}.scroll-area{max-height:200px;overflow-y:auto}.content-area{padding:0;margin:0;list-style:none}.select-dropdown ul{list-style:none;padding:0;margin:0}.select-dropdown li{padding:5px 10px;cursor:pointer;transition:background .2s}.select-dropdown li.selected{background:#333;color:#fff;font-weight:700}.select-dropdown li:not(.optgroup):hover{background:#555;color:#fff}.select-dropdown li.optgroup{font-weight:700;font-size:.85rem;color:#666;background-color:#f5f5f5;padding:8px 12px;cursor:default}ul.clusterize-no-data{padding:10px;font-size:.85rem;color:#999;font-style:italic}.dropdown-header{display:flex;padding:8px}.dropdown-header input{width:100%;padding:4px 8px}.dropdown-footer{padding:8px;text-align:right;border-top:1px solid #ccc}.btn{display:inline-block;background:#333;color:#fff;padding:.3rem .6rem;font-size:.75rem;border:none;border-radius:4px;cursor:pointer}.btn:hover{background:#555}.btn:focus{outline:none;box-shadow:0 0 0 2px #0003}.btn:disabled{opacity:.6;cursor:not-allowed}.counter-filter{background:#d33;color:#fff;font-size:.7rem;font-weight:700;border-radius:999px;padding:2px 6px;position:absolute;top:0;left:0;transform:translate(-40%,-50%);z-index:20;box-shadow:0 0 2px #0000004d}mark{background:#ff0;color:inherit;border-radius:3px;pointer-events:none}.select-dropdown li.selected mark{color:#333;font-weight:700}.select-dropdown li:not(.optgroup):hover mark{color:#333}";
 function debounce(fn, delay = 300) {
   let timer;
   return (...args) => {
     clearTimeout(timer);
     timer = setTimeout(() => fn(...args), delay);
   };
+}
+function mergeOverlapping(indices) {
+  const sorted = [...indices].sort((a, b) => a[0] - b[0]);
+  const merged = [];
+  for (const [start, end] of sorted) {
+    if (!merged.length) {
+      merged.push([start, end]);
+    } else {
+      const last = merged[merged.length - 1];
+      if (start <= last[1] + 1) {
+        last[1] = Math.max(last[1], end);
+      } else {
+        merged.push([start, end]);
+      }
+    }
+  }
+  return merged;
 }
 function isArray(value) {
   return !Array.isArray ? getTag(value) === "[object Array]" : Array.isArray(value);
@@ -1605,8 +1622,29 @@ class PlantaeFilterElement extends HTMLElement {
     __publicField(this, "pendingValues", []);
     __publicField(this, "fuse");
     __publicField(this, "clusterize");
+    // === CONFIG ===
+    __publicField(this, "config", {
+      label: "Filtro",
+      allText: "Todos",
+      emptyText: "Selecione",
+      groupNameSelecteds: "Selecionados",
+      fuseOptions: {
+        keys: ["text", "value"],
+        threshold: 0.3,
+        ignoreDiacritics: true,
+        useExtendedSearch: true,
+        ignoreLocation: true,
+        includeScore: true,
+        includeMatches: true
+      },
+      clusterizeOptions: {
+        tag: "ul",
+        no_data_text: "Não encontrado"
+      }
+    });
   }
   connectedCallback() {
+    this.loadConfig();
     this.loadTemplate();
     requestAnimationFrame(() => {
       this.extractOptions();
@@ -1618,6 +1656,30 @@ class PlantaeFilterElement extends HTMLElement {
       this.updateFilter();
       this.dispatchEvent(new CustomEvent("plantae-filter-ready", { bubbles: false }));
     });
+  }
+  loadConfig() {
+    this.config.label = this.getAttribute("label") || this.config.label;
+    this.config.allText = this.getAttribute("all-text") || this.config.allText;
+    this.config.emptyText = this.getAttribute("empty-text") || this.config.emptyText;
+    this.config.groupNameSelecteds = this.getAttribute("group-name-selecteds") || this.config.groupNameSelecteds;
+    const fuseAttr = this.getAttribute("fuse-options");
+    if (fuseAttr) {
+      try {
+        const parsed = JSON.parse(fuseAttr);
+        this.config.fuseOptions = { ...this.config.fuseOptions, ...parsed };
+      } catch (err) {
+        console.warn("Invalid JSON for fuse-options", err);
+      }
+    }
+    const clusterizeAttr = this.getAttribute("clusterize-options");
+    if (clusterizeAttr) {
+      try {
+        const parsed = JSON.parse(clusterizeAttr);
+        this.config.clusterizeOptions = { ...this.config.clusterizeOptions, ...parsed };
+      } catch (err) {
+        console.warn("Invalid JSON for clusterize-options", err);
+      }
+    }
   }
   // === DOM / TEMPLATE ===
   extractOptions() {
@@ -1631,7 +1693,7 @@ class PlantaeFilterElement extends HTMLElement {
         Array.from(group.children).forEach((option) => {
           const opt = option;
           flatOptions.push({
-            value: opt.value,
+            value: isNaN(Number(opt.value)) ? opt.value : Number(opt.value),
             text: opt.text,
             group: groupLabel
           });
@@ -1639,7 +1701,7 @@ class PlantaeFilterElement extends HTMLElement {
       } else if (child.tagName.toLowerCase() === "option") {
         const opt = child;
         flatOptions.push({
-          value: opt.value,
+          value: isNaN(Number(opt.value)) ? opt.value : Number(opt.value),
           text: opt.text,
           group: null
         });
@@ -1647,7 +1709,7 @@ class PlantaeFilterElement extends HTMLElement {
     });
     this.options = flatOptions;
     selectElement.style.display = "none";
-    this.fuse = new Fuse(flatOptions, { keys: ["text", "value"], threshold: 0.3 });
+    this.fuse = new Fuse(flatOptions, this.config.fuseOptions);
   }
   loadTemplate() {
     const template = document.createElement("template");
@@ -1658,23 +1720,48 @@ class PlantaeFilterElement extends HTMLElement {
     const rows = [];
     const selectedRows = [];
     const groupedRows = /* @__PURE__ */ new Map();
-    const pendingSet = new Set(this.pendingValues);
+    const pendingSet = new Set(this.pendingValues.map(String));
     const searchInput = this.shadowRoot.getElementById("searchInput");
     const isSearching = !!(searchInput == null ? void 0 : searchInput.value.trim());
+    const formatTextWithHighlight = (text, matches) => {
+      if (!matches || matches.length === 0) return text;
+      const match = matches.find((m) => m.key === "text" || m.key === "value");
+      if (!match) return text;
+      const mergedIndices = mergeOverlapping(match.indices);
+      let highlighted = "";
+      let lastIndex = 0;
+      mergedIndices.forEach(([start, end]) => {
+        highlighted += text.slice(lastIndex, start);
+        highlighted += `<mark>${text.slice(start, end + 1)}</mark>`;
+        lastIndex = end + 1;
+      });
+      highlighted += text.slice(lastIndex);
+      return highlighted;
+    };
     for (const opt of optionsToRender) {
-      const isSelected = pendingSet.has(opt.value);
-      const li = `<li part="dropdown-item${isSelected ? " selected" : ""}" data-value="${opt.value}">${opt.text}</li>`;
+      let option;
+      let matches;
+      if ("item" in opt) {
+        option = opt.item;
+        matches = opt.matches;
+      } else {
+        option = opt;
+        matches = void 0;
+      }
+      const isSelected = pendingSet.has(String(option.value));
+      const text = isSearching ? formatTextWithHighlight(option.text, matches) : option.text;
+      const li = `<li part="dropdown-item${isSelected ? " selected" : ""}" data-value="${option.value}">${text}</li>`;
       if (isSelected) {
         selectedRows.push(li);
       } else {
-        if (!groupedRows.has(opt.group)) {
-          groupedRows.set(opt.group, []);
+        if (!groupedRows.has(option.group)) {
+          groupedRows.set(option.group, []);
         }
-        groupedRows.get(opt.group).push(li);
+        groupedRows.get(option.group).push(li);
       }
     }
     if (selectedRows.length > 0) {
-      rows.push(`<li class="optgroup">Selecionados (${selectedRows.length})</li>`);
+      rows.push(`<li class="optgroup">${this.config.groupNameSelecteds} (${selectedRows.length})</li>`);
       rows.push(...selectedRows);
       rows.push(`<li class="optgroup"></li>`);
     }
@@ -1697,14 +1784,11 @@ class PlantaeFilterElement extends HTMLElement {
     this.clusterize.update(rows);
   }
   updateFilter() {
-    const label = this.getAttribute("label") || "Selecionado";
-    const allText = this.getAttribute("all-text") || "Todos";
-    const emptyText = this.getAttribute("empty-text") || "Selecione";
     const total = this.options.length;
     const count = this.selectedValues.length;
-    const selectedTexts = this.options.filter((opt) => this.selectedValues.includes(opt.value)).map((opt) => opt.text);
+    const selectedTexts = this.options.filter((opt) => this.selectedValues.includes(String(opt.value))).map((opt) => opt.text);
     const filterText = this.shadowRoot.getElementById("filterText");
-    filterText.innerHTML = count ? `<span class='counter-filter'>${count}</span> <strong>${label}:</strong> ${count === total ? allText : selectedTexts.join(", ")}` : `<strong>${label}:</strong> ${emptyText}`;
+    filterText.innerHTML = count ? `<span class='counter-filter'>${count}</span> <strong>${this.config.label}:</strong> ${count === total ? this.config.allText : selectedTexts.join(", ")}` : `<strong>${this.config.label}:</strong> ${this.config.emptyText}`;
     const clearBtn = this.shadowRoot.getElementById("clearButton");
     clearBtn.style.opacity = count ? "1" : "0.5";
     clearBtn.style.pointerEvents = count ? "auto" : "none";
@@ -1748,8 +1832,8 @@ class PlantaeFilterElement extends HTMLElement {
         this.syncPendingWithApplied();
         return;
       }
-      const flatResults = this.fuse.search(searchTerm).map((r) => r.item);
-      this.populateOptions(flatResults);
+      const results = this.fuse.search(searchTerm);
+      this.populateOptions(results);
       this.syncPendingWithApplied();
     };
     input.addEventListener("input", debounce(handleSearch, 300));
@@ -1759,8 +1843,7 @@ class PlantaeFilterElement extends HTMLElement {
       rows: [],
       scrollElem: this.shadowRoot.getElementById("scrollArea"),
       contentElem: this.shadowRoot.getElementById("contentArea"),
-      tag: "ul",
-      no_data_text: "Não encontrado"
+      ...this.config.clusterizeOptions
     });
     this.shadowRoot.getElementById("contentArea").addEventListener("click", (e) => {
       const target = e.target;
@@ -1775,9 +1858,9 @@ class PlantaeFilterElement extends HTMLElement {
   syncSelectElement() {
     const selectElement = this.querySelector("select");
     selectElement.innerHTML = "";
-    this.options.filter((opt) => this.selectedValues.includes(opt.value)).forEach((opt) => {
+    this.options.filter((opt) => this.selectedValues.includes(String(opt.value))).forEach((opt) => {
       const option = document.createElement("option");
-      option.value = opt.value;
+      option.value = String(opt.value);
       option.text = opt.text;
       option.selected = true;
       selectElement.appendChild(option);
@@ -1814,8 +1897,13 @@ class PlantaeFilterElement extends HTMLElement {
   }
   openDropdown() {
     const searchInput = this.shadowRoot.getElementById("searchInput");
-    if (searchInput) searchInput.value = "";
     const dropdown = this.shadowRoot.getElementById("dropdown");
+    if (searchInput) {
+      searchInput.value = "";
+      requestAnimationFrame(() => {
+        searchInput.focus();
+      });
+    }
     dropdown.style.display = "block";
     this.pendingValues = [...this.selectedValues];
     this.populateOptions(this.options);
@@ -1893,8 +1981,8 @@ class PlantaeFilterElement extends HTMLElement {
       return opt && !this.isOptionDisabled(opt.value);
     });
     validValues.forEach((v) => {
-      if (!this.selectedValues.includes(v)) {
-        this.selectedValues.push(v);
+      if (!this.selectedValues.includes(String(v))) {
+        this.selectedValues.push(String(v));
       }
     });
     this.pendingValues = [...this.selectedValues];
@@ -1930,7 +2018,7 @@ class PlantaeFilterElement extends HTMLElement {
     this.setOptionsDisabled(values, false);
   }
   getSelected() {
-    return this.options.filter((opt) => this.selectedValues.includes(opt.value));
+    return this.options.filter((opt) => this.selectedValues.includes(String(opt.value)));
   }
   getAllOptions() {
     return [...this.options];
