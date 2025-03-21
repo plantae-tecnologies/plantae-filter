@@ -796,7 +796,7 @@ class PlantaeFilter {
     const datasetAttributes = this.getDatasetAttributes(select, "data-pl-");
     const mergedAttributes = { ...datasetAttributes, ...attributes };
     Object.entries(mergedAttributes).forEach(([key, value]) => {
-      wrapper.setAttribute(camelToKebab(key), value);
+      wrapper.setAttribute(camelToKebab(key), typeof value === "string" ? value : JSON.stringify(value));
     });
     (_a = select.parentNode) == null ? void 0 : _a.insertBefore(wrapper, select);
     wrapper.appendChild(select);

@@ -1,5 +1,17 @@
+import { ClusterizeOptions } from 'clusterize.js';
+import { IFuseOptions } from 'fuse.js';
+
 declare interface InstanceAttributes {
-    [key: string]: string;
+    label?: string;
+    allText?: string;
+    emptyText?: string;
+    groupSelectedLabel?: string;
+    applyButtonText?: string;
+    searchPlaceholder?: string;
+    searchDebounceDelay?: number;
+    fuseOptions?: IFuseOptions<OptionItem>;
+    clusterizeOptions?: Partial<ClusterizeOptions>;
+    [key: string]: string | number | boolean | object | undefined;
 }
 
 declare interface OptionItem {

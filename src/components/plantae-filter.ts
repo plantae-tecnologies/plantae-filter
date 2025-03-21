@@ -1,8 +1,20 @@
 import PlantaeFilterElement from './plantae-filter-element';
 import { camelToKebab } from '../helpers/utils';
+import type { OptionItem } from './plantae-filter-element';
+import type { IFuseOptions } from 'fuse.js';
+import type { ClusterizeOptions } from 'clusterize.js';
 
 interface InstanceAttributes {
-    [key: string]: string;
+    label?: string;
+    allText?: string;
+    emptyText?: string;
+    groupSelectedLabel?: string;
+    applyButtonText?: string;
+    searchPlaceholder?: string;
+    searchDebounceDelay?: number;
+    fuseOptions?: IFuseOptions<OptionItem>;
+    clusterizeOptions?: Partial<ClusterizeOptions>;
+    [key: string]: string | number | boolean | object | undefined;
 }
 
 export class PlantaeFilter {
@@ -19,7 +31,7 @@ export class PlantaeFilter {
 
         // Aplica no custom element
         Object.entries(mergedAttributes).forEach(([key, value]) => {
-            wrapper.setAttribute(camelToKebab(key), value);
+            wrapper.setAttribute(camelToKebab(key), typeof value === 'string' ? value : JSON.stringify(value));
         });
 
         // Primeiro adiciona o wrapper antes do <select> no DOM

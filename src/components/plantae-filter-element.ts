@@ -388,7 +388,7 @@ class PlantaeFilterElement extends HTMLElement {
     }
 
     private initFuseWorker(): void {
-        this.searchWorker = new Worker(new URL('./search-worker.ts', import.meta.url), { type: 'module' });
+        this.searchWorker = new Worker(new URL('../components/search-worker.ts', import.meta.url), { type: 'module' });
         
         // initialize Fuse.js in other thread
         this.searchWorker.postMessage({
@@ -588,4 +588,5 @@ class PlantaeFilterElement extends HTMLElement {
     }
 }
 
+export type { OptionItem };
 export default PlantaeFilterElement;
