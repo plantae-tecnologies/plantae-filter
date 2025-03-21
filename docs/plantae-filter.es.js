@@ -1906,12 +1906,8 @@ class PlantaeFilterElement extends HTMLElement {
       this.populateOptions(this.options);
       return;
     }
-    console.time("search");
     const results = this.fuse.search(searchTerm);
-    console.timeEnd("search");
-    console.time("render");
     this.populateOptions(results);
-    console.timeEnd("render");
   }
   handleClickitem(event) {
     const target = event.target;
@@ -1986,7 +1982,6 @@ class PlantaeFilterElement extends HTMLElement {
     this.addOptions([option]);
   }
   addOptions(options) {
-    console.time("add");
     options.forEach((option) => {
       const exists = this.optionMap.has(option.value);
       if (!exists) {
@@ -1998,13 +1993,8 @@ class PlantaeFilterElement extends HTMLElement {
         });
       }
     });
-    console.timeEnd("add");
-    console.time("fuse");
     this.fuse.setCollection(this.options);
-    console.timeEnd("fuse");
-    console.time("populateOptions");
     this.populateOptions(this.options);
-    console.timeEnd("populateOptions");
     this.syncSelectElement();
   }
   selectOptions(values) {

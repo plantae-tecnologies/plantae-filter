@@ -114,7 +114,6 @@
         });
 
         document.getElementById('populate-bulk').addEventListener('click', () => {
-            console.time('options');
             const options = [];
             for (let i = 1; i <= 500; i++) {
                 options.push({
@@ -123,10 +122,7 @@
                     group: i <= 10 ? 'Group A' : 'Group B'
                 });
             }
-            console.timeEnd('options')
-            console.time('addOptions')
             filter.addOptions(options);
-            console.timeEnd('addOptions')
         });
     </script>
 </body>

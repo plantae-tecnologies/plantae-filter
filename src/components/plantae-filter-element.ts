@@ -358,12 +358,8 @@ class PlantaeFilterElement extends HTMLElement {
             return;
         }
     
-        console.time('search');
         const results = this.fuse.search(searchTerm);
-        console.timeEnd('search');
-        console.time('render');
         this.populateOptions(results);
-        console.timeEnd('render');
     }
 
     private handleClickitem(event: Event): void {
@@ -456,7 +452,6 @@ class PlantaeFilterElement extends HTMLElement {
     }
 
     public addOptions(options: OptionItem[]): void {
-        console.time('add');
         options.forEach(option => {
             const exists = this.optionMap.has(option.value);
             if (!exists) {
@@ -468,15 +463,10 @@ class PlantaeFilterElement extends HTMLElement {
                 });
             }
         });
-        console.timeEnd('add');
 
-        console.time('fuse');
         this.fuse.setCollection(this.options);
-        console.timeEnd('fuse');
 
-        console.time('populateOptions');
         this.populateOptions(this.options);
-        console.timeEnd('populateOptions');
         this.syncSelectElement();
     }
 
