@@ -4,7 +4,6 @@ import { debounce, mergeOverlapping, attributesToCamelCase } from '../helpers/ut
 import type { IFuseOptions, FuseResult, FuseResultMatch } from 'fuse.js';
 import Clusterize from 'clusterize.js';
 import type { ClusterizeOptions } from 'clusterize.js';
-import SearchWorker from './search-worker.ts?worker';
 
 type OptionValue = string | number;
 
@@ -389,8 +388,7 @@ class PlantaeFilterElement extends HTMLElement {
     }
 
     private initFuseWorker(): void {
-        this.searchWorker = new SearchWorker();
-        // this.searchWorker = new Worker(new URL('../components/search-worker.ts?worker', import.meta.url), { type: 'module' });
+        this.searchWorker = new Worker(new URL('../components/search-worker.ts?worker&inline', import.meta.url), { type: 'module' });
         
         // initialize Fuse.js in other thread
         this.searchWorker.postMessage({
