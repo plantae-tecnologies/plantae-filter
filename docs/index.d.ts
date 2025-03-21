@@ -55,6 +55,7 @@ declare class PlantaeFilterElement extends HTMLElement {
     private extractOptions;
     private loadTemplate;
     private populateOptions;
+    private syncPendingWithApplied;
     private updateFilter;
     private attachEvents;
     private toggleSelectOption;

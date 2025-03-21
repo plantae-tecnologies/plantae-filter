@@ -1,8 +1,8 @@
 var __defProp = Object.defineProperty;
 var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-const templateHtml = '<div class="select-dropdown-wrapper">\n    <div id="filter" class="filter" part="filter">\n        <div class="filter-text-wrapper" part="filter-text-wrapper">\n            <span id="filterText" part="filter-text"></span>\n        </div>\n        <button class="btn-close" id="clearButton" part="clear-button" title="Limpar itens selecionados">✕</button>\n    </div>\n    <div class="select-dropdown" id="dropdown" part="dropdown">\n        <div class="dropdown-header" part="dropdown-header">\n            <input type="text" id="searchInput" part="search-input" placeholder="">\n        </div>\n        <div id="scrollArea" class="scroll-area" part="scroll-area">\n            <ul id="contentArea" class="content-area" part="content-area"></ul>\n        </div>\n        <div class="dropdown-footer" part="dropdown-footer">\n            <button id="applyButton" part="apply-button"></button>\n        </div>\n    </div>\n</div>';
-const styles = ":host{color-scheme:light}.select-dropdown-wrapper{display:inline-block;position:relative}.filter{background-color:#fff;color:#333;padding:5px 10px;border:1px solid #999;border-radius:4px;cursor:pointer;display:inline-flex;align-items:center;max-width:300px;white-space:nowrap;text-overflow:ellipsis;position:relative;overflow:visible;font-size:.8em}.filter-text-wrapper{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}.btn-close{background:none;border:none;cursor:pointer;font-size:14px;margin-left:8px;color:inherit}.form-control{display:block;width:100%;padding:.4rem .75rem;font-size:.9rem;line-height:1.4;color:#333;background-color:#fff;border:1px solid #ccc;border-radius:4px}.form-control:focus{outline:none;border-color:#777;box-shadow:0 0 0 2px #0000001a}.mb-2{margin-bottom:.5rem}.select-dropdown{display:none;position:absolute;top:100%;left:0;background:#fff;border:1px solid #ccc;box-shadow:0 2px 4px #0000001a;z-index:10;width:100%;min-width:200px;border-radius:4px;font-size:.85em}.scroll-area{max-height:200px;overflow-y:auto}.content-area{padding:0;margin:0;list-style:none}.select-dropdown ul{list-style:none;padding:0;margin:0}.select-dropdown li{padding:5px 10px;cursor:pointer;transition:background .2s}.select-dropdown li.selected{background:#333;color:#fff}.select-dropdown li:not(.optgroup).focused,.select-dropdown li:not(.optgroup):hover{background:#555;color:#fff}.select-dropdown li.disabled{pointer-events:none;opacity:.5}.select-dropdown li.optgroup{font-weight:700;font-size:.85rem;color:#666;background-color:#f5f5f5;padding:8px 12px;cursor:default}ul.clusterize-no-data{padding:10px;font-size:.85rem;color:#999;font-style:italic}.dropdown-header{display:flex;padding:8px}.dropdown-header input{width:100%;padding:4px 8px}.dropdown-footer{padding:8px;text-align:right;border-top:1px solid #ccc}.btn{display:inline-block;background:#333;color:#fff;padding:.3rem .6rem;font-size:.75rem;border:none;border-radius:4px;cursor:pointer}.btn:hover{background:#555}.btn:focus{outline:none;box-shadow:0 0 0 2px #0003}.btn:disabled{opacity:.6;cursor:not-allowed}.counter-filter{background:#d33;color:#fff;font-size:.7rem;font-weight:700;border-radius:999px;padding:2px 6px;position:absolute;top:0;left:0;transform:translate(-40%,-50%);z-index:20;box-shadow:0 0 2px #0000004d}mark{background:#ff03;color:inherit;border-radius:3px;pointer-events:none}";
+const templateHtml = '<div class="select-dropdown-wrapper">\n    <div id="filter" class="filter" part="filter">\n        <div class="filter-text-wrapper" part="filter-text-wrapper">\n            <span id="filterText" part="filter-text"></span>\n        </div>\n        <button class="btn-close" id="clearButton" part="clear-button" title="">✕</button>\n    </div>\n    <div class="select-dropdown" id="dropdown" part="dropdown">\n        <div class="dropdown-header" part="dropdown-header">\n            <input type="text" id="searchInput" part="search-input" placeholder="">\n        </div>\n        <div id="scrollArea" class="scroll-area" part="scroll-area">\n            <ul id="contentArea" class="content-area" part="content-area"></ul>\n        </div>\n        <div class="dropdown-footer" part="dropdown-footer">\n            <button id="applyButton" part="apply-button"></button>\n        </div>\n    </div>\n</div>';
+const styles = ":host{color-scheme:light}.select-dropdown-wrapper{display:inline-block;position:relative}.filter{background-color:#fff;color:#333;padding:5px 10px;border:1px solid #999;border-radius:4px;cursor:pointer;display:inline-flex;align-items:center;max-width:300px;white-space:nowrap;text-overflow:ellipsis;position:relative;overflow:visible;font-size:.8em}.filter-text-wrapper{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}.btn-close{background:none;border:none;cursor:pointer;font-size:14px;margin-left:8px;color:inherit}.form-control{display:block;width:100%;padding:.4rem .75rem;font-size:.9rem;line-height:1.4;color:#333;background-color:#fff;border:1px solid #ccc;border-radius:4px}.form-control:focus{outline:none;border-color:#777;box-shadow:0 0 0 2px #0000001a}.mb-2{margin-bottom:.5rem}.select-dropdown{display:none;position:absolute;top:100%;left:0;background:#fff;border:1px solid #ccc;box-shadow:0 2px 4px #0000001a;z-index:10;width:100%;min-width:200px;border-radius:4px;font-size:.85em}.scroll-area{max-height:200px;overflow-y:auto}.content-area{padding:0;margin:0;list-style:none}.select-dropdown ul{list-style:none;padding:0;margin:0}.select-dropdown li{padding:5px 10px;cursor:pointer;transition:background .2s}.select-dropdown li.selected{background:#333;color:#fff}.select-dropdown li:not(.optgroup).focused,.select-dropdown li:not(.optgroup):hover{background:#555;color:#fff}.select-dropdown li.disabled{pointer-events:none;opacity:.5}.select-dropdown li.optgroup{font-weight:700;font-size:.85rem;color:#666;background-color:#f5f5f5;padding:8px 12px;cursor:default}ul.clusterize-no-data{padding:10px;font-size:.85rem;color:#999;font-style:italic}.dropdown-header{display:flex;padding:8px}.dropdown-header input{width:100%;padding:4px 8px}.dropdown-footer{padding:8px;text-align:right;border-top:1px solid #ccc}.btn{display:inline-block;background:#333;color:#fff;padding:.3rem .6rem;font-size:.75rem;border:none;border-radius:4px;cursor:pointer}.btn:hover{background:#555}.btn:focus{outline:none;box-shadow:0 0 0 2px #0003}.btn:disabled{opacity:.6;cursor:not-allowed}.counter-filter{background:#d33;color:#fff;font-size:.7rem;line-height:1;font-weight:700;border-radius:999px;padding:2px;min-width:20px;aspect-ratio:1 / 1;display:inline-flex;align-items:center;justify-content:center;position:absolute;top:0;left:0;transform:translate(-40%,-50%);z-index:20;box-shadow:0 0 2px #0000004d}mark{background:#ff03;color:inherit;border-radius:3px;pointer-events:none}";
 function debounce(fn, delay = 300) {
   let timer;
   return (...args) => {
@@ -26,6 +26,17 @@ function mergeOverlapping(indices) {
     }
   }
   return merged;
+}
+function attributesToCamelCase(element) {
+  const result = {};
+  Array.from(element.attributes).forEach((attr) => {
+    const key = attr.name.replace(/-([a-z])/g, (_, char) => char.toUpperCase());
+    result[key] = attr.value;
+  });
+  return result;
+}
+function camelToKebab(str) {
+  return str.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
 }
 function isArray(value) {
   return !Array.isArray ? getTag(value) === "[object Array]" : Array.isArray(value);
@@ -1668,28 +1679,29 @@ class PlantaeFilterElement extends HTMLElement {
     });
   }
   loadConfig() {
-    this.config.label = this.getAttribute("filter-label") || this.config.label;
-    this.config.allText = this.getAttribute("filter-all-text") || this.config.allText;
-    this.config.emptyText = this.getAttribute("filter-empty-text") || this.config.emptyText;
-    this.config.groupSelectedLabel = this.getAttribute("filter-group-selected-label") || this.config.groupSelectedLabel;
-    this.config.applyButtonText = this.getAttribute("filter-apply-button-text") || this.config.applyButtonText;
-    this.config.searchPlaceholder = this.getAttribute("filter-search-placeholder") || this.config.searchPlaceholder;
-    const fuseAttr = this.getAttribute("filter-fuse-options");
+    const componentAttributes = attributesToCamelCase(this);
+    this.config.label = componentAttributes.label || this.config.label;
+    this.config.allText = componentAttributes.allText || this.config.allText;
+    this.config.emptyText = componentAttributes.emptyText || this.config.emptyText;
+    this.config.groupSelectedLabel = componentAttributes.groupSelectedLabel || this.config.groupSelectedLabel;
+    this.config.applyButtonText = componentAttributes.applyButtonText || this.config.applyButtonText;
+    this.config.searchPlaceholder = componentAttributes.searchPlaceholder || this.config.searchPlaceholder;
+    const fuseAttr = componentAttributes.fuseOptions;
     if (fuseAttr) {
       try {
         const parsed = JSON.parse(fuseAttr);
         this.config.fuseOptions = { ...this.config.fuseOptions, ...parsed };
       } catch (err) {
-        console.warn("Invalid JSON for fuse-options", err);
+        console.warn("Invalid JSON for fuseOptions", err);
       }
     }
-    const clusterizeAttr = this.getAttribute("filter-clusterize-options");
+    const clusterizeAttr = componentAttributes.clusterizeOptions;
     if (clusterizeAttr) {
       try {
         const parsed = JSON.parse(clusterizeAttr);
         this.config.clusterizeOptions = { ...this.config.clusterizeOptions, ...parsed };
       } catch (err) {
-        console.warn("Invalid JSON for clusterize-options", err);
+        console.warn("Invalid JSON for clusterizeOptions", err);
       }
     }
   }
@@ -1811,7 +1823,21 @@ class PlantaeFilterElement extends HTMLElement {
         rows.push(...items);
       }
     }
+    this.cursorIndex = -1;
     this.clusterize.update(rows);
+  }
+  syncPendingWithApplied() {
+    const lis = this.contentArea.querySelectorAll("li[data-value]");
+    lis.forEach((li) => {
+      const el = li;
+      const value = el.dataset.value;
+      const isSelected = this.pendingValues.includes(value);
+      const classes = [];
+      if (isSelected) classes.push("selected");
+      if (el.classList.contains("disabled")) classes.push("disabled");
+      el.className = classes.join(" ");
+      el.setAttribute("part", ["dropdown-item", ...classes].join(" "));
+    });
   }
   updateFilter() {
     const total = this.options.length;
@@ -1953,6 +1979,7 @@ class PlantaeFilterElement extends HTMLElement {
     this.selectedValues = [];
     this.pendingValues = [];
     this.populateOptions(this.options);
+    this.syncPendingWithApplied();
     this.syncSelectElement();
     this.updateFilter();
     this.dispatchEvent(new Event("change"));
@@ -2063,10 +2090,10 @@ class PlantaeFilter {
     __publicField(this, "queue", []);
     var _a;
     const wrapper = document.createElement("plantae-filter");
-    const datasetAttributes = this.getDatasetAttributes(select);
+    const datasetAttributes = this.getDatasetAttributes(select, "data-pl-");
     const mergedAttributes = { ...datasetAttributes, ...attributes };
     Object.entries(mergedAttributes).forEach(([key, value]) => {
-      wrapper.setAttribute(key, value);
+      wrapper.setAttribute(camelToKebab(key), value);
     });
     (_a = select.parentNode) == null ? void 0 : _a.insertBefore(wrapper, select);
     wrapper.appendChild(select);
@@ -2087,11 +2114,11 @@ class PlantaeFilter {
       this.queue.push(fn);
     }
   }
-  getDatasetAttributes(select) {
+  getDatasetAttributes(select, prefix = "") {
     const attrs = {};
     Array.from(select.attributes).forEach((attr) => {
-      if (attr.name.startsWith("data-")) {
-        const key = attr.name.replace("data-", "");
+      if (attr.name.startsWith(prefix)) {
+        const key = attr.name.replace(prefix, "");
         attrs[key] = attr.value;
       }
     });

@@ -1,6 +1,6 @@
 import templateHtml from './plantae-filter.html?raw';
 import styles from './plantae-filter.css?inline';
-import { debounce, mergeOverlapping } from '../helpers/utils';
+import { debounce, mergeOverlapping, attributesToCamelCase } from '../helpers/utils';
 import Fuse from 'fuse.js';
 import type { IFuseOptions, FuseResult, FuseResultMatch } from 'fuse.js';
 import Clusterize from 'clusterize.js';
@@ -77,33 +77,35 @@ class PlantaeFilterElement extends HTMLElement {
     }
 
     private loadConfig(): void {
+        const componentAttributes = attributesToCamelCase(this);
+
         // Texts
-        this.config.label = this.getAttribute('filter-label') || this.config.label;
-        this.config.allText = this.getAttribute('filter-all-text') || this.config.allText;
-        this.config.emptyText = this.getAttribute('filter-empty-text') || this.config.emptyText;
-        this.config.groupSelectedLabel = this.getAttribute('filter-group-selected-label') || this.config.groupSelectedLabel;
-        this.config.applyButtonText = this.getAttribute('filter-apply-button-text') || this.config.applyButtonText;
-        this.config.searchPlaceholder = this.getAttribute('filter-search-placeholder') || this.config.searchPlaceholder;
+        this.config.label = componentAttributes.label || this.config.label;
+        this.config.allText = componentAttributes.allText || this.config.allText;
+        this.config.emptyText = componentAttributes.emptyText || this.config.emptyText;
+        this.config.groupSelectedLabel = componentAttributes.groupSelectedLabel || this.config.groupSelectedLabel;
+        this.config.applyButtonText = componentAttributes.applyButtonText || this.config.applyButtonText;
+        this.config.searchPlaceholder = componentAttributes.searchPlaceholder || this.config.searchPlaceholder;
 
         // Fuse Options
-        const fuseAttr = this.getAttribute('filter-fuse-options');
+        const fuseAttr = componentAttributes.fuseOptions;
         if (fuseAttr) {
             try {
                 const parsed = JSON.parse(fuseAttr);
                 this.config.fuseOptions = { ...this.config.fuseOptions, ...parsed };
             } catch (err) {
-                console.warn("Invalid JSON for fuse-options", err);
+                console.warn("Invalid JSON for fuseOptions", err);
             }
         }
 
         // Clusterize Options
-        const clusterizeAttr = this.getAttribute('filter-clusterize-options');
+        const clusterizeAttr = componentAttributes.clusterizeOptions;
         if (clusterizeAttr) {
             try {
                 const parsed = JSON.parse(clusterizeAttr);
                 this.config.clusterizeOptions = { ...this.config.clusterizeOptions, ...parsed };
             } catch (err) {
-                console.warn("Invalid JSON for clusterize-options", err);
+                console.warn("Invalid JSON for clusterizeOptions", err);
             }
         }
     }
@@ -252,7 +254,22 @@ class PlantaeFilterElement extends HTMLElement {
             }
         }
 
+        this.cursorIndex = -1;
         this.clusterize.update(rows);
+    }
+
+    private syncPendingWithApplied(): void {
+        const lis = this.contentArea.querySelectorAll('li[data-value]');
+        lis.forEach(li => {
+            const el = li as HTMLElement;
+            const value = el.dataset.value!;
+            const isSelected = this.pendingValues.includes(value);
+            const classes = [];
+            if (isSelected) classes.push('selected');
+            if (el.classList.contains('disabled')) classes.push('disabled');
+            el.className = classes.join(' ');
+            el.setAttribute('part', ['dropdown-item', ...classes].join(' '));
+        });
     }
 
     private updateFilter(): void {
@@ -433,6 +450,7 @@ class PlantaeFilterElement extends HTMLElement {
         this.selectedValues = [];
         this.pendingValues = [];
         this.populateOptions(this.options);
+        this.syncPendingWithApplied();
         this.syncSelectElement();
         this.updateFilter();
         this.dispatchEvent(new Event("change"));

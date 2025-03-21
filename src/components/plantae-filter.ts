@@ -1,4 +1,5 @@
 import PlantaeFilterElement from './plantae-filter-element';
+import { camelToKebab } from '../helpers/utils';
 
 interface InstanceAttributes {
     [key: string]: string;
@@ -13,12 +14,12 @@ export class PlantaeFilter {
         const wrapper = document.createElement('plantae-filter') as PlantaeFilterElement;
 
         // Pega atributos `data-pl-*` direto do <select>
-        const datasetAttributes = this.getDatasetAttributes(select);
+        const datasetAttributes = this.getDatasetAttributes(select, 'data-pl-');
         const mergedAttributes = { ...datasetAttributes, ...attributes };
 
         // Aplica no custom element
         Object.entries(mergedAttributes).forEach(([key, value]) => {
-            wrapper.setAttribute(key, value);
+            wrapper.setAttribute(camelToKebab(key), value);
         });
 
         // Primeiro adiciona o wrapper antes do <select> no DOM
@@ -49,11 +50,11 @@ export class PlantaeFilter {
         }
     }
 
-    private getDatasetAttributes(select: HTMLSelectElement): InstanceAttributes {
+    private getDatasetAttributes(select: HTMLSelectElement, prefix: string = ''): InstanceAttributes {
         const attrs: InstanceAttributes = {};
         Array.from(select.attributes).forEach(attr => {
-            if (attr.name.startsWith('data-')) {
-                const key = attr.name.replace('data-', '');
+            if (attr.name.startsWith(prefix)) {
+                const key = attr.name.replace(prefix, '');
                 attrs[key] = attr.value;
             }
         });

@@ -178,9 +178,15 @@ ul.clusterize-no-data {
     background: #d33;
     color: white;
     font-size: 0.7rem;
+    line-height: 1;
     font-weight: bold;
     border-radius: 999px;
-    padding: 2px 6px;
+    padding: 2px;
+    min-width: 20px;
+    aspect-ratio: 1 / 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     position: absolute;
     top: 0;
     left: 0;

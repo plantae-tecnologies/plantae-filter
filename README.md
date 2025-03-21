@@ -1,6 +1,6 @@
 # Plantae Filter
 
-![npm](https://img.shields.io/npm/v/@plantae-tech/plantae-filter?color=green)
+[![npm](https://img.shields.io/npm/v/@plantae-tech/plantae-filter?color=green)](https://www.npmjs.com/package/@plantae-tech/plantae-filter)
 [![Docs](https://img.shields.io/badge/Demo-GitHub%20Pages-blue)](https://plantae-tecnologies.github.io/plantae-filter/)
 
 A lightweight JavaScript plugin to transform native `<select>` elements into custom dropdown components with search, multi-select, and virtual list rendering (Clusterize.js).
@@ -36,7 +36,7 @@ npm install @plantae-tech/plantae-filter
 ```html
 <script src="https://plantae-tecnologies.github.io/plantae-filter/plantae-filter.umd.js"></script>
 
-<select id="mySelect" data-filter-label="Products">
+<select id="mySelect" data-pl-label="Products">
     <optgroup label="Fruits">
         <option value="apple">Apple</option>
         <option value="banana">Banana</option>
@@ -61,12 +61,12 @@ import PlantaeFilter from '@plantae-tech/plantae-filter';
 
 const select = document.querySelector('select');
 const filter = new PlantaeFilter(select, {
-    "filter-label": "Products",
-    "filter-all-text": "All",
-    "filter-empty-text": "Select options",
-    "filter-group-selected-label": "Selected",
-    "filter-apply-button-text": "Apply",
-    "filter-search-placeholder": "Search.."
+    label: "Products",
+    allText: "All",
+    emptyText: "Select options",
+    groupSelectedLabel: "Selected",
+    applyButtonText: "Apply",
+    searchPlaceholder: "Search.."
 });
 
 // API Example
@@ -79,7 +79,7 @@ filter.selectOptions(['grape']);
 ```html
 <script src="https://plantae-tecnologies.github.io/plantae-filter/plantae-filter.umd.js"></script>
 
-<plantae-filter filter-label="Products" filter-empty-text="Select..">
+<plantae-filter label="Products" empty-text="Select..">
     <select id="mySelect">
         <optgroup label="Fruits">
             <option value="apple">Apple</option>
@@ -102,20 +102,20 @@ filter.selectOptions(['grape']);
 
 ## Data Attributes
 
-> The `filter-*` attributes should be used directly on the `<plantae-filter>` component.  
-> The `data-*` attributes are alternatives that can be used inside the `<select>` element if you prefer to configure it via the native `<select>`.  
+> Attributes must be informed in camelCase when informed by the class constructor.  
+> The `data-pl-*` attributes are alternatives that can be used inside the `<select>` element if you prefer to configure it via the native `<select>`.  
 > If both are provided, the values from `<plantae-filter>` will take priority.
 
 | Attribute (no `<plantae-filter>`)       | Description                                | Example (`<plantae-filter>`)                                    | Example (`<select>`)                                           |
 | --------------------------------------- | ------------------------------------------ | --------------------------------------------------------------- | -------------------------------------------------------------- |
-| `filter-label`                          | Label shown on the filter                  | `filter-label="Products"`                                      | `data-filter-label="Products"`                                |
-| `filter-all-text`                       | Text when all items are selected           | `filter-all-text="All"`                                        | `data-filter-all-text="All"`                                  |
-| `filter-empty-text`                     | Text when no item is selected              | `filter-empty-text="Select"`                                   | `data-filter-empty-text="Select"`                             |
-| `filter-group-selected-label`           | Label shown on the "Selected" group        | `filter-group-selected-label="Selected"`                       | `data-filter-group-selected-label="Selected"`                 |
-| `filter-apply-button-text`              | Label shown on the apply button            | `filter-apply-button-text="Apply"`                             | `data-filter-apply-button-text="Apply"`                       |
-| `filter-search-placeholder`             | Placeholder shown on the search input      | `filter-search-placeholder="Search.."`                         | `data-filter-search-placeholder="Search.."`                   |
-| `filter-fuse-options`                   | JSON string with Fuse.js custom options    | `filter-fuse-options='{"threshold": 0.2, "distance": 100}'`    | `data-filter-fuse-options='{"threshold": 0.2}'`               |
-| `filter-clusterize-options`             | JSON string with Clusterize.js options     | `filter-clusterize-options='{"rows_in_block": 25}'`            | `data-filter-clusterize-options='{"no_data_text": "No data"}'` |
+| `label`                                 | Label shown on the filter                  | `label="Products"`                                              | `data-pl-label="Products"`                                     |
+| `all-text`                              | Text when all items are selected           | `all-text="All"`                                                | `data-pl-all-text="All"`                                       |
+| `empty-text`                            | Text when no item is selected              | `empty-text="Select"`                                           | `data-pl-empty-text="Select"`                                  |
+| `group-selected-label`                  | Label shown on the "Selected" group        | `group-selected-label="Selected"`                               | `data-pl-group-selected-label="Selected"`                      |
+| `apply-button-text`                     | Label shown on the apply button            | `apply-button-text="Apply"`                                     | `data-pl-apply-button-text="Apply"`                            |
+| `search-placeholder`                    | Placeholder shown on the search input      | `search-placeholder="Search.."`                                 | `data-pl-search-placeholder="Search.."`                        |
+| `fuse-options`                          | JSON string with Fuse.js custom options    | `fuse-options='{"threshold": 0.2, "distance": 100}'`            | `data-pl-fuse-options='{"threshold": 0.2}'`                    |
+| `clusterize-options`                    | JSON string with Clusterize.js options     | `clusterize-options='{"rows_in_block": 25}'`                    | `data-pl-clusterize-options='{"no_data_text": "No data"}'`     |
 
 ---
 
@@ -148,22 +148,36 @@ You can apply the official Bootstrap 5 theme by including the stylesheet:
 
 ### 2. Customizing with `::part()`
 
-Plantae Filter exposes parts for full customization:
+Plantae Filter exposes the following parts for styling via Shadow DOM `::part()` selectors:
+
+| Part Name              | Description                                              |
+| ---------------------- | -------------------------------------------------------- |
+| `filter`               | The clickable filter input area                         |
+| `filter-text`          | The text container inside the filter area               |
+| `clear-button`         | The clear (reset) button inside the filter              |
+| `dropdown`             | The dropdown container with the options list            |
+| `dropdown-item`        | A single option (`<li>`) inside the dropdown            |
+| `dropdown-item selected` | A selected option inside the dropdown                |
+| `dropdown-item focused`  | The item currently focused via keyboard navigation   |
+| `highlight`            | The `<mark>` used to highlight search matches           |
+| `optgroup`             | The group label (`<li>` separator) inside the dropdown  |
+| `apply-button`         | The \"Apply\" button inside the dropdown footer         |
+| `search-input`         | The search `<input>` inside the dropdown                |
+
+### Example usage:
 
 ```css
 plantae-filter::part(filter) {
-    background-color: #f8f9fa;
-    border: 1px solid #ced4da;
-    border-radius: 0.25rem;
+    background: #f1f1f1;
+    border-radius: 4px;
 }
 
-plantae-filter::part(dropdown-item) {
-    padding: 0.5rem 1rem;
+plantae-filter::part(dropdown-item focused) {
+    ackground: #e0e0e0;
 }
 
-plantae-filter::part(dropdown-item selected) {
-    background: #0d6efd;
-    color: #fff;
+plantae-filter::part(highlight) {
+    background: yellow;
 }
 ```
 

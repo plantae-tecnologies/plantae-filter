@@ -26,3 +26,16 @@ export function mergeOverlapping(indices: readonly [number, number][]): [number,
 
     return merged;
 }
+
+export function attributesToCamelCase(element: HTMLElement): Record<string, string> {
+    const result: Record<string, string> = {};
+    Array.from(element.attributes).forEach(attr => {
+        const key = attr.name.replace(/-([a-z])/g, (_, char) => char.toUpperCase())
+        result[key] = attr.value;
+    });
+    return result;
+}
+
+export function camelToKebab(str: string): string {
+    return str.replace(/([a-z0-9])([A-Z])/g, '$1-$2').toLowerCase();
+}

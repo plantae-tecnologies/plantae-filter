@@ -53,7 +53,7 @@
     <main class="wrapper">
         <h2>Interactive Example</h2>
 
-        <select multiple data-filter-clusterize-options='{"no_data_text": "No data"}'></select>
+        <select multiple data-pl-clusterize-options='{"no_data_text": "No data"}'></select>
 
         <div class="div-actions">
             <div class="action-group">
@@ -77,12 +77,12 @@
         import PlantaeFilter from './main.ts';
         const select = document.querySelector('select');
         const filter = new PlantaeFilter(select, {
-            "filter-label": "Products",
-            "filter-all-text": "All",
-            "filter-empty-text": "Select options",
-            "filter-group-selected-label": "Selected",
-            "filter-apply-button-text": "Apply",
-            "filter-search-placeholder": "Find.."
+            label: "Products",
+            allText: "All",
+            emptyText: "Select options",
+            groupSelectedLabel: "Selected",
+            applyButtonText: "Apply",
+            searchPlaceholder: "Find.."
         });
         const output = document.getElementById('output');
 
