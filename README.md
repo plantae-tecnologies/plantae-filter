@@ -100,23 +100,51 @@ filter.selectOptions(['grape']);
 
 ---
 
+## ⚠️ **Important Notice for Vite Users**
+
+If you are using **Vite** as a bundler in your project, and you are installing `@plantae-tech/plantae-filter` via NPM, you **MUST** configure your `vite.config.ts` to avoid issues with the embedded web worker.
+
+**Why?**
+
+This library uses `import.meta.url` + `?worker` to load a background thread (via **Web Worker**) for search operations. Vite’s **dependency optimizer** (`optimizeDeps`) might break the dynamic `new URL()` resolution during pre-bundling of `node_modules`, causing errors like:
+
+```
+The file does not exist at ".../node_modules/.vite/deps/assets/search-worker-xxxxx.js"
+```
+
+### Solution: Add this to your `vite.config.ts`
+
+```ts
+export default defineConfig({
+    optimizeDeps: {
+        exclude: ["@plantae-tech/plantae-filter"]
+    }
+});
+```
+
+> This will ensure that Vite does **NOT pre-bundle** the library and lets the worker load properly.
+
+**🚩 If you skip this step, your application may break during build or runtime!**
+
+---
+
 ## Data Attributes
 
 > Attributes must be informed in camelCase when informed by the class constructor.  
 > The `data-pl-*` attributes are alternatives that can be used inside the `<select>` element if you prefer to configure it via the native `<select>`.  
 > If both are provided, the values from `<plantae-filter>` will take priority.
 
-| Attribute (no `<plantae-filter>`)       | Description                                | Example (`<plantae-filter>`)                                    | Example (`<select>`)                                           |
+| Attribute (`constructor class`)         | Description                                | Example (`<plantae-filter>`)                                    | Example (`<select>`)                                           |
 | --------------------------------------- | ------------------------------------------ | --------------------------------------------------------------- | -------------------------------------------------------------- |
 | `label`                                 | Label shown on the filter                  | `label="Products"`                                              | `data-pl-label="Products"`                                     |
-| `all-text`                              | Text when all items are selected           | `all-text="All"`                                                | `data-pl-all-text="All"`                                       |
-| `empty-text`                            | Text when no item is selected              | `empty-text="Select"`                                           | `data-pl-empty-text="Select"`                                  |
-| `group-selected-label`                  | Label shown on the "Selected" group        | `group-selected-label="Selected"`                               | `data-pl-group-selected-label="Selected"`                      |
-| `apply-button-text`                     | Label shown on the apply button            | `apply-button-text="Apply"`                                     | `data-pl-apply-button-text="Apply"`                            |
-| `search-placeholder`                    | Placeholder shown on the search input      | `search-placeholder="Search.."`                                 | `data-pl-search-placeholder="Search.."`                        |
-| `search-debounce-delay`                 | Search engine response time                | `search-debounce-delay="100"`                                   | `data-pl-search-debounce-delay="100"`                          |
-| `fuse-options`                          | JSON string with Fuse.js custom options    | `fuse-options='{"threshold": 0.2, "distance": 100}'`            | `data-pl-fuse-options='{"threshold": 0.2}'`                    |
-| `clusterize-options`                    | JSON string with Clusterize.js options     | `clusterize-options='{"rows_in_block": 25}'`                    | `data-pl-clusterize-options='{"no_data_text": "No data"}'`     |
+| `allText`                               | Text when all items are selected           | `all-text="All"`                                                | `data-pl-all-text="All"`                                       |
+| `emptyText`                             | Text when no item is selected              | `empty-text="Select"`                                           | `data-pl-empty-text="Select"`                                  |
+| `groupSelectedLabel`                    | Label shown on the "Selected" group        | `group-selected-label="Selected"`                               | `data-pl-group-selected-label="Selected"`                      |
+| `applyButtonText`                       | Label shown on the apply button            | `apply-button-text="Apply"`                                     | `data-pl-apply-button-text="Apply"`                            |
+| `searchPlaceholder`                     | Placeholder shown on the search input      | `search-placeholder="Search.."`                                 | `data-pl-search-placeholder="Search.."`                        |
+| `searchDebounceDelay`                   | Search engine response time                | `search-debounce-delay="100"`                                   | `data-pl-search-debounce-delay="100"`                          |
+| `fuseOptions`                           | JSON string with Fuse.js custom options    | `fuse-options='{"threshold": 0.2, "distance": 100}'`            | `data-pl-fuse-options='{"threshold": 0.2}'`                    |
+| `clusterizeOptions`                     | JSON string with Clusterize.js options     | `clusterize-options='{"rows_in_block": 25}'`                    | `data-pl-clusterize-options='{"no_data_text": "No data"}'`     |
 
 ---
 
