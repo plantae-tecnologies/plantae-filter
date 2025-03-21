@@ -114,6 +114,7 @@ filter.selectOptions(['grape']);
 | `group-selected-label`                  | Label shown on the "Selected" group        | `group-selected-label="Selected"`                               | `data-pl-group-selected-label="Selected"`                      |
 | `apply-button-text`                     | Label shown on the apply button            | `apply-button-text="Apply"`                                     | `data-pl-apply-button-text="Apply"`                            |
 | `search-placeholder`                    | Placeholder shown on the search input      | `search-placeholder="Search.."`                                 | `data-pl-search-placeholder="Search.."`                        |
+| `search-debounce-delay`                 | Search engine response time                | `search-debounce-delay="100"`                                   | `data-pl-search-debounce-delay="100"`                          |
 | `fuse-options`                          | JSON string with Fuse.js custom options    | `fuse-options='{"threshold": 0.2, "distance": 100}'`            | `data-pl-fuse-options='{"threshold": 0.2}'`                    |
 | `clusterize-options`                    | JSON string with Clusterize.js options     | `clusterize-options='{"rows_in_block": 25}'`                    | `data-pl-clusterize-options='{"no_data_text": "No data"}'`     |
 

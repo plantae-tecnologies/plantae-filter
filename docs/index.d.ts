@@ -55,7 +55,7 @@ declare class PlantaeFilterElement extends HTMLElement {
     private extractOptions;
     private loadTemplate;
     private populateOptions;
-    private syncPendingWithApplied;
+    private formatTextWithHighlight;
     private updateFilter;
     private attachEvents;
     private toggleSelectOption;
@@ -68,7 +68,7 @@ declare class PlantaeFilterElement extends HTMLElement {
     private initClusterize;
     private syncSelectElement;
     private applySelection;
-    private clearSelectionInterno;
+    private clear;
     private toggleDropdown;
     private closeDropdown;
     private openDropdown;

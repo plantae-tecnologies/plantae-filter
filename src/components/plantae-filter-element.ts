@@ -19,8 +19,8 @@ class PlantaeFilterElement extends HTMLElement {
 
     private options: OptionItem[] = [];
     private optionMap: Map<string | number, OptionItem> = new Map();
-    private selectedValues: string[] = [];
-    private pendingValues: string[] = [];
+    private selectedValues: Set<string> = new Set();
+    private pendingValues: Set<string> = new Set();
     private fuse!: Fuse<OptionItem>;
     private clusterize!: Clusterize;
     private cursorIndex: number = -1;
@@ -41,6 +41,7 @@ class PlantaeFilterElement extends HTMLElement {
         applyButtonText: 'Aplicar',
         groupSelectedLabel: 'Selecionados',
         searchPlaceholder: 'Buscar..',
+        searchDebounceDelay: 100,
         fuseOptions: {
             keys: ['text', 'value'],
             threshold: 0.3,
@@ -79,15 +80,14 @@ class PlantaeFilterElement extends HTMLElement {
     private loadConfig(): void {
         const componentAttributes = attributesToCamelCase(this);
 
-        // Texts
         this.config.label = componentAttributes.label || this.config.label;
         this.config.allText = componentAttributes.allText || this.config.allText;
         this.config.emptyText = componentAttributes.emptyText || this.config.emptyText;
         this.config.groupSelectedLabel = componentAttributes.groupSelectedLabel || this.config.groupSelectedLabel;
         this.config.applyButtonText = componentAttributes.applyButtonText || this.config.applyButtonText;
         this.config.searchPlaceholder = componentAttributes.searchPlaceholder || this.config.searchPlaceholder;
+        this.config.searchDebounceDelay = Number(componentAttributes.searchDebounceDelay) || this.config.searchDebounceDelay;
 
-        // Fuse Options
         const fuseAttr = componentAttributes.fuseOptions;
         if (fuseAttr) {
             try {
@@ -98,7 +98,6 @@ class PlantaeFilterElement extends HTMLElement {
             }
         }
 
-        // Clusterize Options
         const clusterizeAttr = componentAttributes.clusterizeOptions;
         if (clusterizeAttr) {
             try {
@@ -154,7 +153,6 @@ class PlantaeFilterElement extends HTMLElement {
         template.innerHTML = `<style>${styles}</style>${templateHtml}`;
         this.attachShadow({ mode: 'open' })!.append(template.content.cloneNode(true));
 
-        // Initialize elements in class
         this.searchInput = this.shadowRoot!.getElementById("searchInput") as HTMLInputElement;
         this.applyButton = this.shadowRoot!.getElementById("applyButton")!;
         this.clearButton = this.shadowRoot!.getElementById("clearButton")!;
@@ -164,66 +162,32 @@ class PlantaeFilterElement extends HTMLElement {
         this.scrollArea = this.shadowRoot!.getElementById("scrollArea")!;
         this.contentArea = this.shadowRoot!.getElementById("contentArea")!;
 
-        // apply config text
         this.searchInput.placeholder = this.config.searchPlaceholder;
         this.applyButton.innerText = this.config.applyButtonText;
     }
 
     private populateOptions(optionsToRender: OptionItem[] | Array<FuseResult<OptionItem>>): void {
-        const rows: string[] = [];
+        let rows: string[] = [];
         const selectedRows: string[] = [];
         const groupedRows: Map<string | null, string[]> = new Map();
-        const pendingSet = new Set(this.pendingValues.map(String));
-
         const isSearching = this.searchInput.value.trim();
 
-        const formatTextWithHighlight = (text: string, matches?: readonly FuseResultMatch[]): string => {
-            if (!matches || matches.length === 0) return text;
-
-            const match = matches.find(m => m.key === "text" || m.key === "value");
-            if (!match) return text;
-
-            const mergedIndices = mergeOverlapping(match.indices);
-            let highlighted = "";
-            let lastIndex = 0;
-
-            mergedIndices.forEach(([start, end]) => {
-                highlighted += text.slice(lastIndex, start);
-                highlighted += `<mark part="highlight">${text.slice(start, end + 1)}</mark>`;
-                lastIndex = end + 1;
-            });
-
-            highlighted += text.slice(lastIndex);
-            return highlighted;
-        };
-
         for (const opt of optionsToRender) {
-            let option: OptionItem;
-            let matches: readonly FuseResultMatch[] | undefined;
+            const { item, matches } = 'item' in opt ? { item: opt.item, matches: opt.matches } : { item: opt, matches: undefined };
+            const valueStr = String(item.value);
+            const isSelected = this.pendingValues.has(valueStr);
+            const isDisabled = item.disabled;
 
-            if ('item' in opt) {
-                option = opt.item;
-                matches = opt.matches;
-            } else {
-                option = opt;
-                matches = undefined;
-            }
+            const text = isSearching ? this.formatTextWithHighlight(item.text, matches) : item.text;
 
-            const isSelected = pendingSet.has(String(option.value));
-            const text = isSearching ? formatTextWithHighlight(option.text, matches) : option.text;
+            const classes = isSelected ? (isDisabled ? "selected disabled" : "selected") : (isDisabled ? "disabled" : "");
 
-            const classes = [];
-            if (isSelected) classes.push("selected");
-            if (option.disabled) classes.push("disabled");
-
-            const parts = ["dropdown-item", ...classes];
-
-            const li = `<li part="${parts.join(' ')}" class="${classes.join(' ')}" data-value="${option.value}" ${option.disabled ? 'aria-disabled="true"' : ''}>${text}</li>`;
+            const li = `<li part="dropdown-item ${classes}" class="${classes}" data-value="${valueStr}" ${isDisabled ? 'aria-disabled="true"' : ''}>${text}</li>`;
 
             if (isSelected) {
                 selectedRows.push(li);
             } else {
-                const groupKey = option.group || null;
+                const groupKey = item.group || null;
                 if (!groupedRows.has(groupKey)) {
                     groupedRows.set(groupKey, []);
                 }
@@ -233,51 +197,51 @@ class PlantaeFilterElement extends HTMLElement {
 
         if (selectedRows.length > 0) {
             rows.push(`<li class="optgroup">${this.config.groupSelectedLabel} (${selectedRows.length})</li>`);
-            rows.push(...selectedRows);
+            rows = rows.concat(selectedRows);
             rows.push(`<li class="optgroup"></li>`);
         }
 
         if (isSearching) {
-            groupedRows.forEach(items => rows.push(...items));
+            groupedRows.forEach(items => {
+                rows = rows.concat(items);
+            });
         } else {
-            let lastGroup: string | null = null;
-            for (const [group, items] of groupedRows) {
-                if (group !== lastGroup) {
-                    if (group) {
-                        rows.push(`<li class="optgroup">${group}</li>`);
-                    } else if (lastGroup !== null) {
-                        rows.push(`<li class="optgroup"></li>`);
-                    }
-                    lastGroup = group;
-                }
-                rows.push(...items);
-            }
+            groupedRows.forEach((items, group) => {
+                rows.push(`<li class="optgroup">${group ?? ''}</li>`);
+                rows = rows.concat(items);
+            });
         }
 
-        this.cursorIndex = -1;
+        this.clusterize.clear();
         this.clusterize.update(rows);
     }
 
-    private syncPendingWithApplied(): void {
-        const lis = this.contentArea.querySelectorAll('li[data-value]');
-        lis.forEach(li => {
-            const el = li as HTMLElement;
-            const value = el.dataset.value!;
-            const isSelected = this.pendingValues.includes(value);
-            const classes = [];
-            if (isSelected) classes.push('selected');
-            if (el.classList.contains('disabled')) classes.push('disabled');
-            el.className = classes.join(' ');
-            el.setAttribute('part', ['dropdown-item', ...classes].join(' '));
+    private formatTextWithHighlight(text: string, matches?: readonly FuseResultMatch[]): string {
+        if (!matches || matches.length === 0) return text;
+
+        const match = matches.find(m => m.key === "text");
+        if (!match) return text;
+
+        const mergedIndices = mergeOverlapping(match.indices);
+        let highlighted = "";
+        let lastIndex = 0;
+
+        mergedIndices.forEach(([start, end]) => {
+            highlighted += text.slice(lastIndex, start);
+            highlighted += `<mark part="highlight">${text.slice(start, end + 1)}</mark>`;
+            lastIndex = end + 1;
         });
+
+        highlighted += text.slice(lastIndex);
+        return highlighted;
     }
 
     private updateFilter(): void {
         const total = this.options.length;
-        const count = this.selectedValues.length;
+        const count = this.selectedValues.size;
 
         const selectedTexts = this.options
-            .filter(opt => this.selectedValues.includes(String(opt.value)))
+            .filter(opt => this.selectedValues.has(String(opt.value)))
             .map(opt => opt.text);
 
         this.filterText.innerHTML = count
@@ -294,9 +258,9 @@ class PlantaeFilterElement extends HTMLElement {
 
     private attachEvents(): void {
         this.filter.addEventListener("click", () => this.toggleDropdown());
-        this.clearButton.addEventListener("click", (e) => this.clearSelectionInterno(e));
+        this.clearButton.addEventListener("click", (e) => this.clear(e));
         this.applyButton.addEventListener("click", () => this.applySelection());
-        this.searchInput.addEventListener("input", debounce(this.handleSearch.bind(this), 300));
+        this.searchInput.addEventListener("input", debounce(this.handleSearch.bind(this), this.config.searchDebounceDelay));
         this.contentArea.addEventListener('click', this.handleClickitem.bind(this));
         
         document.addEventListener("keydown", (e: KeyboardEvent) => this.handleKeyboardNavigation(e));
@@ -308,10 +272,10 @@ class PlantaeFilterElement extends HTMLElement {
     
         li.classList.toggle("selected");
         if (li.classList.contains("selected")) {
-            this.pendingValues.push(value);
+            this.pendingValues.add(value);
             li.setAttribute('part', 'dropdown-item selected');
         } else {
-            this.pendingValues = this.pendingValues.filter(v => v !== value);
+            this.pendingValues.delete(value);
             li.setAttribute('part', 'dropdown-item');
         }
     }
@@ -394,8 +358,12 @@ class PlantaeFilterElement extends HTMLElement {
             return;
         }
     
+        console.time('search');
         const results = this.fuse.search(searchTerm);
+        console.timeEnd('search');
+        console.time('render');
         this.populateOptions(results);
+        console.timeEnd('render');
     }
 
     private handleClickitem(event: Event): void {
@@ -427,7 +395,7 @@ class PlantaeFilterElement extends HTMLElement {
         selectElement.innerHTML = '';
 
         this.options
-            .filter(opt => this.selectedValues.includes(String(opt.value)))
+            .filter(opt => this.selectedValues.has(String(opt.value)))
             .forEach(opt => {
                 const option = document.createElement('option');
                 option.value = String(opt.value);
@@ -438,19 +406,18 @@ class PlantaeFilterElement extends HTMLElement {
     }
 
     private applySelection(): void {
-        this.selectedValues = [...this.pendingValues];
+        this.selectedValues = new Set(this.pendingValues);
         this.syncSelectElement();
         this.updateFilter();
         this.closeDropdown();
         this.dispatchEvent(new Event("change"));
     }
 
-    private clearSelectionInterno(event?: Event): void {
+    private clear(event?: Event): void {
         event?.stopPropagation();
-        this.selectedValues = [];
-        this.pendingValues = [];
+        this.selectedValues.clear();
+        this.pendingValues.clear();
         this.populateOptions(this.options);
-        this.syncPendingWithApplied();
         this.syncSelectElement();
         this.updateFilter();
         this.dispatchEvent(new Event("change"));
@@ -478,7 +445,7 @@ class PlantaeFilterElement extends HTMLElement {
         });
 
         this.dropdown.style.display = "block";
-        this.pendingValues = [...this.selectedValues];
+        this.pendingValues = new Set(this.selectedValues);
         this.populateOptions(this.options);
     }
 
@@ -489,8 +456,9 @@ class PlantaeFilterElement extends HTMLElement {
     }
 
     public addOptions(options: OptionItem[]): void {
+        console.time('add');
         options.forEach(option => {
-            const exists = this.options.find(opt => opt.value === option.value);
+            const exists = this.optionMap.has(option.value);
             if (!exists) {
                 this.options.push({
                     value: option.value,
@@ -500,21 +468,26 @@ class PlantaeFilterElement extends HTMLElement {
                 });
             }
         });
+        console.timeEnd('add');
 
+        console.time('fuse');
         this.fuse.setCollection(this.options);
+        console.timeEnd('fuse');
 
+        console.time('populateOptions');
         this.populateOptions(this.options);
+        console.timeEnd('populateOptions');
         this.syncSelectElement();
     }
 
     public selectOptions(values: OptionValue[]): void {
         values.forEach(v => {
             const opt = this.optionMap.get(v);
-            if (opt && !opt.disabled && !this.selectedValues.includes(String(v))) {
-                this.selectedValues.push(String(v));
+            if (opt && !opt.disabled && !this.selectedValues.has(String(v))) {
+                this.selectedValues.add(String(v));
             }
         });
-        this.pendingValues = [...this.selectedValues];
+        this.pendingValues = new Set(this.selectedValues);
         this.populateOptions(this.options);
         this.syncSelectElement();
         this.updateFilter();
@@ -522,8 +495,11 @@ class PlantaeFilterElement extends HTMLElement {
 
     public removeOptions(values: OptionValue[]): void {
         this.options = this.options.filter(opt => !values.includes(opt.value));
-        this.selectedValues = this.selectedValues.filter(v => !values.includes(v));
-        this.pendingValues = this.pendingValues.filter(v => !values.includes(v));
+        
+        values.forEach(v => {
+            this.selectedValues.delete(String(v));
+            this.pendingValues.delete(String(v));
+        });
 
         this.fuse.setCollection(this.options);
 
@@ -534,8 +510,8 @@ class PlantaeFilterElement extends HTMLElement {
 
     public removeAllOptions(): void {
         this.options = [];
-        this.selectedValues = [];
-        this.pendingValues = [];
+        this.selectedValues.clear();
+        this.pendingValues.clear();
 
         this.fuse.setCollection(this.options);
 
@@ -545,7 +521,7 @@ class PlantaeFilterElement extends HTMLElement {
     }
 
     public clearSelection(): void {
-        this.clearSelectionInterno();
+        this.clear();
     }
 
     public disableOptions(values: OptionValue[]): void {
@@ -569,7 +545,7 @@ class PlantaeFilterElement extends HTMLElement {
     }
 
     public getSelected(): OptionItem[] {
-        return this.options.filter(opt => this.selectedValues.includes(String(opt.value)));
+        return this.options.filter(opt => this.selectedValues.has(String(opt.value)));
     }
 
     public getAllOptions(): OptionItem[] {

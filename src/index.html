@@ -114,15 +114,19 @@
         });
 
         document.getElementById('populate-bulk').addEventListener('click', () => {
+            console.time('options');
             const options = [];
             for (let i = 1; i <= 500; i++) {
                 options.push({
                     value: i,
                     text: randomName(),
-                    group: i <= 250 ? 'Group A' : 'Group B'
+                    group: i <= 10 ? 'Group A' : 'Group B'
                 });
             }
+            console.timeEnd('options')
+            console.time('addOptions')
             filter.addOptions(options);
+            console.timeEnd('addOptions')
         });
     </script>
 </body>
