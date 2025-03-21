@@ -159,18 +159,4 @@
 /* Badge contador */
 ::part(counter-filter) {
     background: var(--bs-danger, red);
-    color: #fff;
-    font-size: 0.7rem;
-    border-radius: 999px;
-    padding: 0.15rem 0.5rem;
-    position: absolute;
-    top: 0;
-    left: 0;
-    transform: translate(-50%, -50%);
-    z-index: 20;
-    box-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
 }
-
-/* ::part(highlight) {
-    color: red;
-} */
