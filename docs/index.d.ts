@@ -37,9 +37,11 @@ declare class PlantaeFilterElement extends HTMLElement {
     private optionMap;
     private selectedValues;
     private pendingValues;
-    private fuse;
     private clusterize;
     private cursorIndex;
+    private searchToken;
+    private searchWorker;
+    private loadingIndicator;
     private searchInput;
     private applyButton;
     private clearButton;
@@ -64,7 +66,7 @@ declare class PlantaeFilterElement extends HTMLElement {
     private updateCursor;
     private handleSearch;
     private handleClickitem;
-    private initFuse;
+    private initFuseWorker;
     private initClusterize;
     private syncSelectElement;
     private applySelection;

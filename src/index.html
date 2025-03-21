@@ -82,7 +82,8 @@
             emptyText: "Select options",
             groupSelectedLabel: "Selected",
             applyButtonText: "Apply",
-            searchPlaceholder: "Find.."
+            searchPlaceholder: "Find..",
+            searchDebounceDelay: '300'
         });
         const output = document.getElementById('output');
 
@@ -115,11 +116,11 @@
 
         document.getElementById('populate-bulk').addEventListener('click', () => {
             const options = [];
-            for (let i = 1; i <= 500; i++) {
+            for (let i = 1; i <= 500_000; i++) {
                 options.push({
                     value: i,
                     text: randomName(),
-                    group: i <= 10 ? 'Group A' : 'Group B'
+                    // group: i <= 10 ? 'Group A' : 'Group B'
                 });
             }
             filter.addOptions(options);

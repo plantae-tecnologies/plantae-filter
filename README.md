@@ -186,5 +186,20 @@ Feel free to adapt styles to match your design system.
 
 ---
 
+## Browser Support
+
+Plantae Filter leverages modern browser APIs, including the use of **Web Workers** to offload the search functionality (powered by Fuse.js) to a separate thread, ensuring a smoother experience when filtering large datasets.
+
+### Notes:
+- The **Web Worker** is automatically used for all search operations.
+- As of today, all modern browsers fully support Web Workers (Chrome, Firefox, Edge, Safari, etc.).
+- **Internet Explorer** and very old browsers **do not support Web Workers** and are not compatible with this plugin.
+- There is no fallback implementation if Web Workers are not available.
+
+### Recommendation:
+Ensure your application targets modern browsers or environments that provide full support for **Web Workers**.
+
+---
+
 > Powered by Plantae Gestão Agrícola
 

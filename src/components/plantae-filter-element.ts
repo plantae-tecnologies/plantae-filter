@@ -1,7 +1,6 @@
 import templateHtml from './plantae-filter.html?raw';
 import styles from './plantae-filter.css?inline';
 import { debounce, mergeOverlapping, attributesToCamelCase } from '../helpers/utils';
-import Fuse from 'fuse.js';
 import type { IFuseOptions, FuseResult, FuseResultMatch } from 'fuse.js';
 import Clusterize from 'clusterize.js';
 import type { ClusterizeOptions } from 'clusterize.js';
@@ -21,9 +20,12 @@ class PlantaeFilterElement extends HTMLElement {
     private optionMap: Map<string | number, OptionItem> = new Map();
     private selectedValues: Set<string> = new Set();
     private pendingValues: Set<string> = new Set();
-    private fuse!: Fuse<OptionItem>;
     private clusterize!: Clusterize;
     private cursorIndex: number = -1;
+    private searchToken = 0;
+
+    private searchWorker!: Worker;
+    private loadingIndicator!: HTMLElement;
 
     private searchInput!: HTMLInputElement;
     private applyButton!: HTMLElement;
@@ -67,7 +69,7 @@ class PlantaeFilterElement extends HTMLElement {
         requestAnimationFrame(() => {
             this.extractOptions();
             this.attachEvents();
-            this.initFuse();
+            this.initFuseWorker();
             this.initClusterize();
             this.populateOptions(this.options);
             this.syncSelectElement();
@@ -109,13 +111,17 @@ class PlantaeFilterElement extends HTMLElement {
         }
     }
 
-    private extractOptions(): void {
+    private async extractOptions(): Promise<void> {
         const selectElement = this.querySelector("select");
         if (!selectElement) return;
-
-        const flatOptions: OptionItem[] = Array.from(selectElement.children).flatMap(child => {
+    
+        const flatOptions: OptionItem[] = [];
+        const children = Array.from(selectElement.children);
+        let batchCount = 0;
+    
+        for (const child of children) {
             if (child instanceof HTMLOptGroupElement) {
-                return Array.from(child.children).map(option => {
+                for (const option of Array.from(child.children)) {
                     if (option instanceof HTMLOptionElement) {
                         const opt: OptionItem = {
                             value: option.value,
@@ -124,13 +130,10 @@ class PlantaeFilterElement extends HTMLElement {
                             disabled: option.disabled
                         };
                         this.optionMap.set(opt.value, opt);
-                        return opt;
+                        flatOptions.push(opt);
                     }
-                    return null;
-                }).filter(Boolean) as OptionItem[];
-            }
-
-            if (child instanceof HTMLOptionElement) {
+                }
+            } else if (child instanceof HTMLOptionElement) {
                 const opt: OptionItem = {
                     value: child.value,
                     text: child.text,
@@ -138,12 +141,15 @@ class PlantaeFilterElement extends HTMLElement {
                     disabled: child.disabled
                 };
                 this.optionMap.set(opt.value, opt);
-                return [opt];
+                flatOptions.push(opt);
             }
-
-            return [];
-        });
-
+    
+            batchCount++;
+            if (batchCount % 200 === 0) {
+                await new Promise(requestAnimationFrame);
+            }
+        }
+    
         this.options = flatOptions;
         selectElement.style.display = "none";
     }
@@ -161,12 +167,13 @@ class PlantaeFilterElement extends HTMLElement {
         this.filter = this.shadowRoot!.getElementById("filter")!;
         this.scrollArea = this.shadowRoot!.getElementById("scrollArea")!;
         this.contentArea = this.shadowRoot!.getElementById("contentArea")!;
+        this.loadingIndicator = this.shadowRoot!.getElementById("loadingIndicator")!;
 
         this.searchInput.placeholder = this.config.searchPlaceholder;
         this.applyButton.innerText = this.config.applyButtonText;
     }
 
-    private populateOptions(optionsToRender: OptionItem[] | Array<FuseResult<OptionItem>>): void {
+    private async populateOptions(optionsToRender: OptionItem[] | Array<FuseResult<OptionItem>>): Promise<void> {
         let rows: string[] = [];
         const selectedRows: string[] = [];
         const groupedRows: Map<string | null, string[]> = new Map();
@@ -207,7 +214,7 @@ class PlantaeFilterElement extends HTMLElement {
             });
         } else {
             groupedRows.forEach((items, group) => {
-                rows.push(`<li class="optgroup">${group ?? ''}</li>`);
+                if (group) rows.push(`<li class="optgroup">${group}</li>`);
                 rows = rows.concat(items);
             });
         }
@@ -352,14 +359,23 @@ class PlantaeFilterElement extends HTMLElement {
     }
 
     private handleSearch(): void {
+        this.searchToken++;
+
         const searchTerm = this.searchInput.value.trim();
         if (!searchTerm) {
             this.populateOptions(this.options);
+            this.loadingIndicator.style.visibility = "hidden";
             return;
         }
     
-        const results = this.fuse.search(searchTerm);
-        this.populateOptions(results);
+        this.loadingIndicator.style.visibility = "visible";
+        this.searchWorker.postMessage({
+            type: 'search',
+            payload: {
+                term: searchTerm,
+                token: this.searchToken
+            }
+        });
     }
 
     private handleClickitem(event: Event): void {
@@ -371,9 +387,29 @@ class PlantaeFilterElement extends HTMLElement {
         }
     }
 
-    private initFuse(): void {
-        this.fuse = new Fuse(this.options, this.config.fuseOptions);
-    }
+    private initFuseWorker(): void {
+        this.searchWorker = new Worker(new URL('./search-worker.ts', import.meta.url), { type: 'module' });
+        
+        // initialize Fuse.js in other thread
+        this.searchWorker.postMessage({
+            type: 'init',
+            payload: {
+                collection: this.options,
+                options: this.config.fuseOptions
+            }
+        });
+    
+        this.searchWorker.onmessage = (e: MessageEvent) => {
+            // apply search results on dropdown
+            if (e.data.type === 'results') {
+                if (e.data.token !== this.searchToken)
+                    return;
+
+                this.populateOptions(e.data.results);
+                this.loadingIndicator.style.visibility = "hidden";
+            }
+        }
+    };
 
     private initClusterize(): void {
         this.clusterize = new Clusterize({
@@ -464,7 +500,10 @@ class PlantaeFilterElement extends HTMLElement {
             }
         });
 
-        this.fuse.setCollection(this.options);
+        this.searchWorker.postMessage({
+            type: 'update',
+            payload: { collection: this.options }
+        });
 
         this.populateOptions(this.options);
         this.syncSelectElement();
@@ -491,7 +530,10 @@ class PlantaeFilterElement extends HTMLElement {
             this.pendingValues.delete(String(v));
         });
 
-        this.fuse.setCollection(this.options);
+        this.searchWorker.postMessage({
+            type: 'update',
+            payload: { collection: this.options }
+        });
 
         this.populateOptions(this.options);
         this.syncSelectElement();
@@ -503,7 +545,10 @@ class PlantaeFilterElement extends HTMLElement {
         this.selectedValues.clear();
         this.pendingValues.clear();
 
-        this.fuse.setCollection(this.options);
+        this.searchWorker.postMessage({
+            type: 'update',
+            payload: { collection: this.options }
+        });
 
         this.populateOptions(this.options);
         this.syncSelectElement();
