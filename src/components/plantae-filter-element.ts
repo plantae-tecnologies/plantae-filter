@@ -16,27 +16,27 @@ interface OptionItem {
 
 class PlantaeFilterElement extends HTMLElement {
 
-    private options: OptionItem[] = [];
-    private optionMap: Map<string | number, OptionItem> = new Map();
-    private selectedValues: Set<string> = new Set();
-    private pendingValues: Set<string> = new Set();
-    private clusterize!: Clusterize;
-    private cursorIndex: number = -1;
-    private searchToken = 0;
+    protected options: OptionItem[] = [];
+    protected optionMap: Map<string | number, OptionItem> = new Map();
+    protected selectedValues: Set<string> = new Set();
+    protected pendingValues: Set<string> = new Set();
+    protected clusterize!: Clusterize;
+    protected cursorIndex: number = -1;
+    protected searchToken = 0;
 
-    private searchWorker!: Worker;
-    private loadingIndicator!: HTMLElement;
+    protected searchWorker!: Worker;
+    protected loadingIndicator!: HTMLElement;
 
-    private searchInput!: HTMLInputElement;
-    private applyButton!: HTMLElement;
-    private clearButton!: HTMLElement;
-    private dropdown!: HTMLElement;
-    private filterText!: HTMLElement;
-    private filter!: HTMLElement;
-    private scrollArea!: HTMLElement;
-    private contentArea!: HTMLElement;
+    protected searchInput!: HTMLInputElement;
+    protected applyButton!: HTMLElement;
+    protected clearButton!: HTMLElement;
+    protected dropdown!: HTMLElement;
+    protected filterText!: HTMLElement;
+    protected filter!: HTMLElement;
+    protected scrollArea!: HTMLElement;
+    protected contentArea!: HTMLElement;
 
-    private config = {
+    protected config = {
         label: 'Filtro',
         allText: 'Todos',
         emptyText: 'Selecione',
@@ -59,10 +59,6 @@ class PlantaeFilterElement extends HTMLElement {
         } as Partial<ClusterizeOptions>
     };
 
-    constructor() {
-        super();
-    }
-
     connectedCallback(): void {
         this.loadConfig();
         this.loadTemplate();
@@ -79,7 +75,7 @@ class PlantaeFilterElement extends HTMLElement {
         });
     }
 
-    private loadConfig(): void {
+    protected loadConfig(): void {
         const componentAttributes = attributesToCamelCase(this);
 
         this.config.label = componentAttributes.label || this.config.label;
@@ -111,7 +107,7 @@ class PlantaeFilterElement extends HTMLElement {
         }
     }
 
-    private async extractOptions(): Promise<void> {
+    protected async extractOptions(): Promise<void> {
         const selectElement = this.querySelector("select");
         if (!selectElement) return;
     
@@ -154,7 +150,7 @@ class PlantaeFilterElement extends HTMLElement {
         selectElement.style.display = "none";
     }
 
-    private loadTemplate(): void {
+    protected loadTemplate(): void {
         const template = document.createElement('template');
         template.innerHTML = `<style>${styles}</style>${templateHtml}`;
         this.attachShadow({ mode: 'open' })!.append(template.content.cloneNode(true));
@@ -173,7 +169,7 @@ class PlantaeFilterElement extends HTMLElement {
         this.applyButton.innerText = this.config.applyButtonText;
     }
 
-    private async populateOptions(optionsToRender: OptionItem[] | Array<FuseResult<OptionItem>>): Promise<void> {
+    protected async populateOptions(optionsToRender: OptionItem[] | Array<FuseResult<OptionItem>>): Promise<void> {
         let rows: string[] = [];
         const selectedRows: string[] = [];
         const groupedRows: Map<string | null, string[]> = new Map();
@@ -189,7 +185,7 @@ class PlantaeFilterElement extends HTMLElement {
 
             const classes = isSelected ? (isDisabled ? "selected disabled" : "selected") : (isDisabled ? "disabled" : "");
 
-            const li = `<li part="dropdown-item ${classes}" class="${classes}" data-value="${valueStr}" ${isDisabled ? 'aria-disabled="true"' : ''}>${text}</li>`;
+            const li = `<li part="dropdown-item${classes ? ` ${classes}` : classes}" class="${classes}" data-value="${valueStr}" ${isDisabled ? 'aria-disabled="true"' : ''}>${text}</li>`;
 
             if (isSelected) {
                 selectedRows.push(li);
@@ -223,7 +219,7 @@ class PlantaeFilterElement extends HTMLElement {
         this.clusterize.update(rows);
     }
 
-    private formatTextWithHighlight(text: string, matches?: readonly FuseResultMatch[]): string {
+    protected formatTextWithHighlight(text: string, matches?: readonly FuseResultMatch[]): string {
         if (!matches || matches.length === 0) return text;
 
         const match = matches.find(m => m.key === "text");
@@ -243,7 +239,7 @@ class PlantaeFilterElement extends HTMLElement {
         return highlighted;
     }
 
-    private updateFilter(): void {
+    protected updateFilter(): void {
         const total = this.options.length;
         const count = this.selectedValues.size;
 
@@ -263,7 +259,7 @@ class PlantaeFilterElement extends HTMLElement {
 
     // === EVENT HANDLERS ===
 
-    private attachEvents(): void {
+    protected attachEvents(): void {
         this.filter.addEventListener("click", () => this.toggleDropdown());
         this.clearButton.addEventListener("click", (e) => this.clear(e));
         this.applyButton.addEventListener("click", () => this.applySelection());
@@ -274,7 +270,7 @@ class PlantaeFilterElement extends HTMLElement {
         document.addEventListener("click", (e) => this.handleOutsideClick(e));
     }
 
-    private toggleSelectOption(li: HTMLElement, value: string): void {
+    protected toggleSelectOption(li: HTMLElement, value: string): void {
         li.classList.remove("focused");
     
         li.classList.toggle("selected");
@@ -287,13 +283,13 @@ class PlantaeFilterElement extends HTMLElement {
         }
     }
 
-    private handleOutsideClick(event: Event): void {
+    protected handleOutsideClick(event: Event): void {
         if (!this.contains(event.target as Node)) {
             this.closeDropdown();
         }
     }
 
-    private handleKeyboardNavigation(event: KeyboardEvent): void {
+    protected handleKeyboardNavigation(event: KeyboardEvent): void {
         const isOpen = this.dropdown.style.display === "block";
         if (!isOpen) return;
 
@@ -336,7 +332,7 @@ class PlantaeFilterElement extends HTMLElement {
         }
     }
 
-    private updateCursor(lis: HTMLElement[]): void {
+    protected updateCursor(lis: HTMLElement[]): void {
         lis.forEach(li => {
             li.classList.remove('focused');
             li.setAttribute('part', li.classList.contains('selected') ? 'dropdown-item selected' : 'dropdown-item');
@@ -358,7 +354,7 @@ class PlantaeFilterElement extends HTMLElement {
         }
     }
 
-    private handleSearch(): void {
+    protected handleSearch(): void {
         this.searchToken++;
 
         const searchTerm = this.searchInput.value.trim();
@@ -378,7 +374,7 @@ class PlantaeFilterElement extends HTMLElement {
         });
     }
 
-    private handleClickitem(event: Event): void {
+    protected handleClickitem(event: Event): void {
         const target = event.target as HTMLElement;
         if (target.tagName.toLowerCase() === 'li' && !target.classList.contains('optgroup')) {
             const li = target as HTMLElement;
@@ -387,7 +383,7 @@ class PlantaeFilterElement extends HTMLElement {
         }
     }
 
-    private initFuseWorker(): void {
+    protected initFuseWorker(): void {
         this.searchWorker = new Worker(new URL('../components/search-worker.ts?worker&inline', import.meta.url), { type: 'module' });
         
         // initialize Fuse.js in other thread
@@ -411,7 +407,7 @@ class PlantaeFilterElement extends HTMLElement {
         }
     };
 
-    private initClusterize(): void {
+    protected initClusterize(): void {
         this.clusterize = new Clusterize({
             rows: [],
             scrollElem: this.scrollArea,
@@ -422,7 +418,7 @@ class PlantaeFilterElement extends HTMLElement {
 
     // === STATE + SELECTION ===
 
-    private syncSelectElement(): void {
+    protected syncSelectElement(): void {
         const selectElement = this.querySelector("select") as HTMLSelectElement;
         selectElement.innerHTML = '';
 
@@ -437,7 +433,7 @@ class PlantaeFilterElement extends HTMLElement {
             });
     }
 
-    private applySelection(): void {
+    protected applySelection(): void {
         this.selectedValues = new Set(this.pendingValues);
         this.syncSelectElement();
         this.updateFilter();
@@ -445,7 +441,7 @@ class PlantaeFilterElement extends HTMLElement {
         this.dispatchEvent(new Event("change"));
     }
 
-    private clear(event?: Event): void {
+    protected clear(event?: Event): void {
         event?.stopPropagation();
         this.selectedValues.clear();
         this.pendingValues.clear();
@@ -455,7 +451,7 @@ class PlantaeFilterElement extends HTMLElement {
         this.dispatchEvent(new Event("change"));
     }
 
-    private toggleDropdown(): void {
+    protected toggleDropdown(): void {
         const isOpen = this.dropdown.style.display === "block";
         if (isOpen) {
             this.closeDropdown();
@@ -464,11 +460,11 @@ class PlantaeFilterElement extends HTMLElement {
         }
     }
 
-    private closeDropdown(): void {
+    protected closeDropdown(): void {
         this.dropdown.style.display = "none";
     }
 
-    private openDropdown(): void {
+    protected openDropdown(): void {
         this.cursorIndex = -1;
 
         this.searchInput.value = "";

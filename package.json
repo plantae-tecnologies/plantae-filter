@@ -7,7 +7,8 @@
     "module": "dist/plantae-filter.es.js",
     "types": "dist/index.d.ts",
     "files": [
-        "dist"
+        "dist",
+        "src"
     ],
     "scripts": {
         "dev": "vite",
@@ -17,7 +18,9 @@
         "prepare:docs": "npm run build && npm run prepare:build-demo && cp -r dist/* docs/",
         "release": "npm run build && npm version patch && npm publish --access public",
         "release:minor": "npm run build && npm version minor && npm publish --access public",
-        "release:major": "npm run build && npm version major && npm publish --access public"
+        "release:major": "npm run build && npm version major && npm publish --access public",
+        "test": "vitest",
+        "test:watch": "vitest --watch"
     },
     "exports": {
         "./theme/*": "./dist/theme/*",
@@ -25,7 +28,8 @@
             "types": "./dist/index.d.ts",
             "import": "./dist/plantae-filter.es.js",
             "require": "./dist/plantae-filter.umd.js"
-        }
+        },
+        "./src/*": "./src/*"
     },
     "typesVersions": {
         "*": {
@@ -43,11 +47,16 @@
         "url": "https://github.com/plantae-tecnologies/plantae-filter/issues"
     },
     "devDependencies": {
+        "@testing-library/dom": "^10.4.0",
+        "@testing-library/jest-dom": "^6.6.3",
+        "@testing-library/user-event": "^14.6.1",
+        "jsdom": "^26.0.0",
         "terser": "^5.39.0",
         "typescript": "~5.7.2",
         "vite": "^6.2.0",
         "vite-plugin-dts": "^4.5.3",
-        "vite-plugin-static-copy": "^2.3.0"
+        "vite-plugin-static-copy": "^2.3.0",
+        "vitest": "^3.0.9"
     },
     "dependencies": {
         "clusterize.js": "^1.0.0",
