@@ -20,17 +20,17 @@ describe('Initialization', () => {
             <option value="2">Banana</option>
             <option value="3">Orange</option>
         `;
-    
+
         wrapper = document.createElement('plantae-filter') as PlantaeFilterElement;
         wrapper.appendChild(select);
         document.body.appendChild(wrapper);
-    
+
         const readyListener = vi.fn();
         wrapper.addEventListener('plantae-filter-ready', readyListener);
-    
+
         // Simula ciclo do DOM
         await new Promise((resolve) => requestAnimationFrame(resolve));
-    
+
         expect(wrapper.shadowRoot).toBeDefined();
         expect(wrapper.shadowRoot!.querySelector('#filter')).toBeInTheDocument();
         expect(select.style.display).toBe('none');
@@ -77,5 +77,82 @@ describe('Initialization', () => {
         expect(options[0]).toHaveTextContent('Apple');
         expect(options[1]).toHaveTextContent('Banana');
         expect(options[2]).toHaveTextContent('Orange');
+    });
+});
+
+
+describe('Public API', () => {
+    let wrapper: PlantaeFilterElement;
+    let select: HTMLSelectElement;
+
+    beforeEach(async () => {
+        vi.unmock('clusterize.js');
+
+        select = document.createElement('select');
+        select.innerHTML = `
+        <option value="1">Apple</option>
+        <option value="2">Banana</option>
+      `;
+
+        wrapper = document.createElement('plantae-filter') as PlantaeFilterElement;
+        wrapper.appendChild(select);
+        document.body.appendChild(wrapper);
+
+        await new Promise((resolve) => requestAnimationFrame(resolve));
+    });
+
+    it('addOption adds a new item', () => {
+        wrapper.addOption({ value: '3', text: 'Orange' });
+        const all = wrapper.getAllOptions();
+        expect(all.find(opt => opt.value === '3')).toBeDefined();
+    });
+
+    it('addOptions adds multiple new items', () => {
+        wrapper.addOptions([
+            { value: '3', text: 'Orange' },
+            { value: '4', text: 'Grape' },
+        ]);
+        const all = wrapper.getAllOptions();
+        expect(all).toHaveLength(4);
+    });
+
+    it('selectOptions selects multiple values', () => {
+        wrapper.selectOptions(['1', '2']);
+        const selected = wrapper.getSelected();
+        expect(selected).toHaveLength(2);
+        expect(selected.map(s => s.value)).toContain('1');
+        expect(selected.map(s => s.value)).toContain('2');
+    });
+
+    it('removeOptions removes specified values', () => {
+        wrapper.removeOptions(['1']);
+        const all = wrapper.getAllOptions();
+        expect(all.find(opt => opt.value === '1')).toBeUndefined();
+    });
+
+    it('removeAllOptions removes everything', () => {
+        wrapper.removeAllOptions();
+        const all = wrapper.getAllOptions();
+        expect(all).toHaveLength(0);
+    });
+
+    it('clearSelection resets selected values', () => {
+        wrapper.selectOptions(['1']);
+        wrapper.clearSelection();
+        const selected = wrapper.getSelected();
+        expect(selected).toHaveLength(0);
+    });
+
+    it('disableOptions disables specific values', () => {
+        wrapper.disableOptions(['1']);
+        const opt = wrapper.getAllOptions().find(o => o.value === '1');
+        expect(opt?.disabled).toBe(true);
+    });
+
+    it('enableOptions re-enables specific values', () => {
+        wrapper.disableOptions(['1']);
+        wrapper.enableOptions(['1']);
+        const opt = wrapper.getAllOptions().find(o => o.value === '1');
+        expect(opt?.disabled).toBe(false);
     });
 });
