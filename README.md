@@ -153,17 +153,18 @@ Plantae Filter exposes the following parts for styling via Shadow DOM `::part()`
 
 | Part Name              | Description                                              |
 | ---------------------- | -------------------------------------------------------- |
-| `filter`               | The clickable filter input area                         |
-| `filter-text`          | The text container inside the filter area               |
-| `clear-button`         | The clear (reset) button inside the filter              |
-| `dropdown`             | The dropdown container with the options list            |
-| `dropdown-item`        | A single option (`<li>`) inside the dropdown            |
-| `dropdown-item selected` | A selected option inside the dropdown                |
-| `dropdown-item focused`  | The item currently focused via keyboard navigation   |
-| `highlight`            | The `<mark>` used to highlight search matches           |
-| `optgroup`             | The group label (`<li>` separator) inside the dropdown  |
-| `apply-button`         | The \"Apply\" button inside the dropdown footer         |
-| `search-input`         | The search `<input>` inside the dropdown                |
+| `filter`               | The clickable filter input area                          |
+| `filter-text`          | The text container inside the filter area                |
+| `clear-button`         | The clear (reset) button inside the filter               |
+| `counter-filter`       | The badge with applied itens counter                     |
+| `dropdown`             | The dropdown container with the options list             |
+| `dropdown-item`        | A single option (`<li>`) inside the dropdown             |
+| `dropdown-item selected` | A selected option inside the dropdown                  |
+| `dropdown-item focused`  | The item currently focused via keyboard navigation     |
+| `highlight`            | The `<mark>` used to highlight search matches            |
+| `optgroup`             | The group label (`<li>` separator) inside the dropdown   |
+| `apply-button`         | The \"Apply\" button inside the dropdown footer          |
+| `search-input`         | The search `<input>` inside the dropdown                 |
 
 ### Example usage:
 

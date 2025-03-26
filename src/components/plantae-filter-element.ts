@@ -248,7 +248,7 @@ class PlantaeFilterElement extends HTMLElement {
             .map(opt => opt.text);
 
         this.filterText.innerHTML = count
-            ? `<span class='counter-filter'>${count}</span> <strong>${this.config.label}:</strong> ${count === total ? this.config.allText : selectedTexts.join(", ")}`
+            ? `<span part='counter-filter' class='counter-filter'>${count}</span> <strong>${this.config.label}:</strong> ${count === total ? this.config.allText : selectedTexts.join(", ")}`
             : `<strong>${this.config.label}:</strong> ${this.config.emptyText}`;
 
         this.clearButton.style.opacity = count ? '1' : '0.5';
