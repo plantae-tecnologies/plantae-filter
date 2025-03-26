@@ -55,6 +55,7 @@ declare class PlantaeFilterElement extends HTMLElement {
     protected clusterize: default_2;
     protected cursorIndex: number;
     protected searchToken: number;
+    private updateOptionsDebounced;
     protected searchWorker: Worker;
     protected loadingIndicator: HTMLElement;
     protected searchInput: HTMLInputElement;

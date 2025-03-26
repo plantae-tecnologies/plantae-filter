@@ -23,6 +23,7 @@ class PlantaeFilterElement extends HTMLElement {
     protected clusterize!: Clusterize;
     protected cursorIndex: number = -1;
     protected searchToken = 0;
+    private updateOptionsDebounced!: () => void;
 
     protected searchWorker!: Worker;
     protected loadingIndicator!: HTMLElement;
@@ -60,6 +61,8 @@ class PlantaeFilterElement extends HTMLElement {
     };
 
     connectedCallback(): void {
+        this.updateOptionsDebounced = debounce(() => this.updateOptions(), 20);
+
         this.loadConfig();
         this.loadTemplate();
         requestAnimationFrame(() => {
@@ -533,7 +536,7 @@ class PlantaeFilterElement extends HTMLElement {
             }
         });
 
-        debounce(this.updateOptions.bind(this), 20);
+        this.updateOptionsDebounced();
     }
 
     public selectOptions(values: OptionValue[]): void {

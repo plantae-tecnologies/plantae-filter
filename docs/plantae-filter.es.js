@@ -320,6 +320,7 @@ class PlantaeFilterElement extends HTMLElement {
     __publicField(this, "clusterize");
     __publicField(this, "cursorIndex", -1);
     __publicField(this, "searchToken", 0);
+    __publicField(this, "updateOptionsDebounced");
     __publicField(this, "searchWorker");
     __publicField(this, "loadingIndicator");
     __publicField(this, "searchInput");
@@ -354,6 +355,7 @@ class PlantaeFilterElement extends HTMLElement {
     });
   }
   connectedCallback() {
+    this.updateOptionsDebounced = debounce(() => this.updateOptions(), 20);
     this.loadConfig();
     this.loadTemplate();
     requestAnimationFrame(() => {
@@ -742,7 +744,7 @@ class PlantaeFilterElement extends HTMLElement {
         });
       }
     });
-    debounce(this.updateOptions.bind(this), 20);
+    this.updateOptionsDebounced();
   }
   selectOptions(values) {
     values.forEach((v) => {
