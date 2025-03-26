@@ -619,11 +619,31 @@ class PlantaeFilterElement extends HTMLElement {
     }
   }
   initFuseWorker() {
-    this.searchWorker = new Worker(new URL(
-      /* @vite-ignore */
-      "" + new URL("assets/search-worker-BgbjMa5d.js", import.meta.url).href,
-      import.meta.url
-    ), { type: "module" });
+    const workerCode = `
+            importScripts('https://unpkg.com/fuse.js/dist/fuse.js');
+            let fuse;
+
+            self.onmessage = function(e) {
+                const { type, payload } = e.data;
+
+                if (type === 'init') {
+                    fuse = new Fuse(payload.collection, payload.options);
+                    self.postMessage({ type: 'ready' });
+                }
+
+                if (type === 'update') {
+                    fuse.setCollection(payload.collection);
+                    self.postMessage({ type: 'updated' });
+                }
+
+                if (type === 'search') {
+                    const results = fuse.search(payload.term);
+                    self.postMessage({ type: 'results', results, token: payload.token });
+                }
+            }
+        `;
+    const blob = new Blob([workerCode], { type: "application/javascript" });
+    this.searchWorker = new Worker(URL.createObjectURL(blob));
     this.searchWorker.postMessage({
       type: "init",
       payload: {

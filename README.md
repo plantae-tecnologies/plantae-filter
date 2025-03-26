@@ -100,34 +100,6 @@ filter.selectOptions(['grape']);
 
 ---
 
-## ⚠️ **Important Notice for Vite Users**
-
-If you are using **Vite** as a bundler in your project, and you are installing `@plantae-tech/plantae-filter` via NPM, you **MUST** configure your `vite.config.ts` to avoid issues with the embedded web worker.
-
-**Why?**
-
-This library uses `import.meta.url` + `?worker` to load a background thread (via **Web Worker**) for search operations. Vite’s **dependency optimizer** (`optimizeDeps`) might break the dynamic `new URL()` resolution during pre-bundling of `node_modules`, causing errors like:
-
-```
-The file does not exist at ".../node_modules/.vite/deps/assets/search-worker-xxxxx.js"
-```
-
-### Solution: Add this to your `vite.config.ts`
-
-```ts
-export default defineConfig({
-    optimizeDeps: {
-        exclude: ["@plantae-tech/plantae-filter"]
-    }
-});
-```
-
-> This will ensure that Vite does **NOT pre-bundle** the library and lets the worker load properly.
-
-**🚩 If you skip this step, your application may break during build or runtime!**
-
----
-
 ## Data Attributes
 
 > Attributes must be informed in camelCase when informed by the class constructor.  

@@ -19,8 +19,7 @@ export default defineConfig({
                 }
             }
         },
-        minify: 'terser',
-        assetsInlineLimit: 4096
+        minify: 'terser'
     },
     plugins: [
         dts({
