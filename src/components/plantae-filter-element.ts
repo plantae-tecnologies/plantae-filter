@@ -27,7 +27,6 @@ class PlantaeFilterElement extends HTMLElement {
     protected searchWorker!: Worker;
     protected loadingIndicator!: HTMLElement;
 
-    protected selectElement!: HTMLSelectElement;
     protected searchInput!: HTMLInputElement;
     protected applyButton!: HTMLElement;
     protected clearButton!: HTMLElement;
@@ -109,10 +108,11 @@ class PlantaeFilterElement extends HTMLElement {
     }
 
     protected async extractOptions(): Promise<void> {
-        if (!this.selectElement) return;
+        const selectElement = this.querySelector("select");
+        if (!selectElement) return;
     
         const flatOptions: OptionItem[] = [];
-        const children = Array.from(this.selectElement.children);
+        const children = Array.from(selectElement.children);
         let batchCount = 0;
     
         for (const child of children) {
@@ -147,15 +147,13 @@ class PlantaeFilterElement extends HTMLElement {
         }
     
         this.options = flatOptions;
-        this.selectElement.style.display = "none";
+        selectElement.style.display = "none";
     }
 
     protected loadTemplate(): void {
         const template = document.createElement('template');
         template.innerHTML = `<style>${styles}</style>${templateHtml}`;
         this.attachShadow({ mode: 'open' })!.append(template.content.cloneNode(true));
-
-        this.selectElement = this.querySelector("select") as HTMLSelectElement;
 
         this.searchInput = this.shadowRoot!.getElementById("searchInput") as HTMLInputElement;
         this.applyButton = this.shadowRoot!.getElementById("applyButton")!;
@@ -446,7 +444,8 @@ class PlantaeFilterElement extends HTMLElement {
     // === STATE + SELECTION ===
 
     protected syncSelectElement(): void {
-        this.selectElement.innerHTML = '';
+        const selectElement = this.querySelector("select") as HTMLSelectElement;
+        selectElement.innerHTML = '';
 
         this.options
             .filter(opt => this.selectedValues.has(String(opt.value)))
@@ -455,10 +454,10 @@ class PlantaeFilterElement extends HTMLElement {
                 option.value = String(opt.value);
                 option.text = opt.text;
                 option.selected = true;
-                this.selectElement.appendChild(option);
+                selectElement.appendChild(option);
             });
 
-        this.selectElement.dispatchEvent(new Event("change"));
+        selectElement.dispatchEvent(new Event("change"));
     }
 
     protected applySelection(): void {
@@ -505,6 +504,16 @@ class PlantaeFilterElement extends HTMLElement {
         this.populateOptions(this.options);
     }
 
+    private updateOptions() {
+        this.searchWorker.postMessage({
+            type: 'update',
+            payload: { collection: this.options }
+        });
+
+        this.populateOptions(this.options);
+        this.syncSelectElement();
+    }
+
     // === PUBLIC API ===
 
     public addOption(option: OptionItem): void {
@@ -524,13 +533,7 @@ class PlantaeFilterElement extends HTMLElement {
             }
         });
 
-        this.searchWorker.postMessage({
-            type: 'update',
-            payload: { collection: this.options }
-        });
-
-        this.populateOptions(this.options);
-        this.syncSelectElement();
+        debounce(this.updateOptions.bind(this), 20);
     }
 
     public selectOptions(values: OptionValue[]): void {
@@ -554,13 +557,7 @@ class PlantaeFilterElement extends HTMLElement {
             this.pendingValues.delete(String(v));
         });
 
-        this.searchWorker.postMessage({
-            type: 'update',
-            payload: { collection: this.options }
-        });
-
-        this.populateOptions(this.options);
-        this.syncSelectElement();
+        this.updateOptions();
         this.updateFilter();
     }
 
@@ -569,13 +566,7 @@ class PlantaeFilterElement extends HTMLElement {
         this.selectedValues.clear();
         this.pendingValues.clear();
 
-        this.searchWorker.postMessage({
-            type: 'update',
-            payload: { collection: this.options }
-        });
-
-        this.populateOptions(this.options);
-        this.syncSelectElement();
+        this.updateOptions();
         this.updateFilter();
     }
 

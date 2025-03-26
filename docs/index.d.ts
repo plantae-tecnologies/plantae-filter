@@ -57,7 +57,6 @@ declare class PlantaeFilterElement extends HTMLElement {
     protected searchToken: number;
     protected searchWorker: Worker;
     protected loadingIndicator: HTMLElement;
-    protected selectElement: HTMLSelectElement;
     protected searchInput: HTMLInputElement;
     protected applyButton: HTMLElement;
     protected clearButton: HTMLElement;
@@ -99,6 +98,7 @@ declare class PlantaeFilterElement extends HTMLElement {
     protected toggleDropdown(): void;
     protected closeDropdown(): void;
     protected openDropdown(): void;
+    private updateOptions;
     addOption(option: OptionItem): void;
     addOptions(options: OptionItem[]): void;
     selectOptions(values: OptionValue[]): void;

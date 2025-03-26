@@ -322,7 +322,6 @@ class PlantaeFilterElement extends HTMLElement {
     __publicField(this, "searchToken", 0);
     __publicField(this, "searchWorker");
     __publicField(this, "loadingIndicator");
-    __publicField(this, "selectElement");
     __publicField(this, "searchInput");
     __publicField(this, "applyButton");
     __publicField(this, "clearButton");
@@ -397,9 +396,10 @@ class PlantaeFilterElement extends HTMLElement {
     }
   }
   async extractOptions() {
-    if (!this.selectElement) return;
+    const selectElement = this.querySelector("select");
+    if (!selectElement) return;
     const flatOptions = [];
-    const children = Array.from(this.selectElement.children);
+    const children = Array.from(selectElement.children);
     let batchCount = 0;
     for (const child of children) {
       if (child instanceof HTMLOptGroupElement) {
@@ -431,13 +431,12 @@ class PlantaeFilterElement extends HTMLElement {
       }
     }
     this.options = flatOptions;
-    this.selectElement.style.display = "none";
+    selectElement.style.display = "none";
   }
   loadTemplate() {
     const template = document.createElement("template");
     template.innerHTML = `<style>${styles}</style>${templateHtml}`;
     this.attachShadow({ mode: "open" }).append(template.content.cloneNode(true));
-    this.selectElement = this.querySelector("select");
     this.searchInput = this.shadowRoot.getElementById("searchInput");
     this.applyButton = this.shadowRoot.getElementById("applyButton");
     this.clearButton = this.shadowRoot.getElementById("clearButton");
@@ -671,15 +670,16 @@ class PlantaeFilterElement extends HTMLElement {
   }
   // === STATE + SELECTION ===
   syncSelectElement() {
-    this.selectElement.innerHTML = "";
+    const selectElement = this.querySelector("select");
+    selectElement.innerHTML = "";
     this.options.filter((opt) => this.selectedValues.has(String(opt.value))).forEach((opt) => {
       const option = document.createElement("option");
       option.value = String(opt.value);
       option.text = opt.text;
       option.selected = true;
-      this.selectElement.appendChild(option);
+      selectElement.appendChild(option);
     });
-    this.selectElement.dispatchEvent(new Event("change"));
+    selectElement.dispatchEvent(new Event("change"));
   }
   applySelection() {
     this.selectedValues = new Set(this.pendingValues);
@@ -718,6 +718,14 @@ class PlantaeFilterElement extends HTMLElement {
     this.pendingValues = new Set(this.selectedValues);
     this.populateOptions(this.options);
   }
+  updateOptions() {
+    this.searchWorker.postMessage({
+      type: "update",
+      payload: { collection: this.options }
+    });
+    this.populateOptions(this.options);
+    this.syncSelectElement();
+  }
   // === PUBLIC API ===
   addOption(option) {
     this.addOptions([option]);
@@ -734,12 +742,7 @@ class PlantaeFilterElement extends HTMLElement {
         });
       }
     });
-    this.searchWorker.postMessage({
-      type: "update",
-      payload: { collection: this.options }
-    });
-    this.populateOptions(this.options);
-    this.syncSelectElement();
+    debounce(this.updateOptions.bind(this), 20);
   }
   selectOptions(values) {
     values.forEach((v) => {
@@ -759,24 +762,14 @@ class PlantaeFilterElement extends HTMLElement {
       this.selectedValues.delete(String(v));
       this.pendingValues.delete(String(v));
     });
-    this.searchWorker.postMessage({
-      type: "update",
-      payload: { collection: this.options }
-    });
-    this.populateOptions(this.options);
-    this.syncSelectElement();
+    this.updateOptions();
     this.updateFilter();
   }
   removeAllOptions() {
     this.options = [];
     this.selectedValues.clear();
     this.pendingValues.clear();
-    this.searchWorker.postMessage({
-      type: "update",
-      payload: { collection: this.options }
-    });
-    this.populateOptions(this.options);
-    this.syncSelectElement();
+    this.updateOptions();
     this.updateFilter();
   }
   clearSelection() {
