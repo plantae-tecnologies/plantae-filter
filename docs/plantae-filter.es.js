@@ -509,7 +509,7 @@ class PlantaeFilterElement extends HTMLElement {
     const total = this.options.length;
     const count = this.selectedValues.size;
     const selectedTexts = this.options.filter((opt) => this.selectedValues.has(String(opt.value))).map((opt) => opt.text);
-    this.filterText.innerHTML = count ? `<span class='counter-filter'>${count}</span> <strong>${this.config.label}:</strong> ${count === total ? this.config.allText : selectedTexts.join(", ")}` : `<strong>${this.config.label}:</strong> ${this.config.emptyText}`;
+    this.filterText.innerHTML = count ? `<span part='counter-filter' class='counter-filter'>${count}</span> <strong>${this.config.label}:</strong> ${count === total ? this.config.allText : selectedTexts.join(", ")}` : `<strong>${this.config.label}:</strong> ${this.config.emptyText}`;
     this.clearButton.style.opacity = count ? "1" : "0.5";
     this.clearButton.style.pointerEvents = count ? "auto" : "none";
     this.filter.setAttribute("title", count ? selectedTexts.join(", ") : "");
