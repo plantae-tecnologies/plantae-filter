@@ -322,6 +322,7 @@ class PlantaeFilterElement extends HTMLElement {
     __publicField(this, "searchToken", 0);
     __publicField(this, "searchWorker");
     __publicField(this, "loadingIndicator");
+    __publicField(this, "selectElement");
     __publicField(this, "searchInput");
     __publicField(this, "applyButton");
     __publicField(this, "clearButton");
@@ -396,10 +397,9 @@ class PlantaeFilterElement extends HTMLElement {
     }
   }
   async extractOptions() {
-    const selectElement = this.querySelector("select");
-    if (!selectElement) return;
+    if (!this.selectElement) return;
     const flatOptions = [];
-    const children = Array.from(selectElement.children);
+    const children = Array.from(this.selectElement.children);
     let batchCount = 0;
     for (const child of children) {
       if (child instanceof HTMLOptGroupElement) {
@@ -431,12 +431,13 @@ class PlantaeFilterElement extends HTMLElement {
       }
     }
     this.options = flatOptions;
-    selectElement.style.display = "none";
+    this.selectElement.style.display = "none";
   }
   loadTemplate() {
     const template = document.createElement("template");
     template.innerHTML = `<style>${styles}</style>${templateHtml}`;
     this.attachShadow({ mode: "open" }).append(template.content.cloneNode(true));
+    this.selectElement = this.querySelector("select");
     this.searchInput = this.shadowRoot.getElementById("searchInput");
     this.applyButton = this.shadowRoot.getElementById("applyButton");
     this.clearButton = this.shadowRoot.getElementById("clearButton");
@@ -670,15 +671,15 @@ class PlantaeFilterElement extends HTMLElement {
   }
   // === STATE + SELECTION ===
   syncSelectElement() {
-    const selectElement = this.querySelector("select");
-    selectElement.innerHTML = "";
+    this.selectElement.innerHTML = "";
     this.options.filter((opt) => this.selectedValues.has(String(opt.value))).forEach((opt) => {
       const option = document.createElement("option");
       option.value = String(opt.value);
       option.text = opt.text;
       option.selected = true;
-      selectElement.appendChild(option);
+      this.selectElement.appendChild(option);
     });
+    this.selectElement.dispatchEvent(new Event("change"));
   }
   applySelection() {
     this.selectedValues = new Set(this.pendingValues);

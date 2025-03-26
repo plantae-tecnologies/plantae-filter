@@ -57,6 +57,7 @@ declare class PlantaeFilterElement extends HTMLElement {
     protected searchToken: number;
     protected searchWorker: Worker;
     protected loadingIndicator: HTMLElement;
+    protected selectElement: HTMLSelectElement;
     protected searchInput: HTMLInputElement;
     protected applyButton: HTMLElement;
     protected clearButton: HTMLElement;
