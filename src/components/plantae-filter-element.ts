@@ -4,6 +4,9 @@ import { debounce, mergeOverlapping, attributesToCamelCase } from '../helpers/ut
 import type { IFuseOptions, FuseResult, FuseResultMatch } from 'fuse.js';
 import Clusterize from 'clusterize.js';
 import type { ClusterizeOptions } from 'clusterize.js';
+import { SearchEngine } from './search-engine/search-engine.interface';
+import WorkerSearchEngine from './search-engine/worker-search-engine';
+import FuseSearchEngine from './search-engine/fuse-search-engine';
 
 type OptionValue = string | number;
 
@@ -25,7 +28,7 @@ class PlantaeFilterElement extends HTMLElement {
     protected searchToken = 0;
     private updateOptionsDebounced!: () => void;
 
-    protected searchWorker!: Worker;
+    private searchEngine!: SearchEngine;
     protected loadingIndicator!: HTMLElement;
 
     protected searchInput!: HTMLInputElement;
@@ -45,6 +48,7 @@ class PlantaeFilterElement extends HTMLElement {
         groupSelectedLabel: 'Selecionados',
         searchPlaceholder: 'Buscar..',
         searchDebounceDelay: 100,
+        searchEngineMode: 'fuse-worker',
         fuseOptions: {
             keys: ['text', 'value'],
             threshold: 0.3,
@@ -68,7 +72,7 @@ class PlantaeFilterElement extends HTMLElement {
         requestAnimationFrame(() => {
             this.extractOptions();
             this.attachEvents();
-            this.initFuseWorker();
+            this.initSearchEngine();
             this.initClusterize();
             this.populateOptions(this.options);
             this.syncSelectElement();
@@ -88,6 +92,7 @@ class PlantaeFilterElement extends HTMLElement {
         this.config.applyButtonText = componentAttributes.applyButtonText || this.config.applyButtonText;
         this.config.searchPlaceholder = componentAttributes.searchPlaceholder || this.config.searchPlaceholder;
         this.config.searchDebounceDelay = Number(componentAttributes.searchDebounceDelay) || this.config.searchDebounceDelay;
+        this.config.searchEngineMode = componentAttributes.searchEngineMode || this.config.searchEngineMode;
 
         const fuseAttr = componentAttributes.fuseOptions;
         if (fuseAttr) {
@@ -368,13 +373,7 @@ class PlantaeFilterElement extends HTMLElement {
         }
     
         this.loadingIndicator.style.visibility = "visible";
-        this.searchWorker.postMessage({
-            type: 'search',
-            payload: {
-                term: searchTerm,
-                token: this.searchToken
-            }
-        });
+        this.searchEngine.search(searchTerm, this.searchToken);
     }
 
     protected handleClickitem(event: Event): void {
@@ -386,54 +385,28 @@ class PlantaeFilterElement extends HTMLElement {
         }
     }
 
-    protected initFuseWorker(): void {
-        const workerCode = `
-            importScripts('https://unpkg.com/fuse.js/dist/fuse.js');
-            let fuse;
-
-            self.onmessage = function(e) {
-                const { type, payload } = e.data;
-
-                if (type === 'init') {
-                    fuse = new Fuse(payload.collection, payload.options);
-                    self.postMessage({ type: 'ready' });
-                }
-
-                if (type === 'update') {
-                    fuse.setCollection(payload.collection);
-                    self.postMessage({ type: 'updated' });
-                }
-
-                if (type === 'search') {
-                    const results = fuse.search(payload.term);
-                    self.postMessage({ type: 'results', results, token: payload.token });
-                }
-            }
-        `;
-
-        const blob = new Blob([workerCode], { type: "application/javascript" });
-        this.searchWorker = new Worker(URL.createObjectURL(blob));
-        
-        // initialize Fuse.js in other thread
-        this.searchWorker.postMessage({
-            type: 'init',
-            payload: {
-                collection: this.options,
-                options: this.config.fuseOptions
-            }
-        });
-    
-        this.searchWorker.onmessage = (e: MessageEvent) => {
-            // apply search results on dropdown
-            if (e.data.type === 'results') {
-                if (e.data.token !== this.searchToken)
-                    return;
-
-                this.populateOptions(e.data.results);
-                this.loadingIndicator.style.visibility = "hidden";
+    protected initSearchEngine(): void {
+        if (!this.searchEngine) {
+            switch (this.config.searchEngineMode) {
+                case 'fuse-worker':
+                    this.searchEngine = new WorkerSearchEngine(this.options, this.config.fuseOptions);
+                    break;
+                case 'fuse':
+                    this.searchEngine = new FuseSearchEngine(this.options, this.config.fuseOptions);
+                    break;
+                default:
+                    throw new Error(`Modo de mecanismo de busca desconhecido: ${this.config.searchEngineMode}`);
             }
         }
-    };
+
+        this.searchEngine.onResults = (results, token) => this.handleSearchResults(results, token);
+    }
+
+    private handleSearchResults(results: FuseResult<OptionItem>[] | OptionItem[], token: number): void {
+        if (token !== this.searchToken) return;
+        this.populateOptions(results);
+        this.loadingIndicator.style.visibility = "hidden";
+    }      
 
     protected initClusterize(): void {
         this.clusterize = new Clusterize({
@@ -508,10 +481,7 @@ class PlantaeFilterElement extends HTMLElement {
     }
 
     private updateOptions() {
-        this.searchWorker.postMessage({
-            type: 'update',
-            payload: { collection: this.options }
-        });
+        this.searchEngine.update(this.options);
 
         this.populateOptions(this.options);
         this.syncSelectElement();
@@ -603,6 +573,11 @@ class PlantaeFilterElement extends HTMLElement {
 
     public getAllOptions(): OptionItem[] {
         return [...this.options];
+    }
+
+    // Setter para injetar um mecanismo de busca customizado
+    public set customSearchEngine(engine: SearchEngine) {
+        this.searchEngine = engine;
     }
 }
 

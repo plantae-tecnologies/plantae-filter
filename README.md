@@ -100,6 +100,30 @@ filter.selectOptions(['grape']);
 
 ---
 
+## ⚠️ **Important Notice for Vite Users**
+
+If you are using **Vite** as a bundler in your project, and you are installing `@plantae-tech/plantae-filter` via NPM, you **MUST** configure your `vite.config.ts` to avoid issues with the embedded web worker.
+
+**Why?**
+
+This library uses `import.meta.url` + `?worker` to load a background thread (via **Web Worker**) for search operations. Vite’s **dependency optimizer** (`optimizeDeps`) might break the dynamic `new URL()` resolution during pre-bundling of `node_modules`, causing errors like:
+
+```
+The file does not exist at ".../node_modules/.vite/deps/assets/search-worker-xxxxx.js"
+```
+
+### Solution: Add this to your `vite.config.ts`
+
+```ts
+export default defineConfig({
+    optimizeDeps: {
+        exclude: ["@plantae-tech/plantae-filter"]
+    }
+});
+```
+
+---
+
 ## Data Attributes
 
 > Attributes must be informed in camelCase when informed by the class constructor.  
@@ -115,6 +139,7 @@ filter.selectOptions(['grape']);
 | `applyButtonText`                       | Label shown on the apply button            | `apply-button-text="Apply"`                                     | `data-pl-apply-button-text="Apply"`                            |
 | `searchPlaceholder`                     | Placeholder shown on the search input      | `search-placeholder="Search.."`                                 | `data-pl-search-placeholder="Search.."`                        |
 | `searchDebounceDelay`                   | Search engine response time                | `search-debounce-delay="100"`                                   | `data-pl-search-debounce-delay="100"`                          |
+| `searchEngineMode`                      | Search engine mode ('fuse' or 'fuse-worker') | `search-engine-mode="fuse-worker"`                            | `data-pl-search-engine-mode="fuse-worker"`                     |
 | `fuseOptions`                           | JSON string with Fuse.js custom options    | `fuse-options='{"threshold": 0.2, "distance": 100}'`            | `data-pl-fuse-options='{"threshold": 0.2}'`                    |
 | `clusterizeOptions`                     | JSON string with Clusterize.js options     | `clusterize-options='{"rows_in_block": 25}'`                    | `data-pl-clusterize-options='{"no_data_text": "No data"}'`     |
 

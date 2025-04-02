@@ -12,6 +12,7 @@ declare interface InstanceAttributes {
     applyButtonText?: string;
     searchPlaceholder?: string;
     searchDebounceDelay?: number;
+    searchEngineMode?: string;
     fuseOptions?: IFuseOptions<OptionItem>;
     clusterizeOptions?: Partial<ClusterizeOptions>;
     [key: string]: string | number | boolean | object | undefined;
@@ -56,7 +57,7 @@ declare class PlantaeFilterElement extends HTMLElement {
     protected cursorIndex: number;
     protected searchToken: number;
     private updateOptionsDebounced;
-    protected searchWorker: Worker;
+    private searchEngine;
     protected loadingIndicator: HTMLElement;
     protected searchInput: HTMLInputElement;
     protected applyButton: HTMLElement;
@@ -74,6 +75,7 @@ declare class PlantaeFilterElement extends HTMLElement {
         groupSelectedLabel: string;
         searchPlaceholder: string;
         searchDebounceDelay: number;
+        searchEngineMode: string;
         fuseOptions: IFuseOptions<OptionItem>;
         clusterizeOptions: Partial<ClusterizeOptions>;
     };
@@ -91,7 +93,8 @@ declare class PlantaeFilterElement extends HTMLElement {
     protected updateCursor(lis: HTMLElement[]): void;
     protected handleSearch(): void;
     protected handleClickitem(event: Event): void;
-    protected initFuseWorker(): void;
+    protected initSearchEngine(): void;
+    private handleSearchResults;
     protected initClusterize(): void;
     protected syncSelectElement(): void;
     protected applySelection(): void;
@@ -110,6 +113,13 @@ declare class PlantaeFilterElement extends HTMLElement {
     enableOptions(values: OptionValue[]): void;
     getSelected(): OptionItem[];
     getAllOptions(): OptionItem[];
+    set customSearchEngine(engine: SearchEngine);
+}
+
+declare interface SearchEngine {
+    search(term: string, token: number): void;
+    update(collection: OptionItem[]): void;
+    onResults?: (results: FuseResult<OptionItem>[] | OptionItem[], token: number) => void;
 }
 
 export { }
