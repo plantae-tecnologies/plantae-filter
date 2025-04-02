@@ -48,7 +48,7 @@ class PlantaeFilterElement extends HTMLElement {
         groupSelectedLabel: 'Selecionados',
         searchPlaceholder: 'Buscar..',
         searchDebounceDelay: 100,
-        searchEngineMode: 'fuse-worker',
+        searchEngineMode: 'fuse',
         fuseOptions: {
             keys: ['text', 'value'],
             threshold: 0.3,

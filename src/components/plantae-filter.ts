@@ -12,7 +12,7 @@ interface InstanceAttributes {
     applyButtonText?: string;
     searchPlaceholder?: string;
     searchDebounceDelay?: number;
-    searchEngineMode?: string;
+    searchEngineMode?: 'fuse' | 'fuse-worker';
     fuseOptions?: IFuseOptions<OptionItem>;
     clusterizeOptions?: Partial<ClusterizeOptions>;
     [key: string]: string | number | boolean | object | undefined;
