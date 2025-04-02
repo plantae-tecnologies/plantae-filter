@@ -115,15 +115,20 @@
         });
 
         document.getElementById('populate-bulk').addEventListener('click', () => {
-            const options = [];
-            for (let i = 1; i <= 500_000; i++) {
-                options.push({
+            // const options = [];
+            for (let i = 1; i <= 20_000; i++) {
+                filter.addOption({
                     value: i,
                     text: randomName(),
-                    // group: i <= 10 ? 'Group A' : 'Group B'
                 });
+
+                // options.push({
+                //     value: i,
+                //     text: randomName(),
+                //     // group: i <= 10 ? 'Group A' : 'Group B'
+                // });
             }
-            filter.addOptions(options);
+            // filter.addOptions(options);
         });
     </script>
 </body>

@@ -9,6 +9,8 @@ class ResizeObserver {
 }
 (window as any).ResizeObserver = ResizeObserver;
 
+globalThis.URL.createObjectURL = vi.fn(() => 'blob:http://localhost/fake-worker-url');
+
 // Mock do Worker
 vi.stubGlobal('Worker', class {
     onmessage: ((this: Worker, ev: MessageEvent) => any) | null = null;
