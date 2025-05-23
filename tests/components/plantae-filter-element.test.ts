@@ -124,6 +124,22 @@ describe('Public API', () => {
         expect(selected.map(s => s.value)).toContain('2');
     });
 
+    it('selectOptions selects multiple values even dynamic ones', () => {
+        // add dynamic options
+        wrapper.addOptions([
+            { value: '3', text: 'Orange' },
+            { value: '4', text: 'Grape' },
+        ]);
+
+        const expectedValues = ['1', '2', '3', '4'];
+        wrapper.selectOptions(expectedValues);
+
+        const selected = wrapper.getSelected().map(s => s.value);
+
+        expect(selected).toHaveLength(expectedValues.length);
+        expect(selected).toEqual(expect.arrayContaining(expectedValues));
+    });
+
     it('removeOptions removes specified values', () => {
         wrapper.removeOptions(['1']);
         const all = wrapper.getAllOptions();
