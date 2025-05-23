@@ -503,6 +503,7 @@ class PlantaeFilterElement extends HTMLElement {
                     group: option.group ?? null,
                     disabled: option.disabled ?? false
                 });
+                this.optionMap.set(option.value, option);
             }
         });
 
