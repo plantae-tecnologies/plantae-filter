@@ -568,7 +568,22 @@ class PlantaeFilterElement extends HTMLElement {
         this.populateOptions(this.options);
     }
 
-    public getSelected(): OptionItem[] {
+    public setValue(values: OptionValue[]): void {
+        this.selectedValues.clear();
+        values.forEach(v => {
+            const opt = this.optionMap.get(v);
+            if (opt && !opt.disabled) {
+                this.selectedValues.add(String(v));
+            }
+        });
+        this.pendingValues = new Set(this.selectedValues);
+        this.populateOptions(this.options);
+        this.syncSelectElement();
+        this.updateFilter();
+        this.dispatchEvent(new Event('change'));
+    }
+
+    public getValue(): OptionItem[] {
         return this.options.filter(opt => this.selectedValues.has(String(opt.value)));
     }
 

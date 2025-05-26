@@ -48,7 +48,7 @@ describe('Initialization', () => {
 
     it('should select options correctly', () => {
         wrapper.selectOptions(['1']);
-        const selected = wrapper.getSelected();
+        const selected = wrapper.getValue();
         expect(selected[0].value).toBe('1');
     });
 
@@ -118,10 +118,10 @@ describe('Public API', () => {
 
     it('selectOptions selects multiple values', () => {
         wrapper.selectOptions(['1', '2']);
-        const selected = wrapper.getSelected();
+        const selected = wrapper.getValue().map(s => s.value);
         expect(selected).toHaveLength(2);
-        expect(selected.map(s => s.value)).toContain('1');
-        expect(selected.map(s => s.value)).toContain('2');
+        expect(selected).toContain('1');
+        expect(selected).toContain('2');
     });
 
     it('selectOptions selects multiple values even dynamic ones', () => {
@@ -134,8 +134,7 @@ describe('Public API', () => {
         const expectedValues = ['1', '2', '3', '4'];
         wrapper.selectOptions(expectedValues);
 
-        const selected = wrapper.getSelected().map(s => s.value);
-
+        const selected = wrapper.getValue().map(s => s.value);
         expect(selected).toHaveLength(expectedValues.length);
         expect(selected).toEqual(expect.arrayContaining(expectedValues));
     });
@@ -155,7 +154,7 @@ describe('Public API', () => {
     it('clearSelection resets selected values', () => {
         wrapper.selectOptions(['1']);
         wrapper.clearSelection();
-        const selected = wrapper.getSelected();
+        const selected = wrapper.getValue();
         expect(selected).toHaveLength(0);
     });
 
