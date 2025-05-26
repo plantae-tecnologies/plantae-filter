@@ -1830,7 +1830,12 @@ class PlantaeFilterElement extends HTMLElement {
       const isSelected = this.pendingValues.has(valueStr);
       const isDisabled = item.disabled;
       const text = isSearching ? this.formatTextWithHighlight(item.text, matches) : item.text;
-      const classes = isSelected ? isDisabled ? "selected disabled" : "selected" : isDisabled ? "disabled" : "";
+      const classStack = [];
+      if (isSelected)
+        classStack.push("selected");
+      if (isDisabled)
+        classStack.push("disabled");
+      const classes = classStack.join(" ");
       const li = `<li part="dropdown-item${classes ? ` ${classes}` : classes}" class="${classes}" data-value="${valueStr}" ${isDisabled ? 'aria-disabled="true"' : ""}>${text}</li>`;
       if (isSelected) {
         selectedRows.push(li);
@@ -2014,13 +2019,15 @@ class PlantaeFilterElement extends HTMLElement {
   syncSelectElement() {
     const selectElement = this.querySelector("select");
     selectElement.innerHTML = "";
+    const fragment = document.createDocumentFragment();
     this.options.filter((opt) => this.selectedValues.has(String(opt.value))).forEach((opt) => {
       const option = document.createElement("option");
       option.value = String(opt.value);
       option.text = opt.text;
       option.selected = true;
-      selectElement.appendChild(option);
+      fragment.appendChild(option);
     });
+    selectElement.appendChild(fragment);
     selectElement.dispatchEvent(new Event("change"));
   }
   applySelection() {
@@ -2071,15 +2078,16 @@ class PlantaeFilterElement extends HTMLElement {
   }
   addOptions(options) {
     options.forEach((option) => {
-      const exists = this.optionMap.has(option.value);
+      const opt = {
+        value: option.value,
+        text: option.text,
+        group: option.group ?? null,
+        disabled: option.disabled ?? false
+      };
+      const exists = this.optionMap.has(opt.value);
       if (!exists) {
-        this.options.push({
-          value: option.value,
-          text: option.text,
-          group: option.group ?? null,
-          disabled: option.disabled ?? false
-        });
-        this.optionMap.set(option.value, option);
+        this.options.push(opt);
+        this.optionMap.set(opt.value, opt);
       }
     });
     this.updateOptionsDebounced();
@@ -2095,12 +2103,25 @@ class PlantaeFilterElement extends HTMLElement {
     this.populateOptions(this.options);
     this.syncSelectElement();
     this.updateFilter();
+    this.dispatchEvent(new Event("change"));
+  }
+  deselectOptions(values) {
+    values.forEach((v) => {
+      this.selectedValues.delete(String(v));
+      this.pendingValues.delete(String(v));
+    });
+    this.populateOptions(this.options);
+    this.syncSelectElement();
+    this.updateFilter();
+    this.dispatchEvent(new Event("change"));
   }
   removeOptions(values) {
     this.options = this.options.filter((opt) => !values.includes(opt.value));
     values.forEach((v) => {
-      this.selectedValues.delete(String(v));
-      this.pendingValues.delete(String(v));
+      const value = String(v);
+      this.selectedValues.delete(value);
+      this.pendingValues.delete(value);
+      this.optionMap.delete(value);
     });
     this.updateOptions();
     this.updateFilter();
@@ -2109,6 +2130,7 @@ class PlantaeFilterElement extends HTMLElement {
     this.options = [];
     this.selectedValues.clear();
     this.pendingValues.clear();
+    this.optionMap.clear();
     this.updateOptions();
     this.updateFilter();
   }
@@ -2208,6 +2230,9 @@ class PlantaeFilter {
   }
   selectOptions(values) {
     this.runOrQueue(() => this.component.selectOptions(values));
+  }
+  deselectOptions(values) {
+    this.runOrQueue(() => this.component.deselectOptions(values));
   }
   removeOptions(values) {
     this.runOrQueue(() => this.component.removeOptions(values));

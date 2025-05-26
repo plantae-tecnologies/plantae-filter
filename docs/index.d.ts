@@ -38,6 +38,7 @@ declare class PlantaeFilter {
     addOption(option: Parameters<PlantaeFilterElement['addOption']>[0]): void;
     addOptions(options: Parameters<PlantaeFilterElement['addOptions']>[0]): void;
     selectOptions(values: Parameters<PlantaeFilterElement['selectOptions']>[0]): void;
+    deselectOptions(values: Parameters<PlantaeFilterElement['deselectOptions']>[0]): void;
     removeOptions(values: Parameters<PlantaeFilterElement['removeOptions']>[0]): void;
     removeAllOptions(): void;
     clearSelection(): void;
@@ -107,6 +108,7 @@ declare class PlantaeFilterElement extends HTMLElement {
     addOption(option: OptionItem): void;
     addOptions(options: OptionItem[]): void;
     selectOptions(values: OptionValue[]): void;
+    deselectOptions(values: OptionValue[]): void;
     removeOptions(values: OptionValue[]): void;
     removeAllOptions(): void;
     clearSelection(): void;

@@ -147,14 +147,14 @@ describe('Public API', () => {
         ]);
 
         wrapper.selectOptions(['1', '2', '3']);
-        let selected = wrapper.getSelected().map(s => s.value);
+        let selected = wrapper.getValue().map(s => s.value);
         expect(selected).toHaveLength(3);
         expect(selected).toContain('1');
         expect(selected).toContain('2');
         expect(selected).toContain('3');
 
         wrapper.deselectOptions(['1', '2']);
-        selected = wrapper.getSelected().map(s => s.value);
+        selected = wrapper.getValue().map(s => s.value);
 
         expect(selected).toHaveLength(1);
         expect(selected).not.toContain('1');
@@ -192,5 +192,25 @@ describe('Public API', () => {
         wrapper.enableOptions(['1']);
         const opt = wrapper.getAllOptions().find(o => o.value === '1');
         expect(opt?.disabled).toBe(false);
+    });
+
+    it('allows dynamically adding, selecting, removing, re-adding and re-selecting', () => {
+        
+        wrapper.addOptions([{ value: 'dyn', text: 'Dynamic' }]);
+        wrapper.selectOptions(['dyn']);
+
+        let selected = wrapper.getValue().map(s => s.value);
+        expect(selected).toContain('dyn');
+
+        wrapper.removeOptions(['dyn']);
+
+        selected = wrapper.getValue().map(s => s.value);
+        expect(selected).not.toContain('dyn');
+
+        wrapper.addOptions([{ value: 'dyn', text: 'Dynamic' }]);
+        wrapper.selectOptions(['dyn']);
+
+        selected = wrapper.getValue().map(s => s.value);
+        expect(selected).toContain('dyn');
     });
 });

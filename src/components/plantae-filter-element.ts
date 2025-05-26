@@ -118,11 +118,11 @@ class PlantaeFilterElement extends HTMLElement {
     protected async extractOptions(): Promise<void> {
         const selectElement = this.querySelector("select");
         if (!selectElement) return;
-    
+
         const flatOptions: OptionItem[] = [];
         const children = Array.from(selectElement.children);
         let batchCount = 0;
-    
+
         for (const child of children) {
             if (child instanceof HTMLOptGroupElement) {
                 for (const option of Array.from(child.children)) {
@@ -147,13 +147,13 @@ class PlantaeFilterElement extends HTMLElement {
                 this.optionMap.set(opt.value, opt);
                 flatOptions.push(opt);
             }
-    
+
             batchCount++;
             if (batchCount % 200 === 0) {
                 await new Promise(requestAnimationFrame);
             }
         }
-    
+
         this.options = flatOptions;
         selectElement.style.display = "none";
     }
@@ -280,14 +280,14 @@ class PlantaeFilterElement extends HTMLElement {
         this.applyButton.addEventListener("click", () => this.applySelection());
         this.searchInput.addEventListener("input", debounce(this.handleSearch.bind(this), this.config.searchDebounceDelay));
         this.contentArea.addEventListener('click', this.handleClickitem.bind(this));
-        
+
         document.addEventListener("keydown", (e: KeyboardEvent) => this.handleKeyboardNavigation(e));
         document.addEventListener("click", (e) => this.handleOutsideClick(e));
     }
 
     protected toggleSelectOption(li: HTMLElement, value: string): void {
         li.classList.remove("focused");
-    
+
         li.classList.toggle("selected");
         if (li.classList.contains("selected")) {
             this.pendingValues.add(value);
@@ -336,7 +336,7 @@ class PlantaeFilterElement extends HTMLElement {
         if (activeEl && (activeEl.tagName === "BUTTON")) {
             return;
         }
-    
+
         if (event.key === "Enter") {
             event.preventDefault();
             const li = lis[this.cursorIndex];
@@ -352,11 +352,11 @@ class PlantaeFilterElement extends HTMLElement {
             li.classList.remove('focused');
             li.setAttribute('part', li.classList.contains('selected') ? 'dropdown-item selected' : 'dropdown-item');
         });
-    
+
         if (this.cursorIndex >= 0 && lis[this.cursorIndex]) {
             const targetLi = lis[this.cursorIndex];
             targetLi.classList.add('focused');
-    
+
             // Atualiza o part incluindo o estado "focused"
             let partValue = 'dropdown-item';
             if (targetLi.classList.contains('selected')) {
@@ -364,7 +364,7 @@ class PlantaeFilterElement extends HTMLElement {
             }
             partValue += ' focused';
             targetLi.setAttribute('part', partValue);
-    
+
             targetLi.scrollIntoView({ block: 'nearest' });
         }
     }
@@ -378,7 +378,7 @@ class PlantaeFilterElement extends HTMLElement {
             this.loadingIndicator.style.visibility = "hidden";
             return;
         }
-    
+
         this.loadingIndicator.style.visibility = "visible";
         this.searchEngine.search(searchTerm, this.searchToken);
     }
@@ -413,7 +413,7 @@ class PlantaeFilterElement extends HTMLElement {
         if (token !== this.searchToken) return;
         this.populateOptions(results);
         this.loadingIndicator.style.visibility = "hidden";
-    }      
+    }
 
     protected initClusterize(): void {
         this.clusterize = new Clusterize({
@@ -430,6 +430,8 @@ class PlantaeFilterElement extends HTMLElement {
         const selectElement = this.querySelector("select") as HTMLSelectElement;
         selectElement.innerHTML = '';
 
+        const fragment = document.createDocumentFragment();
+
         this.options
             .filter(opt => this.selectedValues.has(String(opt.value)))
             .forEach(opt => {
@@ -437,8 +439,10 @@ class PlantaeFilterElement extends HTMLElement {
                 option.value = String(opt.value);
                 option.text = opt.text;
                 option.selected = true;
-                selectElement.appendChild(option);
+                fragment.appendChild(option);
             });
+
+        selectElement.appendChild(fragment);
 
         selectElement.dispatchEvent(new Event("change"));
     }
@@ -502,15 +506,18 @@ class PlantaeFilterElement extends HTMLElement {
 
     public addOptions(options: OptionItem[]): void {
         options.forEach(option => {
-            const exists = this.optionMap.has(option.value);
+
+            const opt: OptionItem = {
+                value: option.value,
+                text: option.text,
+                group: option.group ?? null,
+                disabled: option.disabled ?? false
+            };
+
+            const exists = this.optionMap.has(opt.value);
             if (!exists) {
-                this.options.push({
-                    value: option.value,
-                    text: option.text,
-                    group: option.group ?? null,
-                    disabled: option.disabled ?? false
-                });
-                this.optionMap.set(option.value, option);
+                this.options.push(opt);
+                this.optionMap.set(opt.value, opt);
             }
         });
 
@@ -545,10 +552,12 @@ class PlantaeFilterElement extends HTMLElement {
 
     public removeOptions(values: OptionValue[]): void {
         this.options = this.options.filter(opt => !values.includes(opt.value));
-        
+
         values.forEach(v => {
-            this.selectedValues.delete(String(v));
-            this.pendingValues.delete(String(v));
+            const value = String(v);
+            this.selectedValues.delete(value);
+            this.pendingValues.delete(value);
+            this.optionMap.delete(value);
         });
 
         this.updateOptions();
@@ -559,6 +568,7 @@ class PlantaeFilterElement extends HTMLElement {
         this.options = [];
         this.selectedValues.clear();
         this.pendingValues.clear();
+        this.optionMap.clear();
 
         this.updateOptions();
         this.updateFilter();
