@@ -87,6 +87,10 @@ export class PlantaeFilter {
         this.runOrQueue(() => this.component.selectOptions(values));
     }
 
+    public deselectOptions(values: Parameters<PlantaeFilterElement['deselectOptions']>[0]): void {
+        this.runOrQueue(() => this.component.deselectOptions(values));
+    }
+
     public removeOptions(values: Parameters<PlantaeFilterElement['removeOptions']>[0]): void {
         this.runOrQueue(() => this.component.removeOptions(values));
     }

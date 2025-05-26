@@ -191,7 +191,14 @@ class PlantaeFilterElement extends HTMLElement {
 
             const text = isSearching ? this.formatTextWithHighlight(item.text, matches) : item.text;
 
-            const classes = isSelected ? (isDisabled ? "selected disabled" : "selected") : (isDisabled ? "disabled" : "");
+            const classStack = [];
+            if (isSelected)
+                classStack.push('selected');
+
+            if (isDisabled)
+                classStack.push('disabled');
+
+            const classes = classStack.join(' ');
 
             const li = `<li part="dropdown-item${classes ? ` ${classes}` : classes}" class="${classes}" data-value="${valueStr}" ${isDisabled ? 'aria-disabled="true"' : ''}>${text}</li>`;
 
@@ -521,6 +528,19 @@ class PlantaeFilterElement extends HTMLElement {
         this.populateOptions(this.options);
         this.syncSelectElement();
         this.updateFilter();
+        this.dispatchEvent(new Event("change"));
+    }
+
+    public deselectOptions(values: OptionValue[]): void {
+        values.forEach(v => {
+            this.selectedValues.delete(String(v));
+            this.pendingValues.delete(String(v));
+        });
+
+        this.populateOptions(this.options);
+        this.syncSelectElement();
+        this.updateFilter();
+        this.dispatchEvent(new Event("change"));
     }
 
     public removeOptions(values: OptionValue[]): void {
