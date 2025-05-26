@@ -107,8 +107,12 @@ export class PlantaeFilter {
         this.runOrQueue(() => this.component.enableOptions(values));
     }
 
-    public getSelected(): ReturnType<PlantaeFilterElement['getSelected']> {
-        return this.component.getSelected();
+    public setValue(values: Parameters<PlantaeFilterElement['setValue']>[0]): void {
+        this.runOrQueue(() => this.component.setValue(values));
+    }
+
+    public getValue(): ReturnType<PlantaeFilterElement['getValue']> {
+        return this.component.getValue();
     }
 
     public getAllOptions(): ReturnType<PlantaeFilterElement['getAllOptions']> {

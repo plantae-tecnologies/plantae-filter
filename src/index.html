@@ -87,6 +87,8 @@
         });
         const output = document.getElementById('output');
 
+        console.log(filter);
+
         const randomName = () => {
             const list1 = ['Silly', 'Funky', 'Wacky', 'Lazy', 'Happy', 'Grumpy', 'Weird', 'Tiny', 'Big', 'Chubby', 'Sneaky', 'Jumpy', 'Fluffy', 'Crispy', 'Dizzy', 'Nerdy', 'Goofy', 'Spooky', 'Cheesy', 'Zany'];
             const list2 = ['Blue', 'Green', 'Yellow', 'Orange', 'Purple', 'Silver', 'Golden', 'Pink', 'Cyan', 'Magenta', 'Brown', 'Black', 'White', 'Red', 'Turquoise', 'Beige', 'Violet', 'Amber', 'Lime', 'Gray'];
@@ -98,7 +100,7 @@
         };
 
         document.getElementById('get-selected').addEventListener('click', () => {
-            const selected = filter.getSelected();
+            const selected = filter.getValue();
             output.textContent = JSON.stringify(selected, null, 2);
         });
 

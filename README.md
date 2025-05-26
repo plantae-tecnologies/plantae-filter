@@ -147,18 +147,20 @@ export default defineConfig({
 
 ## Public API
 
-| Method                   | Description                     |
-| ------------------------ | ------------------------------- |
-| `addOption(option)`      | Add a single option             |
-| `addOptions(options)`    | Add multiple options            |
-| `selectOptions(values)`  | Select multiple values by value |
-| `removeOptions(values)`  | Remove options by value         |
-| `removeAllOptions()`     | Remove all options              |
-| `clearSelection()`       | Deselect all selected options   |
-| `disableOptions(values)` | Disable options by value        |
-| `enableOptions(values)`  | Enable options by value         |
-| `getSelected()`          | Get all selected options        |
-| `getAllOptions()`        | Get all available options       |
+| Method                     | Description                                 |
+|----------------------------|---------------------------------------------|
+| `addOption(option)`        | Add a single option                         |
+| `addOptions(options)`      | Add multiple options                        |
+| `clearSelection()`         | Deselect all selected options               |
+| `deselectOptions(values)`  | Deselect specific values                    |
+| `disableOptions(values)`   | Disable options by value                    |
+| `enableOptions(values)`    | Enable options by value                     |
+| `getAllOptions()`          | Get all available options                   |
+| `getValue()`               | Get all selected options                    |
+| `removeAllOptions()`       | Remove all options                          |
+| `removeOptions(values)`    | Remove options by value                     |
+| `selectOptions(values)`    | Select multiple values by value             |
+| `setValue(values)`         | Replace all selected options with new values|
 
 ---
 
