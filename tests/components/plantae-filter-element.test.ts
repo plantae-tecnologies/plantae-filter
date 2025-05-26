@@ -90,9 +90,9 @@ describe('Public API', () => {
 
         select = document.createElement('select');
         select.innerHTML = `
-        <option value="1">Apple</option>
-        <option value="2">Banana</option>
-      `;
+            <option value="1">Apple</option>
+            <option value="2">Banana</option>
+        `;
 
         wrapper = document.createElement('plantae-filter') as PlantaeFilterElement;
         wrapper.appendChild(select);
@@ -137,6 +137,29 @@ describe('Public API', () => {
         const selected = wrapper.getValue().map(s => s.value);
         expect(selected).toHaveLength(expectedValues.length);
         expect(selected).toEqual(expect.arrayContaining(expectedValues));
+    });
+
+    it('deselectOptions deselects multiple values even dynamic ones', () => {
+
+        wrapper.addOptions([
+            { value: '3', text: 'Orange' },
+            { value: '4', text: 'Grape' },
+        ]);
+
+        wrapper.selectOptions(['1', '2', '3']);
+        let selected = wrapper.getSelected().map(s => s.value);
+        expect(selected).toHaveLength(3);
+        expect(selected).toContain('1');
+        expect(selected).toContain('2');
+        expect(selected).toContain('3');
+
+        wrapper.deselectOptions(['1', '2']);
+        selected = wrapper.getSelected().map(s => s.value);
+
+        expect(selected).toHaveLength(1);
+        expect(selected).not.toContain('1');
+        expect(selected).not.toContain('2');
+        expect(selected).toContain('3');
     });
 
     it('removeOptions removes specified values', () => {
