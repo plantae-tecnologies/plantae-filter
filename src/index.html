@@ -65,6 +65,15 @@
                 <button class="btn-action" id="clear-all">Remove All</button>
             </div>
             <div class="action-group">
+                <button class="btn-action" id="disable-donut">Disable 'Big Donut'</button>
+                <button class="btn-action" id="enable-donut">Enable 'Big Donut'</button>
+            </div>
+            <div class="action-group">
+                <button class="btn-action" id="select-donut">Select 'Big Donut'</button>
+                <button class="btn-action" id="deselect-donut">Deselect 'Big Donut'</button>
+                <button class="btn-action" id="set-only-donut">Set Only 'Big Donut'</button>
+            </div>
+            <div class="action-group">
                 <button class="btn-action" id="get-selected">Get Selected</button>
             </div>
         </div>
@@ -116,21 +125,36 @@
             filter.removeAllOptions();
         });
 
+        document.getElementById('disable-donut').addEventListener('click', () => {
+            filter.disableOptions(['donut']);
+        });
+
+        document.getElementById('enable-donut').addEventListener('click', () => {
+            filter.enableOptions(['donut']);
+        });
+
+        document.getElementById('select-donut').addEventListener('click', () => {
+            filter.selectOptions(['donut']);
+        });
+
+        document.getElementById('deselect-donut').addEventListener('click', () => {
+            filter.deselectOptions(['donut']);
+        });
+
+        document.getElementById('set-only-donut').addEventListener('click', () => {
+            filter.setValue(['donut']);
+        });
+
         document.getElementById('populate-bulk').addEventListener('click', () => {
-            // const options = [];
-            for (let i = 1; i <= 20_000; i++) {
-                filter.addOption({
+            const options = [];
+            for (let i = 1; i <= 500_000; i++) {
+                options.push({
                     value: i,
                     text: randomName(),
+                    group: i <= 250 ? 'Group A' : 'Group B'
                 });
-
-                // options.push({
-                //     value: i,
-                //     text: randomName(),
-                //     // group: i <= 10 ? 'Group A' : 'Group B'
-                // });
             }
-            // filter.addOptions(options);
+            filter.addOptions(options);
         });
     </script>
 </body>
