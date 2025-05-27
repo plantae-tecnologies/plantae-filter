@@ -128,7 +128,7 @@ class PlantaeFilterElement extends HTMLElement {
                 for (const option of Array.from(child.children)) {
                     if (option instanceof HTMLOptionElement) {
                         const opt: OptionItem = {
-                            value: option.value,
+                            value: String(option.value),
                             text: option.text,
                             group: child.label,
                             disabled: option.disabled
@@ -139,7 +139,7 @@ class PlantaeFilterElement extends HTMLElement {
                 }
             } else if (child instanceof HTMLOptionElement) {
                 const opt: OptionItem = {
-                    value: child.value,
+                    value: String(child.value),
                     text: child.text,
                     group: null,
                     disabled: child.disabled
@@ -258,9 +258,8 @@ class PlantaeFilterElement extends HTMLElement {
         const total = this.options.length;
         const count = this.selectedValues.size;
 
-        const selectedTexts = this.options
-            .filter(opt => this.selectedValues.has(String(opt.value)))
-            .map(opt => opt.text);
+        const selectedTexts = [...this.selectedValues]
+            .map(v => this.optionMap.get(v)!.text);
 
         this.filterText.innerHTML = count
             ? `<span part='counter-filter' class='counter-filter'>${count}</span> <strong>${this.config.label}:</strong> ${count === total ? this.config.allText : selectedTexts.join(", ")}`
@@ -286,10 +285,10 @@ class PlantaeFilterElement extends HTMLElement {
     }
 
     protected toggleSelectOption(li: HTMLElement, value: string): void {
-        li.classList.remove("focused");
+        li.classList.remove('focused');
 
-        li.classList.toggle("selected");
-        if (li.classList.contains("selected")) {
+        li.classList.toggle('selected');
+        if (li.classList.contains('selected')) {
             this.pendingValues.add(value);
             li.setAttribute('part', 'dropdown-item selected');
         } else {
@@ -430,20 +429,21 @@ class PlantaeFilterElement extends HTMLElement {
         const selectElement = this.querySelector("select") as HTMLSelectElement;
         selectElement.innerHTML = '';
 
-        const fragment = document.createDocumentFragment();
+        const optionStack = [...this.selectedValues]
+            .reduce((fragment, v) => {
 
-        this.options
-            .filter(opt => this.selectedValues.has(String(opt.value)))
-            .forEach(opt => {
+                const opt = this.optionMap.get(v)!;
                 const option = document.createElement('option');
                 option.value = String(opt.value);
                 option.text = opt.text;
                 option.selected = true;
+
                 fragment.appendChild(option);
-            });
+                return fragment;
 
-        selectElement.appendChild(fragment);
+            }, document.createDocumentFragment());
 
+        selectElement.appendChild(optionStack);
         selectElement.dispatchEvent(new Event("change"));
     }
 
@@ -508,7 +508,7 @@ class PlantaeFilterElement extends HTMLElement {
         options.forEach(option => {
 
             const opt: OptionItem = {
-                value: option.value,
+                value: String(option.value),
                 text: option.text,
                 group: option.group ?? null,
                 disabled: option.disabled ?? false
@@ -526,9 +526,10 @@ class PlantaeFilterElement extends HTMLElement {
 
     public selectOptions(values: OptionValue[]): void {
         values.forEach(v => {
+            const value = String(v);
             const opt = this.optionMap.get(v);
-            if (opt && !opt.disabled && !this.selectedValues.has(String(v))) {
-                this.selectedValues.add(String(v));
+            if (opt && !opt.disabled && !this.selectedValues.has(value)) {
+                this.selectedValues.add(value);
             }
         });
         this.pendingValues = new Set(this.selectedValues);
@@ -540,8 +541,9 @@ class PlantaeFilterElement extends HTMLElement {
 
     public deselectOptions(values: OptionValue[]): void {
         values.forEach(v => {
-            this.selectedValues.delete(String(v));
-            this.pendingValues.delete(String(v));
+            const value = String(v);
+            this.selectedValues.delete(value);
+            this.pendingValues.delete(value);
         });
 
         this.populateOptions(this.options);
@@ -580,7 +582,8 @@ class PlantaeFilterElement extends HTMLElement {
 
     public disableOptions(values: OptionValue[]): void {
         values.forEach(v => {
-            const opt = this.optionMap.get(v);
+            const value = String(v);
+            const opt = this.optionMap.get(value);
             if (opt) {
                 opt.disabled = true;
             }
@@ -590,7 +593,8 @@ class PlantaeFilterElement extends HTMLElement {
 
     public enableOptions(values: OptionValue[]): void {
         values.forEach(v => {
-            const opt = this.optionMap.get(v);
+            const value = String(v);
+            const opt = this.optionMap.get(value);
             if (opt) {
                 opt.disabled = false;
             }
@@ -601,9 +605,10 @@ class PlantaeFilterElement extends HTMLElement {
     public setValue(values: OptionValue[]): void {
         this.selectedValues.clear();
         values.forEach(v => {
-            const opt = this.optionMap.get(v);
+            const value = String(v);
+            const opt = this.optionMap.get(value);
             if (opt && !opt.disabled) {
-                this.selectedValues.add(String(v));
+                this.selectedValues.add(value);
             }
         });
         this.pendingValues = new Set(this.selectedValues);
@@ -613,8 +618,12 @@ class PlantaeFilterElement extends HTMLElement {
         this.dispatchEvent(new Event('change'));
     }
 
-    public getValue(): OptionItem[] {
-        return this.options.filter(opt => this.selectedValues.has(String(opt.value)));
+    public getValue(): string[] {
+        return [...this.selectedValues];
+    }
+
+    public getSelected(): OptionItem[] {
+        return [...this.selectedValues].map(v => this.optionMap.get(v)!);
     }
 
     public getAllOptions(): OptionItem[] {

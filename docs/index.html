@@ -83,8 +83,8 @@
             </div>
             <div class="action-group">
                 <button class="btn-action" id="get-selected">Get Selected</button>
+                <button class="btn-action" id="get-value">Get Value</button>
             </div>
-        </div>
 
         <h3>Result</h3>
         <pre id="output">Click "Get Selected" to view here.</pre>
@@ -115,8 +115,13 @@
         };
 
         document.getElementById('get-selected').addEventListener('click', () => {
-            const selected = filter.getValue();
+            const selected = filter.getSelected();
             output.textContent = JSON.stringify(selected, null, 2);
+        });
+
+        document.getElementById('get-value').addEventListener('click', () => {
+            const values = filter.getValue();
+            output.textContent = JSON.stringify(values, null, 2);
         });
 
         document.getElementById('add-option').addEventListener('click', () => {

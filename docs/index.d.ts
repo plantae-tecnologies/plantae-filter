@@ -46,6 +46,7 @@ declare class PlantaeFilter {
     enableOptions(values: string[]): void;
     setValue(values: Parameters<PlantaeFilterElement['setValue']>[0]): void;
     getValue(): ReturnType<PlantaeFilterElement['getValue']>;
+    getSelected(): ReturnType<PlantaeFilterElement['getSelected']>;
     getAllOptions(): ReturnType<PlantaeFilterElement['getAllOptions']>;
 }
 export default PlantaeFilter;
@@ -115,7 +116,8 @@ declare class PlantaeFilterElement extends HTMLElement {
     disableOptions(values: OptionValue[]): void;
     enableOptions(values: OptionValue[]): void;
     setValue(values: OptionValue[]): void;
-    getValue(): OptionItem[];
+    getValue(): string[];
+    getSelected(): OptionItem[];
     getAllOptions(): OptionItem[];
     set customSearchEngine(engine: SearchEngine);
 }

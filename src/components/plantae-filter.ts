@@ -119,6 +119,10 @@ export class PlantaeFilter {
         return this.component.getValue();
     }
 
+    public getSelected(): ReturnType<PlantaeFilterElement['getSelected']> {
+        return this.component.getSelected();
+    }
+
     public getAllOptions(): ReturnType<PlantaeFilterElement['getAllOptions']> {
         return this.component.getAllOptions();
     }
