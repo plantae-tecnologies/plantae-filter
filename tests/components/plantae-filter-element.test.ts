@@ -49,7 +49,7 @@ describe('Initialization', () => {
     it('should select options correctly', () => {
         wrapper.selectOptions(['1']);
         const selected = wrapper.getValue();
-        expect(selected[0].value).toBe('1');
+        expect(selected).toContain('1');
     });
 
     it('opens dropdown when clicked', async () => {
@@ -118,7 +118,7 @@ describe('Public API', () => {
 
     it('selectOptions selects multiple values', () => {
         wrapper.selectOptions(['1', '2']);
-        const selected = wrapper.getValue().map(s => s.value);
+        const selected = wrapper.getValue();
         expect(selected).toHaveLength(2);
         expect(selected).toContain('1');
         expect(selected).toContain('2');
@@ -134,7 +134,7 @@ describe('Public API', () => {
         const expectedValues = ['1', '2', '3', '4'];
         wrapper.selectOptions(expectedValues);
 
-        const selected = wrapper.getValue().map(s => s.value);
+        const selected = wrapper.getValue();
         expect(selected).toHaveLength(expectedValues.length);
         expect(selected).toEqual(expect.arrayContaining(expectedValues));
     });
@@ -147,14 +147,14 @@ describe('Public API', () => {
         ]);
 
         wrapper.selectOptions(['1', '2', '3']);
-        let selected = wrapper.getValue().map(s => s.value);
+        let selected = wrapper.getValue();
         expect(selected).toHaveLength(3);
         expect(selected).toContain('1');
         expect(selected).toContain('2');
         expect(selected).toContain('3');
 
         wrapper.deselectOptions(['1', '2']);
-        selected = wrapper.getValue().map(s => s.value);
+        selected = wrapper.getValue();
 
         expect(selected).toHaveLength(1);
         expect(selected).not.toContain('1');
@@ -177,7 +177,7 @@ describe('Public API', () => {
     it('clearSelection resets selected values', () => {
         wrapper.selectOptions(['1']);
         wrapper.clearSelection();
-        const selected = wrapper.getValue();
+        const selected = wrapper.getSelected();
         expect(selected).toHaveLength(0);
     });
 
@@ -199,18 +199,18 @@ describe('Public API', () => {
         wrapper.addOptions([{ value: 'dyn', text: 'Dynamic' }]);
         wrapper.selectOptions(['dyn']);
 
-        let selected = wrapper.getValue().map(s => s.value);
+        let selected = wrapper.getValue();
         expect(selected).toContain('dyn');
 
         wrapper.removeOptions(['dyn']);
 
-        selected = wrapper.getValue().map(s => s.value);
+        selected = wrapper.getValue();
         expect(selected).not.toContain('dyn');
 
         wrapper.addOptions([{ value: 'dyn', text: 'Dynamic' }]);
         wrapper.selectOptions(['dyn']);
 
-        selected = wrapper.getValue().map(s => s.value);
+        selected = wrapper.getValue();
         expect(selected).toContain('dyn');
     });
 });

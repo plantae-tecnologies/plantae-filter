@@ -106,7 +106,7 @@
         };
 
         document.getElementById('get-selected').addEventListener('click', () => {
-            const selected = filter.getValue();
+            const selected = filter.getSelected();
             output.textContent = JSON.stringify(selected, null, 2);
         });
 

@@ -1776,7 +1776,7 @@ class PlantaeFilterElement extends HTMLElement {
         for (const option of Array.from(child.children)) {
           if (option instanceof HTMLOptionElement) {
             const opt = {
-              value: option.value,
+              value: String(option.value),
               text: option.text,
               group: child.label,
               disabled: option.disabled
@@ -1787,7 +1787,7 @@ class PlantaeFilterElement extends HTMLElement {
         }
       } else if (child instanceof HTMLOptionElement) {
         const opt = {
-          value: child.value,
+          value: String(child.value),
           text: child.text,
           group: null,
           disabled: child.disabled
@@ -2079,7 +2079,7 @@ class PlantaeFilterElement extends HTMLElement {
   addOptions(options) {
     options.forEach((option) => {
       const opt = {
-        value: option.value,
+        value: String(option.value),
         text: option.text,
         group: option.group ?? null,
         disabled: option.disabled ?? false
@@ -2094,9 +2094,10 @@ class PlantaeFilterElement extends HTMLElement {
   }
   selectOptions(values) {
     values.forEach((v) => {
+      const value = String(v);
       const opt = this.optionMap.get(v);
-      if (opt && !opt.disabled && !this.selectedValues.has(String(v))) {
-        this.selectedValues.add(String(v));
+      if (opt && !opt.disabled && !this.selectedValues.has(value)) {
+        this.selectedValues.add(value);
       }
     });
     this.pendingValues = new Set(this.selectedValues);
@@ -2107,8 +2108,9 @@ class PlantaeFilterElement extends HTMLElement {
   }
   deselectOptions(values) {
     values.forEach((v) => {
-      this.selectedValues.delete(String(v));
-      this.pendingValues.delete(String(v));
+      const value = String(v);
+      this.selectedValues.delete(value);
+      this.pendingValues.delete(value);
     });
     this.populateOptions(this.options);
     this.syncSelectElement();
@@ -2139,7 +2141,8 @@ class PlantaeFilterElement extends HTMLElement {
   }
   disableOptions(values) {
     values.forEach((v) => {
-      const opt = this.optionMap.get(v);
+      const value = String(v);
+      const opt = this.optionMap.get(value);
       if (opt) {
         opt.disabled = true;
       }
@@ -2148,7 +2151,8 @@ class PlantaeFilterElement extends HTMLElement {
   }
   enableOptions(values) {
     values.forEach((v) => {
-      const opt = this.optionMap.get(v);
+      const value = String(v);
+      const opt = this.optionMap.get(value);
       if (opt) {
         opt.disabled = false;
       }
@@ -2158,9 +2162,10 @@ class PlantaeFilterElement extends HTMLElement {
   setValue(values) {
     this.selectedValues.clear();
     values.forEach((v) => {
-      const opt = this.optionMap.get(v);
+      const value = String(v);
+      const opt = this.optionMap.get(value);
       if (opt && !opt.disabled) {
-        this.selectedValues.add(String(v));
+        this.selectedValues.add(value);
       }
     });
     this.pendingValues = new Set(this.selectedValues);
@@ -2170,7 +2175,10 @@ class PlantaeFilterElement extends HTMLElement {
     this.dispatchEvent(new Event("change"));
   }
   getValue() {
-    return this.options.filter((opt) => this.selectedValues.has(String(opt.value)));
+    return [...this.selectedValues];
+  }
+  getSelected() {
+    return [...this.selectedValues].map((v) => this.optionMap.get(v));
   }
   getAllOptions() {
     return [...this.options];
@@ -2254,6 +2262,9 @@ class PlantaeFilter {
   }
   getValue() {
     return this.component.getValue();
+  }
+  getSelected() {
+    return this.component.getSelected();
   }
   getAllOptions() {
     return this.component.getAllOptions();

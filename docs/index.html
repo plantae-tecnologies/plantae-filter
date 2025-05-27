@@ -65,21 +65,12 @@
 
         <div class="div-actions">
             <div class="action-group">
-                <button class="btn-action" id="populate-bulk">Populate 500.000 Items</button>
+                <button class="btn-action" id="populate-bulk">Populate 500 Items</button>
             </div>
             <div class="action-group">
                 <button class="btn-action" id="add-option">Add 'Big Donut'</button>
                 <button class="btn-action" id="remove-option">Remove 'Big Donut'</button>
                 <button class="btn-action" id="clear-all">Remove All</button>
-            </div>
-            <div class="action-group">
-                <button class="btn-action" id="disable-donut">Disable 'Big Donut'</button>
-                <button class="btn-action" id="enable-donut">Enable 'Big Donut'</button>
-            </div>
-            <div class="action-group">
-                <button class="btn-action" id="select-donut">Select 'Big Donut'</button>
-                <button class="btn-action" id="deselect-donut">Deselect 'Big Donut'</button>
-                <button class="btn-action" id="set-only-donut">Set Only 'Big Donut'</button>
             </div>
             <div class="action-group">
                 <button class="btn-action" id="get-selected">Get Selected</button>
@@ -115,7 +106,7 @@
         };
 
         document.getElementById('get-selected').addEventListener('click', () => {
-            const selected = filter.getValue();
+            const selected = filter.getSelected();
             output.textContent = JSON.stringify(selected, null, 2);
         });
 
@@ -131,29 +122,9 @@
             filter.removeAllOptions();
         });
 
-        document.getElementById('disable-donut').addEventListener('click', () => {
-            filter.disableOptions(['donut']);
-        });
-
-        document.getElementById('enable-donut').addEventListener('click', () => {
-            filter.enableOptions(['donut']);
-        });
-
-        document.getElementById('select-donut').addEventListener('click', () => {
-            filter.selectOptions(['donut']);
-        });
-
-        document.getElementById('deselect-donut').addEventListener('click', () => {
-            filter.deselectOptions(['donut']);
-        });
-
-        document.getElementById('set-only-donut').addEventListener('click', () => {
-            filter.setValue(['donut']);
-        });
-
         document.getElementById('populate-bulk').addEventListener('click', () => {
             const options = [];
-            for (let i = 1; i <= 500_000; i++) {
+            for (let i = 1; i <= 500; i++) {
                 options.push({
                     value: i,
                     text: randomName(),
