@@ -258,9 +258,8 @@ class PlantaeFilterElement extends HTMLElement {
         const total = this.options.length;
         const count = this.selectedValues.size;
 
-        const selectedTexts = this.options
-            .filter(opt => this.selectedValues.has(String(opt.value)))
-            .map(opt => opt.text);
+        const selectedTexts = [...this.selectedValues]
+            .map(v => this.optionMap.get(v)!.text);
 
         this.filterText.innerHTML = count
             ? `<span part='counter-filter' class='counter-filter'>${count}</span> <strong>${this.config.label}:</strong> ${count === total ? this.config.allText : selectedTexts.join(", ")}`
@@ -430,20 +429,21 @@ class PlantaeFilterElement extends HTMLElement {
         const selectElement = this.querySelector("select") as HTMLSelectElement;
         selectElement.innerHTML = '';
 
-        const fragment = document.createDocumentFragment();
+        const optionStack = [...this.selectedValues]
+            .reduce((fragment, v) => {
 
-        this.options
-            .filter(opt => this.selectedValues.has(String(opt.value)))
-            .forEach(opt => {
+                const opt = this.optionMap.get(v)!;
                 const option = document.createElement('option');
                 option.value = String(opt.value);
                 option.text = opt.text;
                 option.selected = true;
+
                 fragment.appendChild(option);
-            });
+                return fragment;
 
-        selectElement.appendChild(fragment);
+            }, document.createDocumentFragment());
 
+        selectElement.appendChild(optionStack);
         selectElement.dispatchEvent(new Event("change"));
     }
 
