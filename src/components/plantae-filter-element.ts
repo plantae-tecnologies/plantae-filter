@@ -623,7 +623,7 @@ class PlantaeFilterElement extends HTMLElement {
     }
 
     public getSelected(): OptionItem[] {
-        return [...this.selectedValues].map(v => this.optionMap.get(v)!);;
+        return [...this.selectedValues].map(v => this.optionMap.get(v)!);
     }
 
     public getAllOptions(): OptionItem[] {
