@@ -19,7 +19,8 @@ interface InstanceAttributes {
 }
 
 export class PlantaeFilter {
-    private component: PlantaeFilterElement;
+    public component: PlantaeFilterElement;
+    public select: HTMLSelectElement;
     private isReady = false;
     private queue: (() => void)[] = [];
 
@@ -42,6 +43,10 @@ export class PlantaeFilter {
         wrapper.appendChild(select);
 
         this.component = wrapper;
+        this.select = select;
+
+        (this.component as any).plantaeFilter = this;
+        (this.select as any).plantaeFilter = this;
 
         // Seta a flag quando o custom element terminar de carregar
         wrapper.addEventListener('plantae-filter-ready', () => {
