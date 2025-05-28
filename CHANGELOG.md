@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.30](https://github.com/plantae-tecnologies/plantae-filter/compare/v0.0.30...v0.0.30) (2025-05-28)
+
+
+### Bug Fixes
+
+* revert version number to 0.0.30 in package.json ([fd8575f](https://github.com/plantae-tecnologies/plantae-filter/commit/fd8575fadaadba3dd753a059b475e518e245a71f))
+
 ## 1.0.0 (2025-05-28)
 
 
