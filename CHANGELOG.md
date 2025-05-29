@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.4](https://github.com/plantae-tecnologies/plantae-filter/compare/v0.1.3...v0.1.4) (2025-05-29)
+
+
+### Bug Fixes
+
+* trigger release ([ac55cd0](https://github.com/plantae-tecnologies/plantae-filter/commit/ac55cd014a3e2f57447f401636cf24751e767c81))
+* trigger release ([93e1c50](https://github.com/plantae-tecnologies/plantae-filter/commit/93e1c50ccb56a7f80da1a726d0d128adeb1e61d8))
+
 ## [0.1.3](https://github.com/plantae-tecnologies/plantae-filter/compare/v0.1.2...v0.1.3) (2025-05-29)
 
 
