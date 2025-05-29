@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.3](https://github.com/plantae-tecnologies/plantae-filter/compare/v0.1.2...v0.1.3) (2025-05-29)
+
+
+### Bug Fixes
+
+* update type import for plantaeFilter in HTMLElement interface ([9b917b2](https://github.com/plantae-tecnologies/plantae-filter/commit/9b917b2eacbfd65abb56543e7a4c9a814a109a84))
+
 ## [0.1.2](https://github.com/plantae-tecnologies/plantae-filter/compare/v0.1.1...v0.1.2) (2025-05-29)
 
 
