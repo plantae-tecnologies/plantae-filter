@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.0](https://github.com/plantae-tecnologies/plantae-filter/compare/v0.0.30...v0.1.0) (2025-05-29)
+
+
+### Features
+
+* add CI and release workflows for automated testing and publishing ([f9cad4a](https://github.com/plantae-tecnologies/plantae-filter/commit/f9cad4aaf24d1a0721193c71a4ab3a19e8905bf7))
+* add release-please configuration for versioning strategy ([1267e92](https://github.com/plantae-tecnologies/plantae-filter/commit/1267e9274e2f779d87b4a6d897f1dbfc17022c2f))
+
 ## [0.0.30](https://github.com/plantae-tecnologies/plantae-filter/compare/v0.0.30...v0.0.30) (2025-05-28)
 
 
