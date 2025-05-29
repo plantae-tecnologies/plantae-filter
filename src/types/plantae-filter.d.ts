@@ -1,5 +1,7 @@
+import type { PlantaeFilter } from '../components/plantae-filter';
+
 declare global {
     interface HTMLElement {
-        plantaeFilter?: import('../components/plantae-filter').PlantaeFilter;
+        plantaeFilter?: PlantaeFilter;
     }
 }
