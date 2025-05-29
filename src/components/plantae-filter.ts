@@ -45,8 +45,8 @@ export class PlantaeFilter {
         this.component = wrapper;
         this.select = select;
 
-        (this.component as any).plantaeFilter = this;
-        (this.select as any).plantaeFilter = this;
+        this.component.plantaeFilter = this;
+        this.select.plantaeFilter = this;
 
         // Seta a flag quando o custom element terminar de carregar
         wrapper.addEventListener('plantae-filter-ready', () => {
