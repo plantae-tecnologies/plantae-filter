@@ -1,5 +1,35 @@
 # Changelog
 
+## [0.1.3](https://github.com/plantae-tecnologies/plantae-filter/compare/v0.0.30...v0.1.3) (2025-05-29)
+
+
+### Features
+
+* add CI and release workflows for automated testing and publishing ([f9cad4a](https://github.com/plantae-tecnologies/plantae-filter/commit/f9cad4aaf24d1a0721193c71a4ab3a19e8905bf7))
+* add release-please configuration for versioning strategy ([1267e92](https://github.com/plantae-tecnologies/plantae-filter/commit/1267e9274e2f779d87b4a6d897f1dbfc17022c2f))
+
+
+### Bug Fixes
+
+* global type ([644e193](https://github.com/plantae-tecnologies/plantae-filter/commit/644e19313fcf64e145ad20aa0f72825bf9c14225))
+* revert version number to 0.1.2 in package.json ([c6d7411](https://github.com/plantae-tecnologies/plantae-filter/commit/c6d741154993f91700a70b2894ab2e79c7abd0e8))
+* simplify type import for plantaeFilter in HTMLElement interface ([7a16ea3](https://github.com/plantae-tecnologies/plantae-filter/commit/7a16ea39cbc5badc8b0275654ad701bff9cef091))
+* trigger release ([2d313b7](https://github.com/plantae-tecnologies/plantae-filter/commit/2d313b7bcca53e7ec4cb457da230184ea66bf6ea))
+* trigger release ([ac55cd0](https://github.com/plantae-tecnologies/plantae-filter/commit/ac55cd014a3e2f57447f401636cf24751e767c81))
+* trigger release ([93e1c50](https://github.com/plantae-tecnologies/plantae-filter/commit/93e1c50ccb56a7f80da1a726d0d128adeb1e61d8))
+* trigger release ([580f008](https://github.com/plantae-tecnologies/plantae-filter/commit/580f008066c032dc2b029c2f433e4d1f9db491cd))
+* trigger release process ([2b6a177](https://github.com/plantae-tecnologies/plantae-filter/commit/2b6a17720181387209e7b170db20d95cf8d55a39))
+* trigger release-please release-as: 0.0.31 ([b3c4a9b](https://github.com/plantae-tecnologies/plantae-filter/commit/b3c4a9b1fda1ca764db58746cce0d51115bd876a))
+* update plantaeFilter property assignment and add type declaration for HTMLElement ([6e4f028](https://github.com/plantae-tecnologies/plantae-filter/commit/6e4f02892fcfa36f9616b4b7772b4492b7b16736))
+* update type import for plantaeFilter in HTMLElement interface ([3333d1f](https://github.com/plantae-tecnologies/plantae-filter/commit/3333d1f8fba45d1613654dfa81adf71dfb97e79e))
+* update type import for plantaeFilter in HTMLElement interface ([9b917b2](https://github.com/plantae-tecnologies/plantae-filter/commit/9b917b2eacbfd65abb56543e7a4c9a814a109a84))
+* update version to 0.1.2 ([aff60b1](https://github.com/plantae-tecnologies/plantae-filter/commit/aff60b1630027c9fc22dc79e03f172d4844dae81))
+
+
+### Miscellaneous Chores
+
+* update version to 0.1.2 ([938829a](https://github.com/plantae-tecnologies/plantae-filter/commit/938829a341350886da60017ca4e50243478edf2a))
+
 ## [0.0.30](https://github.com/plantae-tecnologies/plantae-filter/compare/v0.1.4...v0.0.30) (2025-05-29)
 
 
