@@ -1,6 +1,9 @@
 name: Publish to NPM
 
 on:
+  release:
+    types: [published]
+
   repository_dispatch:
     types: [trigger-publish]
 
