@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/plantae-tecnologies/plantae-filter/compare/v0.1.6...v0.2.0) (2025-05-30)
+
+
+### Features
+
+* enhance PlantaeFilter with custom rendering and data attributes support ([f5bee6b](https://github.com/plantae-tecnologies/plantae-filter/commit/f5bee6bb28de9586b1bc19d1c2c79e9fc550ffa8))
+
 ## [0.1.6](https://github.com/plantae-tecnologies/plantae-filter/compare/v0.1.5...v0.1.6) (2025-05-30)
 
 
