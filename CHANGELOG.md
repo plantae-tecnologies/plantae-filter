@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.6](https://github.com/plantae-tecnologies/plantae-filter/compare/v0.1.5...v0.1.6) (2025-05-30)
+
+
+### Bug Fixes
+
+* trigger workflow ([a3c65ac](https://github.com/plantae-tecnologies/plantae-filter/commit/a3c65ac942e752e5de7db3d930dafa242ca4fd43))
+
 ## [0.1.5](https://github.com/plantae-tecnologies/plantae-filter/compare/v0.1.4...v0.1.5) (2025-05-30)
 
 
