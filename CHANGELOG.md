@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.5](https://github.com/plantae-tecnologies/plantae-filter/compare/v0.1.4...v0.1.5) (2025-05-30)
+
+
+### Bug Fixes
+
+* add global type definition for PlantaeFilter on HTMLElement ([9130b13](https://github.com/plantae-tecnologies/plantae-filter/commit/9130b1364f4c42ce94b32243d795f806f2b51d5f))
+
 ## [0.1.4](https://github.com/plantae-tecnologies/plantae-filter/compare/v0.1.3...v0.1.4) (2025-05-29)
 
 
