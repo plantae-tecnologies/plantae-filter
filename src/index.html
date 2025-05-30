@@ -58,6 +58,7 @@
         <div class="div-actions">
             <div class="action-group">
                 <button class="btn-action" id="populate-bulk">Populate 500.000 Items</button>
+                <button class="btn-action" id="populate-bulk-data">Populate 500.000 Items With Custom Render</button>
             </div>
             <div class="action-group">
                 <button class="btn-action" id="add-option">Add 'Big Donut'</button>
@@ -93,7 +94,16 @@
             groupSelectedLabel: "Selected",
             applyButtonText: "Apply",
             searchPlaceholder: "Find..",
-            searchDebounceDelay: 300
+            searchDebounceDelay: 300,
+            fuseOptions: {
+                keys: ['value', 'text', 'data.description']
+            },
+            render: (item) => {
+                return `
+                    ${item.text}<br/>
+                    <small>${item.data?.description ?? ''}</small>
+                `;
+            }
         });
         const output = document.getElementById('output');
 
@@ -106,6 +116,28 @@
             const part1 = list1[Math.floor(Math.random() * list1.length)];
             const part2 = list2[Math.floor(Math.random() * list2.length)];
             const part3 = list3[Math.floor(Math.random() * list3.length)];
+            return `${part1} ${part2} ${part3}`;
+        };
+
+        const randomDescription = () => {
+            const actions = [
+                'Dances with', 'Eats', 'Codes like', 'Sleeps beside', 'Dreams of', 'Escapes from',
+                'Draws', 'Invents', 'Debugs', 'Paints', 'Searches for', 'Fights', 'Builds', 'Breaks'
+            ];
+            const moods = [
+                'angry', 'sleepy', 'confused', 'inspired', 'hungry', 'curious', 'hyperactive',
+                'paranoid', 'sarcastic', 'bored', 'focused', 'clueless', 'zen', 'furious'
+            ];
+            const subjects = [
+                'toasters', 'code monkeys', 'lasers', 'sandwiches', 'bugs', 'dragons',
+                'clouds', 'servers', 'AI bots', 'dinosaurs', 'coffee cups', 'pixels',
+                'goblins', 'ducks', 'firewalls', 'spaceships'
+            ];
+
+            const part1 = actions[Math.floor(Math.random() * actions.length)];
+            const part2 = moods[Math.floor(Math.random() * moods.length)];
+            const part3 = subjects[Math.floor(Math.random() * subjects.length)];
+
             return `${part1} ${part2} ${part3}`;
         };
 
@@ -158,6 +190,21 @@
                     value: i,
                     text: randomName(),
                     group: i <= 250 ? 'Group A' : 'Group B'
+                });
+            }
+            filter.addOptions(options);
+        });
+
+        document.getElementById('populate-bulk-data').addEventListener('click', () => {
+            const options = [];
+            for (let i = 1; i <= 500_000; i++) {
+                options.push({
+                    value: i,
+                    text: randomName(),
+                    group: i <= 250 ? 'Group A' : 'Group B',
+                    data: {
+                        description: randomDescription()
+                    }
                 });
             }
             filter.addOptions(options);

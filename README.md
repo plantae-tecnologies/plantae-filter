@@ -213,6 +213,71 @@ plantae-filter::part(highlight) {
 
 Feel free to adapt styles to match your design system.
 
+## Advanced Features
+
+### Custom `render` Function (Option HTML override)
+
+You can pass a custom `render` function via the class constructor to control how each option is rendered inside the dropdown.
+
+This function receives an object containing the full `OptionItem`, including:
+- `text` (with applied `<mark>` highlights)
+- `value`
+- `group`
+- `disabled`
+- `selected`
+- `data` (custom metadata from `data-*` attributes)
+
+#### Example:
+
+```ts
+new PlantaeFilter(selectElement, {
+  render: ({ text, value, selected, data }) => {
+    return `
+        <div><strong>${text}</strong></div>
+        <small>${data?.description ?? 'no description'}</small>
+    `;
+  }
+});
+```
+
+The `text` field will already contain search highlights (wrapped in `<mark part="highlight">`), so you don’t need to reapply them manually.
+
+---
+
+### Option `data` object (metadata from `data-*`)
+
+You can add `data-*` attributes to your `<option>` elements. All of them will be automatically extracted and available inside the `data` property of each option.
+
+#### Example:
+
+```html
+<option value="1" data-code="A1" data-description="Imported item">Apple</option>
+```
+
+In the `render` function or API, you'll get:
+
+```ts
+{
+  value: "1",
+  text: "Apple",
+  data: {
+    code: "A1",
+    description: "Imported item"
+  }
+}
+```
+
+You can also include those fields in the search by configuring `fuseOptions.keys`:
+
+```ts
+new PlantaeFilter(select, {
+  fuseOptions: {
+    keys: ['text', 'value', 'data.description', 'data.code'],
+    includeMatches: true
+  }
+});
+```
+
 ---
 
 ## Browser Support

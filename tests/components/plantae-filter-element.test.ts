@@ -11,12 +11,13 @@ describe('Initialization', () => {
 
     beforeEach(() => {
         vi.unmock('clusterize.js'); // para este teste, use a implementação real
+        vi.unmock('fuse.js'); // para este teste, use a implementação real
     });
 
     it('should instantiate and emit ready event', async () => {
         const select = document.createElement('select');
         select.innerHTML = `
-            <option value="1">Apple</option>
+            <option value="1" data-teste-custom="123">Apple</option>
             <option value="2">Banana</option>
             <option value="3">Orange</option>
         `;
@@ -78,6 +79,72 @@ describe('Initialization', () => {
         expect(options[1]).toHaveTextContent('Banana');
         expect(options[2]).toHaveTextContent('Orange');
     });
+
+    it('should load data-* attributes into item.data', () => {
+        const opt = wrapper.getAllOptions().find(o => o.value === '1');
+        expect(opt?.data).toBeDefined();
+        expect(opt?.data?.testeCustom).toBe('123');
+    });
+
+    it('should apply custom render and highlight', async () => {
+        const select = document.createElement('select');
+        select.innerHTML = `
+            <option value="1" data-extra="hello">Pineapple</option>
+            <option value="2">Papaya</option>
+        `;
+
+        const wrapper = document.createElement('plantae-filter') as PlantaeFilterElement;
+        (wrapper as any)._customRenderFn = (item: { value: any; text: any; data: { extra: any; }; }) => {
+            return `<li data-value="${item.value}"><strong>${item.text}</strong><em>${item.data?.extra ?? ''}</em></li>`;
+        };
+
+        wrapper.appendChild(select);
+        document.body.appendChild(wrapper);
+        await new Promise(resolve => requestAnimationFrame(resolve));
+
+        const filter = wrapper.shadowRoot!.querySelector('#filter')!;
+        filter.dispatchEvent(new Event('click', { bubbles: true }));
+
+        const input = wrapper.shadowRoot!.querySelector('#searchInput')! as HTMLInputElement;
+        input.value = 'pine';
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+
+        await new Promise(resolve => setTimeout(resolve, 200)); // debounce delay
+
+        const highlighted = wrapper.shadowRoot!.querySelector('mark');
+        expect(highlighted).toBeInTheDocument();
+        expect(highlighted!.textContent?.toLowerCase()).toContain('pine');
+    });
+
+
+    it('should find matches in data fields when configured', async () => {
+        const select = document.createElement('select');
+        select.innerHTML = `
+            <option value="1" data-code="xyz123">Banana</option>
+            <option value="2">Apple</option>
+        `;
+
+        const wrapper = document.createElement('plantae-filter') as PlantaeFilterElement;
+        wrapper.setAttribute('fuse-options', JSON.stringify({ keys: ['data.code'] }));
+
+        wrapper.appendChild(select);
+        document.body.appendChild(wrapper);
+        await new Promise(resolve => requestAnimationFrame(resolve));
+
+        const filter = wrapper.shadowRoot!.querySelector('#filter')!;
+        filter.dispatchEvent(new Event('click', { bubbles: true }));
+
+        const input = wrapper.shadowRoot!.querySelector('#searchInput')! as HTMLInputElement;
+        input.value = 'xyz';
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+
+        await new Promise(resolve => setTimeout(resolve, 200)); // debounce
+
+        const visibleOptions = wrapper.shadowRoot!.querySelectorAll('[data-value]');
+        expect(visibleOptions.length).toBe(1);
+        expect(visibleOptions[0].getAttribute('data-value')).toBe('1');
+    });
+
 });
 
 

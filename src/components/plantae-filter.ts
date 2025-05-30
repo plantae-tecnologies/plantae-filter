@@ -1,6 +1,6 @@
 import PlantaeFilterElement from './plantae-filter-element';
 import { camelToKebab } from '../helpers/utils';
-import type { OptionItem } from './plantae-filter-element';
+import type { OptionItem, OptionItemRender } from './plantae-filter-element';
 import type { IFuseOptions } from 'fuse.js';
 import type { ClusterizeOptions } from 'clusterize.js';
 
@@ -16,6 +16,7 @@ interface InstanceAttributes {
     fuseOptions?: IFuseOptions<OptionItem>;
     clusterizeOptions?: Partial<ClusterizeOptions>;
     [key: string]: string | number | boolean | object | undefined;
+    render?: (item: OptionItemRender) => string;
 }
 
 export class PlantaeFilter {
@@ -30,6 +31,10 @@ export class PlantaeFilter {
         // Pega atributos `data-pl-*` direto do <select>
         const datasetAttributes = this.getDatasetAttributes(select, 'data-pl-');
         const mergedAttributes = { ...datasetAttributes, ...attributes };
+
+        if (typeof attributes.render === 'function') {
+            (wrapper as any)._customRenderFn = attributes.render;
+        }
 
         // Aplica no custom element
         Object.entries(mergedAttributes).forEach(([key, value]) => {
