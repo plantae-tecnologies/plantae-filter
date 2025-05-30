@@ -1,7 +1,6 @@
 import { ClusterizeOptions } from 'clusterize.js';
 import { default as default_2 } from 'clusterize.js';
 import { FuseResult } from 'fuse.js';
-import { FuseResultMatch } from 'fuse.js';
 import { IFuseOptions } from 'fuse.js';
 
 declare interface InstanceAttributes {
@@ -16,6 +15,7 @@ declare interface InstanceAttributes {
     fuseOptions?: IFuseOptions<OptionItem>;
     clusterizeOptions?: Partial<ClusterizeOptions>;
     [key: string]: string | number | boolean | object | undefined;
+    render?: (item: OptionItemRender) => string;
 }
 
 declare interface OptionItem {
@@ -23,12 +23,18 @@ declare interface OptionItem {
     text: string;
     group?: string | null;
     disabled?: boolean;
+    data?: Record<string, any>;
 }
+
+declare type OptionItemRender = OptionItem & {
+    selected?: boolean;
+};
 
 declare type OptionValue = string | number;
 
 declare class PlantaeFilter {
-    private component;
+    component: PlantaeFilterElement;
+    select: HTMLSelectElement;
     private isReady;
     private queue;
     constructor(select: HTMLSelectElement, attributes?: InstanceAttributes);
@@ -60,6 +66,7 @@ declare class PlantaeFilterElement extends HTMLElement {
     protected cursorIndex: number;
     protected searchToken: number;
     private updateOptionsDebounced;
+    protected customRenderFn?: (item: OptionItemRender) => string;
     private searchEngine;
     protected loadingIndicator: HTMLElement;
     protected searchInput: HTMLInputElement;
@@ -85,9 +92,11 @@ declare class PlantaeFilterElement extends HTMLElement {
     connectedCallback(): void;
     protected loadConfig(): void;
     protected extractOptions(): Promise<void>;
+    protected extractOptionItem(element: HTMLOptionElement, groupElement?: HTMLOptGroupElement): OptionItem;
     protected loadTemplate(): void;
     protected populateOptions(optionsToRender: OptionItem[] | Array<FuseResult<OptionItem>>): Promise<void>;
-    protected formatTextWithHighlight(text: string, matches?: readonly FuseResultMatch[]): string;
+    private applyHighlightAllFields;
+    protected defaultRender(item: OptionItemRender, content?: string): string;
     protected updateFilter(): void;
     protected attachEvents(): void;
     protected toggleSelectOption(li: HTMLElement, value: string): void;

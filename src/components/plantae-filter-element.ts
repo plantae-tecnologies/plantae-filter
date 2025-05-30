@@ -15,6 +15,11 @@ interface OptionItem {
     text: string;
     group?: string | null;
     disabled?: boolean;
+    data?: Record<string, any>;
+}
+
+type OptionItemRender = OptionItem & {
+    selected?: boolean;
 }
 
 class PlantaeFilterElement extends HTMLElement {
@@ -27,6 +32,8 @@ class PlantaeFilterElement extends HTMLElement {
     protected cursorIndex: number = -1;
     protected searchToken = 0;
     private updateOptionsDebounced!: () => void;
+
+    protected customRenderFn?: (item: OptionItemRender) => string;
 
     private searchEngine!: SearchEngine;
     protected loadingIndicator!: HTMLElement;
@@ -65,6 +72,8 @@ class PlantaeFilterElement extends HTMLElement {
     };
 
     connectedCallback(): void {
+        this.customRenderFn = (this as any)._customRenderFn;
+
         this.updateOptionsDebounced = debounce(() => this.updateOptions(), 20);
 
         this.loadConfig();
@@ -127,23 +136,13 @@ class PlantaeFilterElement extends HTMLElement {
             if (child instanceof HTMLOptGroupElement) {
                 for (const option of Array.from(child.children)) {
                     if (option instanceof HTMLOptionElement) {
-                        const opt: OptionItem = {
-                            value: String(option.value),
-                            text: option.text,
-                            group: child.label,
-                            disabled: option.disabled
-                        };
+                        const opt = this.extractOptionItem(option, child);
                         this.optionMap.set(opt.value, opt);
                         flatOptions.push(opt);
                     }
                 }
             } else if (child instanceof HTMLOptionElement) {
-                const opt: OptionItem = {
-                    value: String(child.value),
-                    text: child.text,
-                    group: null,
-                    disabled: child.disabled
-                };
+                const opt = this.extractOptionItem(child);
                 this.optionMap.set(opt.value, opt);
                 flatOptions.push(opt);
             }
@@ -156,6 +155,24 @@ class PlantaeFilterElement extends HTMLElement {
 
         this.options = flatOptions;
         selectElement.style.display = "none";
+    }
+
+    protected extractOptionItem(element: HTMLOptionElement, groupElement?: HTMLOptGroupElement): OptionItem {
+        const dataAttrs = Array.from(element.attributes)
+            .filter(attr => attr.name.startsWith('data-') && !attr.name.startsWith('data-pl-'))
+            .reduce((acc, attr) => {
+                const key = attr.name.replace(/^data-/, '').replace(/-([a-z])/g, (_, c) => c.toUpperCase());
+                acc[key] = attr.value;
+                return acc;
+            }, {} as Record<string, any>);
+            
+        return {
+            value: String(element.value),
+            text: element.text,
+            group: groupElement instanceof HTMLOptGroupElement ? groupElement.label : null,
+            disabled: element.disabled,
+            data: dataAttrs
+        } as OptionItem;
     }
 
     protected loadTemplate(): void {
@@ -186,23 +203,15 @@ class PlantaeFilterElement extends HTMLElement {
         for (const opt of optionsToRender) {
             const { item, matches } = 'item' in opt ? { item: opt.item, matches: opt.matches } : { item: opt, matches: undefined };
             const valueStr = String(item.value);
-            const isSelected = this.pendingValues.has(valueStr);
-            const isDisabled = item.disabled;
 
-            const text = isSearching ? this.formatTextWithHighlight(item.text, matches) : item.text;
+            const highlightedItem: OptionItemRender = isSearching ? this.applyHighlightAllFields(item, matches) : item;
+            highlightedItem.selected = this.pendingValues.has(valueStr);
 
-            const classStack = [];
-            if (isSelected)
-                classStack.push('selected');
+            const li = this.customRenderFn
+                ? this.defaultRender(highlightedItem, this.customRenderFn(highlightedItem))
+                : this.defaultRender(highlightedItem);
 
-            if (isDisabled)
-                classStack.push('disabled');
-
-            const classes = classStack.join(' ');
-
-            const li = `<li part="dropdown-item${classes ? ` ${classes}` : classes}" class="${classes}" data-value="${valueStr}" ${isDisabled ? 'aria-disabled="true"' : ''}>${text}</li>`;
-
-            if (isSelected) {
+            if (highlightedItem.selected) {
                 selectedRows.push(li);
             } else {
                 const groupKey = item.group || null;
@@ -234,24 +243,53 @@ class PlantaeFilterElement extends HTMLElement {
         this.clusterize.update(rows);
     }
 
-    protected formatTextWithHighlight(text: string, matches?: readonly FuseResultMatch[]): string {
-        if (!matches || matches.length === 0) return text;
+    private applyHighlightAllFields(item: OptionItem, matches?: readonly FuseResultMatch[]): OptionItem {
+        if (!matches?.length) return item;
 
-        const match = matches.find(m => m.key === "text");
-        if (!match) return text;
+        const clone: OptionItem = {
+            ...item,
+            data: { ...item.data }
+        };
 
-        const mergedIndices = mergeOverlapping(match.indices);
-        let highlighted = "";
-        let lastIndex = 0;
+        for (const match of matches) {
+            const path = match!.key!.split('.');
+            let target: any = clone;
 
-        mergedIndices.forEach(([start, end]) => {
-            highlighted += text.slice(lastIndex, start);
-            highlighted += `<mark part="highlight">${text.slice(start, end + 1)}</mark>`;
-            lastIndex = end + 1;
-        });
+            for (let i = 0; i < path.length - 1; i++) {
+                target = target?.[path[i]];
+            }
 
-        highlighted += text.slice(lastIndex);
-        return highlighted;
+            const finalKey = path[path.length - 1];
+            const original = target?.[finalKey];
+
+            if (typeof original === 'string') {
+                const indices = mergeOverlapping(match.indices);
+                let result = '';
+                let lastIndex = 0;
+
+                for (const [start, end] of indices) {
+                    result += original.slice(lastIndex, start);
+                    result += `<mark part="highlight">${original.slice(start, end + 1)}</mark>`;
+                    lastIndex = end + 1;
+                }
+
+                result += original.slice(lastIndex);
+                target[finalKey] = result;
+            }
+        }
+
+        return clone;
+    }
+
+    protected defaultRender(item: OptionItemRender, content?: string): string {
+        const classStack = [];
+        if (item.selected) classStack.push('selected');
+        if (item.disabled) classStack.push('disabled');
+        const classes = classStack.join(' ');
+
+        content = content ?? item.text;
+
+        return `<li part="dropdown-item${classes ? ` ${classes}` : ''}" class="${classes}" data-value="${item.value}" ${item.disabled ? 'aria-disabled="true"' : ''}>${content}</li>`;
     }
 
     protected updateFilter(): void {
@@ -384,8 +422,9 @@ class PlantaeFilterElement extends HTMLElement {
 
     protected handleClickitem(event: Event): void {
         const target = event.target as HTMLElement;
-        if (target.tagName.toLowerCase() === 'li' && !target.classList.contains('optgroup')) {
-            const li = target as HTMLElement;
+        const li = target.closest('li');
+
+        if (li && !li.classList.contains('optgroup')) {
             const value = li.dataset.value!;
             this.toggleSelectOption(li, value);
         }
@@ -511,7 +550,8 @@ class PlantaeFilterElement extends HTMLElement {
                 value: String(option.value),
                 text: option.text,
                 group: option.group ?? null,
-                disabled: option.disabled ?? false
+                disabled: option.disabled ?? false,
+                data: option.data
             };
 
             const exists = this.optionMap.has(opt.value);
@@ -636,5 +676,5 @@ class PlantaeFilterElement extends HTMLElement {
     }
 }
 
-export type { OptionItem };
+export type { OptionItem, OptionItemRender };
 export default PlantaeFilterElement;
