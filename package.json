@@ -1,6 +1,7 @@
 {
     "name": "@plantae-tech/plantae-filter",
     "version": "0.2.1",
+    "description": "Customizable and performant dropdown component with search, multi-select, and virtual scrolling for native <select> elements.",
     "type": "module",
     "sideEffects": false,
     "main": "dist/plantae-filter.umd.js",
