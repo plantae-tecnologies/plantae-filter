@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.2](https://github.com/plantae-tecnologies/plantae-filter/compare/v0.2.1...v0.2.2) (2025-06-04)
+
+
+### Bug Fixes
+
+* update description for plantae-filter package ([93dfeb8](https://github.com/plantae-tecnologies/plantae-filter/commit/93dfeb806dd737c892ed9be1cf2bb13322208893))
+
 ## [0.2.1](https://github.com/plantae-tecnologies/plantae-filter/compare/v0.2.0...v0.2.1) (2025-06-04)
 
 
