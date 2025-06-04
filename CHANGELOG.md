@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/plantae-tecnologies/plantae-filter/compare/v0.2.0...v0.2.1) (2025-06-04)
+
+
+### Bug Fixes
+
+* corrige o tipo da licença adicionada ([cf43ec8](https://github.com/plantae-tecnologies/plantae-filter/commit/cf43ec8a28c75cca71d165ce43b101f52f297ba8))
+
 ## [0.2.0](https://github.com/plantae-tecnologies/plantae-filter/compare/v0.1.6...v0.2.0) (2025-05-30)
 
 
