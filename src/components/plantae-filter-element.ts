@@ -165,7 +165,7 @@ class PlantaeFilterElement extends HTMLElement {
                 acc[key] = attr.value;
                 return acc;
             }, {} as Record<string, any>);
-            
+
         return {
             value: String(element.value),
             text: element.text,
@@ -483,7 +483,7 @@ class PlantaeFilterElement extends HTMLElement {
             }, document.createDocumentFragment());
 
         selectElement.appendChild(optionStack);
-        selectElement.dispatchEvent(new Event("change"));
+        selectElement.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
     }
 
     protected applySelection(): void {
