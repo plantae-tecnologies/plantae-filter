@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.3](https://github.com/plantae-tecnologies/plantae-filter/compare/v0.2.2...v0.2.3) (2025-07-14)
+
+
+### Bug Fixes
+
+* enhance event dispatch for select element change ([6c86330](https://github.com/plantae-tecnologies/plantae-filter/commit/6c863302eb32d74e6aecffd8269c06e193b29b5d))
+
 ## [0.2.2](https://github.com/plantae-tecnologies/plantae-filter/compare/v0.2.1...v0.2.2) (2025-06-04)
 
 
