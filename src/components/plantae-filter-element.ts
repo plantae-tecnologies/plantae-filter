@@ -7,6 +7,8 @@ import type { ClusterizeOptions } from 'clusterize.js';
 import { SearchEngine } from './search-engine/search-engine.interface';
 import WorkerSearchEngine from './search-engine/worker-search-engine';
 import FuseSearchEngine from './search-engine/fuse-search-engine';
+import { RemoteDataSource } from './data-source/remote-data-source';
+import type { DataSourceConfig } from '../types/data-source';
 
 type OptionValue = string | number;
 
@@ -35,6 +37,7 @@ class PlantaeFilterElement extends HTMLElement {
 
     protected customRenderFn?: (item: OptionItemRender) => string;
 
+    private remoteDataSource?: RemoteDataSource;
     private searchEngine!: SearchEngine;
     protected loadingIndicator!: HTMLElement;
 
@@ -87,8 +90,39 @@ class PlantaeFilterElement extends HTMLElement {
             this.syncSelectElement();
             this.updateFilter();
 
+            const dsConfig = (this as any)._dataSourceConfig as DataSourceConfig | undefined;
+            if (dsConfig) {
+                this.initDataSource(dsConfig);
+            }
+
             this.dispatchEvent(new CustomEvent('plantae-filter-ready', { bubbles: false }));
         });
+    }
+
+    disconnectedCallback(): void {
+        this.remoteDataSource?.abort();
+    }
+
+    protected initDataSource(config: DataSourceConfig): void {
+        this.remoteDataSource = new RemoteDataSource(config);
+
+        this.remoteDataSource.onData = (items) => {
+            this.addOptions(items);
+        };
+
+        this.remoteDataSource.onLoadingChange = (isLoading) => {
+            this.loadingIndicator.style.visibility = isLoading ? 'visible' : 'hidden';
+        };
+
+        this.remoteDataSource.onError = (error) => {
+            console.error('[PlantaeFilter] DataSource error:', error);
+        };
+
+        if (config.onComplete) {
+            this.remoteDataSource.onComplete = config.onComplete;
+        }
+
+        this.remoteDataSource.fetchAll();
     }
 
     protected loadConfig(): void {
@@ -673,6 +707,12 @@ class PlantaeFilterElement extends HTMLElement {
     // Setter para injetar um mecanismo de busca customizado
     public set customSearchEngine(engine: SearchEngine) {
         this.searchEngine = engine;
+    }
+
+    /** Configura e inicia o carregamento de dados via DataSource remoto */
+    public setDataSource(config: DataSourceConfig): void {
+        this.remoteDataSource?.abort();
+        this.initDataSource(config);
     }
 }
 

@@ -61,6 +61,9 @@
                 <button class="btn-action" id="populate-bulk-data">Populate 500.000 Items With Custom Render</button>
             </div>
             <div class="action-group">
+                <button class="btn-action" id="load-remote">Load from Mock Paginated API (3 pages)</button>
+            </div>
+            <div class="action-group">
                 <button class="btn-action" id="add-option">Add 'Big Donut'</button>
                 <button class="btn-action" id="remove-option">Remove 'Big Donut'</button>
                 <button class="btn-action" id="clear-all">Remove All</button>
@@ -208,6 +211,54 @@
                 });
             }
             filter.addOptions(options);
+        });
+
+        // === REMOTE DATASOURCE EXAMPLE ===
+        document.getElementById('load-remote').addEventListener('click', () => {
+            const allData = [];
+            for (let i = 1; i <= 150; i++) {
+                allData.push({ id: i, name: randomName(), category: i <= 75 ? 'Category A' : 'Category B' });
+            }
+            const PAGE_SIZE = 50;
+
+            const originalFetch = window.fetch;
+            window.fetch = (url, opts) => {
+                const u = new URL(url);
+                const page = parseInt(u.searchParams.get('page') || '1');
+                const perPage = parseInt(u.searchParams.get('per_page') || String(PAGE_SIZE));
+                const start = (page - 1) * perPage;
+                const slice = allData.slice(start, start + perPage);
+                const totalPages = Math.ceil(allData.length / perPage);
+
+                output.textContent = `Fetching page ${page}/${totalPages} (${slice.length} items)...`;
+
+                return Promise.resolve({
+                    ok: true,
+                    json: () => Promise.resolve({
+                        data: slice,
+                        meta: { current_page: page, last_page: totalPages }
+                    })
+                });
+            };
+
+            filter.removeAllOptions();
+            filter.setDataSource({
+                url: 'https://mock-api.example.com/products',
+                pageSize: PAGE_SIZE,
+                mapResponse: (res) => ({
+                    items: res.data.map(p => ({
+                        value: String(p.id),
+                        text: p.name,
+                        group: p.category
+                    })),
+                    hasMore: res.meta.current_page < res.meta.last_page,
+                    nextCursor: res.meta.current_page + 1
+                }),
+                onComplete: () => {
+                    window.fetch = originalFetch;
+                    output.textContent = `Loaded ${allData.length} items from ${Math.ceil(allData.length / PAGE_SIZE)} pages. Try searching!`;
+                }
+            });
         });
     </script>
 </body>

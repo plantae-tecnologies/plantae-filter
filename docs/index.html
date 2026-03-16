@@ -120,6 +120,23 @@
                 <h3>Result</h3>
                 <pre id="output-custom">Click "Get Selected" to view here.</pre>
             </div>
+
+            <div class="example-box">
+                <h3>Remote DataSource (Paginated API)</h3>
+                <select id="remote-select" multiple></select>
+
+                <div class="div-actions">
+                    <div class="action-group">
+                        <button class="btn-action" id="load-remote">Load from Mock API (3 pages)</button>
+                    </div>
+                    <div class="action-group">
+                        <button class="btn-action" id="get-selected-remote">Get Selected</button>
+                    </div>
+                </div>
+
+                <h3>Result</h3>
+                <pre id="output-remote">Click "Load from Mock API" to fetch paginated data.</pre>
+            </div>
         </div>
     </main>
 
@@ -237,6 +254,74 @@
                 options.push(item);
             }
             filterCustom.addOptions(options);
+        });
+
+
+        // === REMOTE DATASOURCE EXAMPLE ===
+
+        const outputRemote = document.getElementById('output-remote');
+        const filterRemote = new PlantaeFilter(document.getElementById('remote-select'), {
+            label: "Remote Products",
+            allText: "All",
+            emptyText: "Load data first",
+            groupSelectedLabel: "Selected",
+            applyButtonText: "Apply",
+            searchPlaceholder: "Find..",
+            searchEngineMode: 'fuse-worker',
+        });
+
+        // Simulated paginated API using a mock fetch
+        document.getElementById('load-remote').addEventListener('click', () => {
+            const allData = [];
+            for (let i = 1; i <= 150; i++) {
+                allData.push({ id: i, name: randomName(), category: i <= 75 ? 'Category A' : 'Category B' });
+            }
+            const PAGE_SIZE = 50;
+
+            // Override fetch temporarily to simulate a paginated API
+            const originalFetch = window.fetch;
+            window.fetch = (url, opts) => {
+                const u = new URL(url);
+                const page = parseInt(u.searchParams.get('page') || '1');
+                const perPage = parseInt(u.searchParams.get('per_page') || String(PAGE_SIZE));
+                const start = (page - 1) * perPage;
+                const slice = allData.slice(start, start + perPage);
+                const totalPages = Math.ceil(allData.length / perPage);
+
+                outputRemote.textContent = `Fetching page ${page}/${totalPages} (${slice.length} items)...`;
+
+                return Promise.resolve({
+                    ok: true,
+                    json: () => Promise.resolve({
+                        data: slice,
+                        meta: { current_page: page, last_page: totalPages }
+                    })
+                });
+            };
+
+            filterRemote.removeAllOptions();
+            filterRemote.setDataSource({
+                url: 'https://mock-api.example.com/products',
+                pageSize: PAGE_SIZE,
+                mapResponse: (res) => ({
+                    items: res.data.map(p => ({
+                        value: String(p.id),
+                        text: p.name,
+                        group: p.category
+                    })),
+                    hasMore: res.meta.current_page < res.meta.last_page,
+                    nextCursor: res.meta.current_page + 1
+                }),
+                onComplete: () => {
+                    window.fetch = originalFetch;
+                    outputRemote.textContent = `Loaded ${allData.length} items from ${Math.ceil(allData.length / PAGE_SIZE)} pages. Try searching!`;
+                }
+            });
+        });
+
+        document.getElementById('get-selected-remote').addEventListener('click', () => {
+            const selected = filterRemote.getSelected();
+            outputRemote.textContent = JSON.stringify(selected, null, 2);
         });
     </script>
 </body>
