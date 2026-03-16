@@ -37,4 +37,12 @@ export interface DataSourceConfig {
      * Callback chamado quando todas as páginas foram carregadas com sucesso.
      */
     onComplete?: () => void;
+    /**
+     * Callback chamado quando ocorre um erro durante o carregamento.
+     */
+    onError?: (error: Error) => void;
+    /**
+     * Callback chamado quando o estado de loading muda.
+     */
+    onLoadingChange?: (isLoading: boolean) => void;
 }

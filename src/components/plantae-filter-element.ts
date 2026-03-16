@@ -112,10 +112,18 @@ class PlantaeFilterElement extends HTMLElement {
 
         this.remoteDataSource.onLoadingChange = (isLoading) => {
             this.loadingIndicator.style.visibility = isLoading ? 'visible' : 'hidden';
+
+            if (config.onLoadingChange) {
+                config.onLoadingChange(isLoading);
+            }
         };
 
         this.remoteDataSource.onError = (error) => {
-            console.error('[PlantaeFilter] DataSource error:', error);
+            if (config.onError) {
+                config.onError(error);
+            } else {
+                console.error('[PlantaeFilter] DataSource error:', error);
+            }
         };
 
         if (config.onComplete) {
