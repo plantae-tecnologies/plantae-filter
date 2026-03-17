@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.1](https://github.com/plantae-tecnologies/plantae-filter/compare/v0.3.0...v0.3.1) (2026-03-17)
+
+
+### Bug Fixes
+
+* add public access to npm publish command ([6774a54](https://github.com/plantae-tecnologies/plantae-filter/commit/6774a54d917fedfe620c57168e6ed6df6f4a8c8d))
+
 ## [0.3.0](https://github.com/plantae-tecnologies/plantae-filter/compare/v0.2.3...v0.3.0) (2026-03-17)
 
 
