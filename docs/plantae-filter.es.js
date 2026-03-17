@@ -1676,6 +1676,149 @@ class FuseSearchEngine {
     this.fuse.setCollection(collection);
   }
 }
+const DEFAULT_PAGE_SIZE = 50;
+function defaultBuildPageParams(cursor, pageSize) {
+  return {
+    page: String(cursor ?? 1),
+    per_page: String(pageSize)
+  };
+}
+class RemoteDataSource {
+  constructor(config) {
+    __publicField(this, "config");
+    __publicField(this, "pageSize");
+    __publicField(this, "currentCursor");
+    __publicField(this, "_hasMore", true);
+    __publicField(this, "_isLoading", false);
+    __publicField(this, "abortController");
+    __publicField(this, "onData");
+    __publicField(this, "onLoadingChange");
+    __publicField(this, "onError");
+    __publicField(this, "onComplete");
+    this.config = config;
+    this.pageSize = config.pageSize ?? DEFAULT_PAGE_SIZE;
+  }
+  get hasMore() {
+    return this._hasMore;
+  }
+  get isLoading() {
+    return this._isLoading;
+  }
+  /** Executa o fetch HTTP de uma página */
+  async fetchPage(cursor) {
+    var _a, _b, _c;
+    const buildParams = this.config.buildPageParams ?? defaultBuildPageParams;
+    const paginationParams = buildParams(cursor, this.pageSize);
+    const staticParams = this.config.params ?? {};
+    const allParams = { ...staticParams, ...paginationParams };
+    const method = this.config.method ?? "GET";
+    let response;
+    if (method === "GET") {
+      const url = new URL(this.config.url, (_a = globalThis.location) == null ? void 0 : _a.origin);
+      Object.entries(allParams).forEach(([k, v]) => url.searchParams.set(k, v));
+      response = await fetch(url.toString(), {
+        method: "GET",
+        headers: this.config.headers,
+        signal: (_b = this.abortController) == null ? void 0 : _b.signal
+      });
+    } else {
+      response = await fetch(this.config.url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...this.config.headers
+        },
+        body: JSON.stringify(allParams),
+        signal: (_c = this.abortController) == null ? void 0 : _c.signal
+      });
+    }
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+    const body = await response.json();
+    return this.config.mapResponse(body, cursor);
+  }
+  /** Atualiza estado interno e emite items via callback */
+  consumePage(page) {
+    var _a;
+    if ("hasMore" in page) {
+      this._hasMore = page.hasMore;
+      this.currentCursor = page.nextCursor;
+    }
+    if (page.items.length > 0) {
+      (_a = this.onData) == null ? void 0 : _a.call(this, page.items);
+    }
+  }
+  /** Gerencia loading state, abort controller e tratamento de erro */
+  async withLoading(fn) {
+    var _a, _b, _c;
+    this._isLoading = true;
+    (_a = this.onLoadingChange) == null ? void 0 : _a.call(this, true);
+    this.abortController = new AbortController();
+    try {
+      await fn();
+    } catch (err) {
+      if ((err == null ? void 0 : err.name) === "AbortError") return;
+      (_b = this.onError) == null ? void 0 : _b.call(this, err instanceof Error ? err : new Error(String(err)));
+    } finally {
+      this._isLoading = false;
+      this.abortController = void 0;
+      (_c = this.onLoadingChange) == null ? void 0 : _c.call(this, false);
+    }
+  }
+  /** Busca todas as páginas restantes sequencialmente */
+  async fetchSequential() {
+    while (this._hasMore) {
+      this.consumePage(await this.fetchPage(this.currentCursor));
+    }
+  }
+  /** Busca todas as páginas (paralelo quando possível, senão sequencial) */
+  async fetchAll() {
+    var _a;
+    await this.withLoading(async () => {
+      const concurrency = this.config.concurrency ?? 1;
+      if (concurrency <= 1) {
+        await this.fetchSequential();
+        return;
+      }
+      const firstCursor = this.currentCursor;
+      const firstPage = await this.fetchPage(firstCursor);
+      this.consumePage(firstPage);
+      if (!this._hasMore) return;
+      if (!("totalItems" in firstPage)) {
+        await this.fetchSequential();
+        return;
+      }
+      const totalPages = Math.ceil(firstPage.totalItems / this.pageSize);
+      const startPage = (typeof firstCursor === "number" ? firstCursor : 1) + 1;
+      const remaining = Array.from({ length: totalPages - startPage + 1 }, (_, i) => startPage + i);
+      for (let i = 0; i < remaining.length; i += concurrency) {
+        const results = await Promise.all(
+          remaining.slice(i, i + concurrency).map((c) => this.fetchPage(c))
+        );
+        results.forEach((page) => {
+          var _a2;
+          if (page.items.length > 0) (_a2 = this.onData) == null ? void 0 : _a2.call(this, page.items);
+        });
+      }
+      this._hasMore = false;
+    });
+    (_a = this.onComplete) == null ? void 0 : _a.call(this);
+  }
+  /** Reseta o estado de paginação */
+  reset() {
+    this.abort();
+    this.currentCursor = void 0;
+    this._hasMore = true;
+    this._isLoading = false;
+  }
+  /** Cancela request em andamento */
+  abort() {
+    var _a;
+    (_a = this.abortController) == null ? void 0 : _a.abort();
+    this.abortController = void 0;
+  }
+}
 class PlantaeFilterElement extends HTMLElement {
   constructor() {
     super(...arguments);
@@ -1688,6 +1831,7 @@ class PlantaeFilterElement extends HTMLElement {
     __publicField(this, "searchToken", 0);
     __publicField(this, "updateOptionsDebounced");
     __publicField(this, "customRenderFn");
+    __publicField(this, "remoteDataSource");
     __publicField(this, "searchEngine");
     __publicField(this, "loadingIndicator");
     __publicField(this, "searchInput");
@@ -1735,8 +1879,39 @@ class PlantaeFilterElement extends HTMLElement {
       this.populateOptions(this.options);
       this.syncSelectElement();
       this.updateFilter();
+      const dsConfig = this._dataSourceConfig;
+      if (dsConfig) {
+        this.initDataSource(dsConfig);
+      }
       this.dispatchEvent(new CustomEvent("plantae-filter-ready", { bubbles: false }));
     });
+  }
+  disconnectedCallback() {
+    var _a;
+    (_a = this.remoteDataSource) == null ? void 0 : _a.abort();
+  }
+  initDataSource(config) {
+    this.remoteDataSource = new RemoteDataSource(config);
+    this.remoteDataSource.onData = (items) => {
+      this.addOptions(items);
+    };
+    this.remoteDataSource.onLoadingChange = (isLoading) => {
+      this.loadingIndicator.style.visibility = isLoading ? "visible" : "hidden";
+      if (config.onLoadingChange) {
+        config.onLoadingChange(isLoading);
+      }
+    };
+    this.remoteDataSource.onError = (error) => {
+      if (config.onError) {
+        config.onError(error);
+      } else {
+        console.error("[PlantaeFilter] DataSource error:", error);
+      }
+    };
+    if (config.onComplete) {
+      this.remoteDataSource.onComplete = config.onComplete;
+    }
+    this.remoteDataSource.fetchAll();
   }
   loadConfig() {
     const componentAttributes = attributesToCamelCase(this);
@@ -2050,7 +2225,7 @@ class PlantaeFilterElement extends HTMLElement {
       return fragment;
     }, document.createDocumentFragment());
     selectElement.appendChild(optionStack);
-    selectElement.dispatchEvent(new Event("change"));
+    selectElement.dispatchEvent(new Event("change", { bubbles: true, cancelable: true }));
   }
   applySelection() {
     this.selectedValues = new Set(this.pendingValues);
@@ -2210,6 +2385,12 @@ class PlantaeFilterElement extends HTMLElement {
   set customSearchEngine(engine) {
     this.searchEngine = engine;
   }
+  /** Configura e inicia o carregamento de dados via DataSource remoto */
+  setDataSource(config) {
+    var _a;
+    (_a = this.remoteDataSource) == null ? void 0 : _a.abort();
+    this.initDataSource(config);
+  }
 }
 class PlantaeFilter {
   constructor(select, attributes = {}) {
@@ -2223,6 +2404,9 @@ class PlantaeFilter {
     const mergedAttributes = { ...datasetAttributes, ...attributes };
     if (typeof attributes.render === "function") {
       wrapper._customRenderFn = attributes.render;
+    }
+    if (attributes.dataSource) {
+      wrapper._dataSourceConfig = attributes.dataSource;
     }
     Object.entries(mergedAttributes).forEach(([key, value]) => {
       wrapper.setAttribute(camelToKebab(key), typeof value === "string" ? value : JSON.stringify(value));
@@ -2298,6 +2482,9 @@ class PlantaeFilter {
   }
   getAllOptions() {
     return this.component.getAllOptions();
+  }
+  setDataSource(config) {
+    this.runOrQueue(() => this.component.setDataSource(config));
   }
 }
 if (!customElements.get("plantae-filter")) {
