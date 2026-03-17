@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.3.0](https://github.com/plantae-tecnologies/plantae-filter/compare/v0.2.3...v0.3.0) (2026-03-17)
+
+
+### Features
+
+* add loading and error callbacks to DataSourceConfig ([909484d](https://github.com/plantae-tecnologies/plantae-filter/commit/909484db4bf83bc51a7fbf263d7d6636aa4e6ee2))
+* add support for paginated remote API via DataSource ([7c71a82](https://github.com/plantae-tecnologies/plantae-filter/commit/7c71a82a46a4405bf51f55838f582c46f61e493e))
+* enhance RemoteDataSource with concurrency support and loading callbacks ([f1d58f4](https://github.com/plantae-tecnologies/plantae-filter/commit/f1d58f4e4daf103714221f81bac8f2e0e05e55ae))
+
+
+### Bug Fixes
+
+* version ([c412081](https://github.com/plantae-tecnologies/plantae-filter/commit/c412081c9885305bde78821ca29b6108ba759fbf))
+
 ## [0.2.3](https://github.com/plantae-tecnologies/plantae-filter/compare/v0.2.2...v0.2.3) (2025-07-14)
 
 
