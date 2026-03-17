@@ -18,13 +18,9 @@ export class RemoteDataSource {
     private _isLoading: boolean = false;
     private abortController?: AbortController;
 
-    /** Callback chamado quando novos items são carregados */
     onData?: (items: OptionItem[]) => void;
-    /** Callback chamado quando o estado de loading muda */
     onLoadingChange?: (isLoading: boolean) => void;
-    /** Callback chamado quando ocorre um erro */
     onError?: (error: Error) => void;
-    /** Callback chamado quando todas as páginas foram carregadas */
     onComplete?: () => void;
 
     get hasMore(): boolean {
@@ -40,57 +36,63 @@ export class RemoteDataSource {
         this.pageSize = config.pageSize ?? DEFAULT_PAGE_SIZE;
     }
 
-    /** Busca a próxima página */
-    async fetchNextPage(): Promise<void> {
-        if (!this._hasMore || this._isLoading) return;
-
-        this._isLoading = true;
-        this.onLoadingChange?.(true);
-
+    /** Executa o fetch HTTP de uma página */
+    private async fetchPage(cursor: string | number | undefined): Promise<DataSourcePage> {
         const buildParams = this.config.buildPageParams ?? defaultBuildPageParams;
-        const paginationParams = buildParams(this.currentCursor, this.pageSize);
+        const paginationParams = buildParams(cursor, this.pageSize);
         const staticParams = this.config.params ?? {};
         const allParams = { ...staticParams, ...paginationParams };
 
         const method = this.config.method ?? 'GET';
+        let response: Response;
+
+        if (method === 'GET') {
+            const url = new URL(this.config.url, globalThis.location?.origin);
+            Object.entries(allParams).forEach(([k, v]) => url.searchParams.set(k, v));
+            response = await fetch(url.toString(), {
+                method: 'GET',
+                headers: this.config.headers,
+                signal: this.abortController?.signal,
+            });
+        } else {
+            response = await fetch(this.config.url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...this.config.headers,
+                },
+                body: JSON.stringify(allParams),
+                signal: this.abortController?.signal,
+            });
+        }
+
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const body = await response.json();
+        return this.config.mapResponse(body, cursor);
+    }
+
+    /** Atualiza estado interno e emite items via callback */
+    private consumePage(page: DataSourcePage): void {
+        if ('hasMore' in page) {
+            this._hasMore = page.hasMore;
+            this.currentCursor = page.nextCursor;
+        }
+        if (page.items.length > 0) {
+            this.onData?.(page.items);
+        }
+    }
+
+    /** Gerencia loading state, abort controller e tratamento de erro */
+    private async withLoading(fn: () => Promise<void>): Promise<void> {
+        this._isLoading = true;
+        this.onLoadingChange?.(true);
         this.abortController = new AbortController();
 
         try {
-            let response: Response;
-
-            if (method === 'GET') {
-                const url = new URL(this.config.url, globalThis.location?.origin);
-                Object.entries(allParams).forEach(([k, v]) => url.searchParams.set(k, v));
-                response = await fetch(url.toString(), {
-                    method: 'GET',
-                    headers: this.config.headers,
-                    signal: this.abortController.signal,
-                });
-            } else {
-                response = await fetch(this.config.url, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        ...this.config.headers,
-                    },
-                    body: JSON.stringify(allParams),
-                    signal: this.abortController.signal,
-                });
-            }
-
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            }
-
-            const body = await response.json();
-            const page: DataSourcePage = this.config.mapResponse(body, this.currentCursor);
-
-            this._hasMore = page.hasMore;
-            this.currentCursor = page.nextCursor;
-
-            if (page.items.length > 0) {
-                this.onData?.(page.items);
-            }
+            await fn();
         } catch (err: any) {
             if (err?.name === 'AbortError') return;
             this.onError?.(err instanceof Error ? err : new Error(String(err)));
@@ -101,18 +103,54 @@ export class RemoteDataSource {
         }
     }
 
-    /** Busca todas as páginas sequencialmente */
+    /** Busca todas as páginas restantes sequencialmente */
+    private async fetchSequential(): Promise<void> {
+        while (this._hasMore) {
+            this.consumePage(await this.fetchPage(this.currentCursor));
+        }
+    }
+
+    /** Busca todas as páginas (paralelo quando possível, senão sequencial) */
     async fetchAll(): Promise<void> {
-        try {
-            while (this._hasMore) {
-                await this.fetchNextPage();
+        await this.withLoading(async () => {
+            const concurrency = this.config.concurrency ?? 1;
+
+            if (concurrency <= 1) {
+                await this.fetchSequential();
+                return;
             }
-        } catch (error) {
-            this.onError?.(error instanceof Error ? error : new Error(String(error)));
-        }
-        finally {
-            this.onComplete?.();
-        }
+
+            // 1ª página: sequencial para descobrir totalItems
+            const firstCursor = this.currentCursor;
+            const firstPage = await this.fetchPage(firstCursor);
+            this.consumePage(firstPage);
+
+            if (!this._hasMore) return;
+
+            // Fallback sequencial se não pode paralelizar (modo hasMore/cursor)
+            if (!('totalItems' in firstPage)) {
+                await this.fetchSequential();
+                return;
+            }
+
+            // Calcula e busca páginas restantes em lotes paralelos
+            const totalPages = Math.ceil(firstPage.totalItems / this.pageSize);
+            const startPage = (typeof firstCursor === 'number' ? firstCursor : 1) + 1;
+            const remaining = Array.from({ length: totalPages - startPage + 1 }, (_, i) => startPage + i);
+
+            for (let i = 0; i < remaining.length; i += concurrency) {
+                const results = await Promise.all(
+                    remaining.slice(i, i + concurrency).map(c => this.fetchPage(c))
+                );
+                results.forEach(page => {
+                    if (page.items.length > 0) this.onData?.(page.items);
+                });
+            }
+
+            this._hasMore = false;
+        });
+
+        this.onComplete?.();
     }
 
     /** Reseta o estado de paginação */

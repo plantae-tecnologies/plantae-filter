@@ -283,7 +283,7 @@ new PlantaeFilter(select, {
 
 ### Paginated API / Remote Data Source
 
-Plantae Filter supports loading options from paginated APIs. All pages are fetched sequentially in background, and items become available (and searchable) as each page loads.
+Plantae Filter supports loading options from paginated APIs. Pages are fetched in background, and items become available (and searchable) as each page loads. With the `concurrency` option, multiple pages can be fetched in parallel for faster loading.
 
 This is configured via the `dataSource` option in the constructor, or dynamically via `setDataSource()`.
 
@@ -296,19 +296,24 @@ This is configured via the `dataSource` option in the constructor, or dynamicall
 | `headers`         | `Record<string, string>`                                    | No       | Custom HTTP headers (e.g. `Authorization`)                                  |
 | `params`          | `Record<string, string>`                                    | No       | Static query parameters merged into every request                           |
 | `pageSize`        | `number`                                                    | No       | Items per page (default: `50`)                                              |
+| `concurrency`     | `number`                                                    | No       | Max parallel requests (default: `1`). Requires numeric pagination and `totalItems` in `mapResponse`. |
 | `mapResponse`     | `(body: any, cursor?: string \| number) => DataSourcePage` | Yes      | Transforms API response into the standard page format                       |
-| `buildPageParams` | `(cursor, pageSize) => Record<string, string>`              | No       | Customizes pagination parameters (default: `page` / `per_page`)             |
-| `onComplete`      | `() => void`                                                | No       | Callback invoked when all pages have been loaded                            |
+| `buildPageParams`    | `(cursor, pageSize) => Record<string, string>`              | No       | Customizes pagination parameters (default: `page` / `per_page`)             |
+| `onComplete`         | `() => void`                                                | No       | Callback invoked when all pages have been loaded successfully                |
+| `onError`            | `(error: Error) => void`                                    | No       | Callback invoked when an error occurs during loading                         |
+| `onLoadingChange`    | `(isLoading: boolean) => void`                              | No       | Callback invoked whenever the loading state changes                          |
 
 The `mapResponse` function must return a `DataSourcePage` object:
 
 ```ts
-interface DataSourcePage {
-    items: OptionItem[];  // items for this page
-    hasMore: boolean;     // whether more pages exist
-    nextCursor?: string | number;  // cursor/page/offset for the next request
-}
+// Cursor-based pagination (total unknown)
+type DataSourcePage =
+    | { items: OptionItem[]; hasMore: boolean; nextCursor?: string | number }
+    // Parallel-capable pagination (total known — enables concurrency)
+    | { items: OptionItem[]; totalItems: number };
 ```
+
+> Use the `hasMore` variant for cursor or sequential pagination. Use the `totalItems` variant when the API returns a total count, which enables parallel fetching with `concurrency > 1`.
 
 #### Example: Page-based pagination
 
@@ -331,6 +336,32 @@ new PlantaeFilter(select, {
     }
 });
 ```
+
+#### Example: Parallel fetching
+
+When the API returns the total item count, you can enable parallel page fetching for significantly faster loading:
+
+```ts
+new PlantaeFilter(select, {
+    label: 'Products',
+    dataSource: {
+        url: 'https://api.example.com/products',
+        pageSize: 50,
+        concurrency: 4, // fetch up to 4 pages simultaneously
+        mapResponse: (res) => ({
+            items: res.data.map(p => ({
+                value: p.id,
+                text: p.name
+            })),
+            hasMore: res.meta.current_page < res.meta.last_page,
+            nextCursor: res.meta.current_page + 1,
+            totalItems: res.meta.total // required for parallel fetching
+        })
+    }
+});
+```
+
+> **Note:** Parallel fetching requires numeric page-based pagination (`nextCursor` must be a number) and `totalItems` in the `mapResponse` return. When these conditions are not met, fetching falls back to sequential mode automatically.
 
 #### Example: Cursor-based pagination
 
@@ -370,6 +401,31 @@ new PlantaeFilter(select, {
             offset: (cursor ?? 0).toString(),
             limit: pageSize.toString()
         })
+    }
+});
+```
+
+#### Example: Loading and error callbacks
+
+```ts
+new PlantaeFilter(select, {
+    dataSource: {
+        url: '/api/products',
+        pageSize: 50,
+        mapResponse: (res) => ({
+            items: res.data.map(p => ({ value: p.id, text: p.name })),
+            hasMore: res.page < res.totalPages,
+            nextCursor: res.page + 1
+        }),
+        onLoadingChange: (isLoading) => {
+            document.getElementById('spinner')!.hidden = !isLoading;
+        },
+        onError: (error) => {
+            console.error('Failed to load options:', error.message);
+        },
+        onComplete: () => {
+            console.log('All pages loaded.');
+        }
     }
 });
 ```

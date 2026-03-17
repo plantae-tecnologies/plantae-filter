@@ -1,12 +1,18 @@
 import type { OptionItem } from '../components/plantae-filter-element';
 
-/** Resultado padronizado de uma página de dados */
-export interface DataSourcePage {
+/**
+ * Resultado padronizado de uma página de dados.
+ *
+ * Duas formas:
+ * - `hasMore`: paginação por cursor (total desconhecido)
+ * - `totalItems`: paginação por total conhecido — habilita fetch paralelo com `concurrency > 1`
+ */
+export type DataSourcePage = {
     items: OptionItem[];
-    hasMore: boolean;
-    /** Cursor flexível: pode ser número de página, offset, cursor string, etc. */
-    nextCursor?: string | number;
-}
+} & (
+    | { nextCursor?: string | number; hasMore: boolean /** Cursor flexível: pode ser número de página, offset, cursor string, etc. */ }
+    | { totalItems: number }
+);
 
 /** Configuração do DataSource remoto */
 export interface DataSourceConfig {
@@ -20,6 +26,12 @@ export interface DataSourceConfig {
     params?: Record<string, string>;
     /** Tamanho da página / items por request (default: 50) */
     pageSize?: number;
+    /**
+     * Número de requests paralelos para buscar páginas simultaneamente.
+     * Requer que mapResponse retorne totalItems e paginação numérica.
+     * Default: 1 (sequencial).
+     */
+    concurrency?: number;
     /**
      * Função obrigatória que transforma a resposta da API
      * no formato padrão DataSourcePage.
