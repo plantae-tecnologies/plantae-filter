@@ -3,6 +3,7 @@ import { camelToKebab } from '../helpers/utils';
 import type { OptionItem, OptionItemRender } from './plantae-filter-element';
 import type { IFuseOptions } from 'fuse.js';
 import type { ClusterizeOptions } from 'clusterize.js';
+import type { DataSourceConfig } from '../types/data-source';
 
 interface InstanceAttributes {
     label?: string;
@@ -17,6 +18,7 @@ interface InstanceAttributes {
     clusterizeOptions?: Partial<ClusterizeOptions>;
     [key: string]: string | number | boolean | object | undefined;
     render?: (item: OptionItemRender) => string;
+    dataSource?: DataSourceConfig;
 }
 
 export class PlantaeFilter {
@@ -34,6 +36,10 @@ export class PlantaeFilter {
 
         if (typeof attributes.render === 'function') {
             (wrapper as any)._customRenderFn = attributes.render;
+        }
+
+        if (attributes.dataSource) {
+            (wrapper as any)._dataSourceConfig = attributes.dataSource;
         }
 
         // Aplica no custom element
@@ -135,5 +141,9 @@ export class PlantaeFilter {
 
     public getAllOptions(): ReturnType<PlantaeFilterElement['getAllOptions']> {
         return this.component.getAllOptions();
+    }
+
+    public setDataSource(config: DataSourceConfig): void {
+        this.runOrQueue(() => this.component.setDataSource(config));
     }
 }

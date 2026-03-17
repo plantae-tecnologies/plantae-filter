@@ -6,4 +6,5 @@ if (!customElements.get('plantae-filter')) {
     customElements.define('plantae-filter', PlantaeFilterElement);
 }
 
+export type { DataSourceConfig, DataSourcePage } from './types/data-source';
 export default PlantaeFilter;
