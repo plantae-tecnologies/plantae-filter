@@ -126,6 +126,8 @@ class PlantaeFilterElement extends HTMLElement {
         this.remoteDataSource.onComplete = () => {
             this._isBulkLoading = false;
             config.onComplete?.();
+
+            this.dispatchEvent(new CustomEvent('plantae-filter-source-complete', { bubbles: true }));
         };
 
         this.remoteDataSource.fetchAll();
