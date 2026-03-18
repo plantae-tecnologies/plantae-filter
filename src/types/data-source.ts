@@ -3,16 +3,15 @@ import type { OptionItem } from '../components/plantae-filter-element';
 /**
  * Resultado padronizado de uma página de dados.
  *
- * Duas formas:
+ * Três formas:
+ * - Sem paginação: apenas `items`
  * - `hasMore`: paginação por cursor (total desconhecido)
  * - `totalItems`: paginação por total conhecido — habilita fetch paralelo com `concurrency > 1`
  */
-export type DataSourcePage = {
-    items: OptionItem[];
-} & (
-    | { nextCursor?: string | number; hasMore: boolean /** Cursor flexível: pode ser número de página, offset, cursor string, etc. */ }
-    | { totalItems: number }
-);
+export type DataSourcePage =
+    | { items: OptionItem[] }
+    | { items: OptionItem[]; nextCursor?: string | number; hasMore: boolean }
+    | { items: OptionItem[]; totalItems: number };
 
 /** Configuração do DataSource remoto */
 export interface DataSourceConfig {
