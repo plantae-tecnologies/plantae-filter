@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.3](https://github.com/plantae-technologies/plantae-filter/compare/v0.3.2...v0.3.3) (2026-03-18)
+
+
+### Bug Fixes
+
+* dispatch custom event on data source load completion ([2b891c7](https://github.com/plantae-technologies/plantae-filter/commit/2b891c7ff2ac2e4f61599d03a85ab530c43721e5))
+
 ## [0.3.2](https://github.com/plantae-technologies/plantae-filter/compare/v0.3.1...v0.3.2) (2026-03-18)
 
 
