@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.2](https://github.com/plantae-technologies/plantae-filter/compare/v0.3.1...v0.3.2) (2026-03-18)
+
+
+### Bug Fixes
+
+* suppress redundant change events during data source loading ([bb5aea2](https://github.com/plantae-technologies/plantae-filter/commit/bb5aea2b558b246b132c648908661c20887ad383))
+
 ## [0.3.1](https://github.com/plantae-tecnologies/plantae-filter/compare/v0.3.0...v0.3.1) (2026-03-17)
 
 
