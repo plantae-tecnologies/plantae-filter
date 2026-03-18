@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.4](https://github.com/plantae-technologies/plantae-filter/compare/v0.3.3...v0.3.4) (2026-03-18)
+
+
+### Bug Fixes
+
+* update DataSourcePage type documentation and structure ([db2f36b](https://github.com/plantae-technologies/plantae-filter/commit/db2f36b1f5d193a3d8bcadc461c9d0ff99e44d0a))
+
 ## [0.3.3](https://github.com/plantae-technologies/plantae-filter/compare/v0.3.2...v0.3.3) (2026-03-18)
 
 
