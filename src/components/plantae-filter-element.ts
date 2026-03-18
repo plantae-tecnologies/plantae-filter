@@ -37,6 +37,8 @@ class PlantaeFilterElement extends HTMLElement {
 
     protected customRenderFn?: (item: OptionItemRender) => string;
 
+    private _isBulkLoading: boolean = false;
+
     private remoteDataSource?: RemoteDataSource;
     private searchEngine!: SearchEngine;
     protected loadingIndicator!: HTMLElement;
@@ -106,29 +108,25 @@ class PlantaeFilterElement extends HTMLElement {
     protected initDataSource(config: DataSourceConfig): void {
         this.remoteDataSource = new RemoteDataSource(config);
 
+        this._isBulkLoading = true;
+
         this.remoteDataSource.onData = (items) => {
             this.addOptions(items);
         };
 
         this.remoteDataSource.onLoadingChange = (isLoading) => {
             this.loadingIndicator.style.visibility = isLoading ? 'visible' : 'hidden';
-
-            if (config.onLoadingChange) {
-                config.onLoadingChange(isLoading);
-            }
+            config.onLoadingChange?.(isLoading);
         };
 
         this.remoteDataSource.onError = (error) => {
-            if (config.onError) {
-                config.onError(error);
-            } else {
-                console.error('[PlantaeFilter] DataSource error:', error);
-            }
+            config.onError?.(error) ?? console.error('[PlantaeFilter] DataSource error:', error);
         };
 
-        if (config.onComplete) {
-            this.remoteDataSource.onComplete = config.onComplete;
-        }
+        this.remoteDataSource.onComplete = () => {
+            this._isBulkLoading = false;
+            config.onComplete?.();
+        };
 
         this.remoteDataSource.fetchAll();
     }
@@ -525,7 +523,9 @@ class PlantaeFilterElement extends HTMLElement {
             }, document.createDocumentFragment());
 
         selectElement.appendChild(optionStack);
-        selectElement.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
+        if (!this._isBulkLoading) {
+            selectElement.dispatchEvent(new Event('change', { bubbles: true, cancelable: true }));
+        }
     }
 
     protected applySelection(): void {

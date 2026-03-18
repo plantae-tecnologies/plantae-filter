@@ -6,6 +6,7 @@ function createMockConfig(overrides: Partial<DataSourceConfig> = {}): DataSource
     return {
         url: 'https://api.example.com/items',
         pageSize: 2,
+        pagination: true,
         mapResponse: (body) => ({
             items: body.data.map((d: any) => ({ value: d.id, text: d.name })),
             hasMore: body.hasMore,

@@ -20,6 +20,12 @@ export interface DataSourceConfig {
     url: string;
     /** Método HTTP (default: GET) */
     method?: 'GET' | 'POST';
+    /**
+     * Habilita paginação automática (default: false).
+     * Quando true, busca múltiplas páginas automaticamente.
+     * Quando false, faz uma única requisição sem parâmetros de paginação.
+     */
+    pagination?: boolean;
     /** Headers customizados (ex: Authorization) */
     headers?: Record<string, string>;
     /** Parâmetros estáticos de query string */

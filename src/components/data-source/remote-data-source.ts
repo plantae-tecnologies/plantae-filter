@@ -36,19 +36,14 @@ export class RemoteDataSource {
         this.pageSize = config.pageSize ?? DEFAULT_PAGE_SIZE;
     }
 
-    /** Executa o fetch HTTP de uma página */
-    private async fetchPage(cursor: string | number | undefined): Promise<DataSourcePage> {
-        const buildParams = this.config.buildPageParams ?? defaultBuildPageParams;
-        const paginationParams = buildParams(cursor, this.pageSize);
-        const staticParams = this.config.params ?? {};
-        const allParams = { ...staticParams, ...paginationParams };
-
+    /** Executa uma requisição HTTP e retorna o body parseado */
+    private async doFetch(params: Record<string, string>): Promise<any> {
         const method = this.config.method ?? 'GET';
         let response: Response;
 
         if (method === 'GET') {
             const url = new URL(this.config.url, globalThis.location?.origin);
-            Object.entries(allParams).forEach(([k, v]) => url.searchParams.set(k, v));
+            Object.entries(params).forEach(([k, v]) => url.searchParams.set(k, v));
             response = await fetch(url.toString(), {
                 method: 'GET',
                 headers: this.config.headers,
@@ -61,7 +56,7 @@ export class RemoteDataSource {
                     'Content-Type': 'application/json',
                     ...this.config.headers,
                 },
-                body: JSON.stringify(allParams),
+                body: JSON.stringify(params),
                 signal: this.abortController?.signal,
             });
         }
@@ -70,7 +65,16 @@ export class RemoteDataSource {
             throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
 
-        const body = await response.json();
+        return response.json();
+    }
+
+    /** Executa o fetch HTTP de uma página */
+    private async fetchPage(cursor: string | number | undefined): Promise<DataSourcePage> {
+        const buildParams = this.config.buildPageParams ?? defaultBuildPageParams;
+        const paginationParams = buildParams(cursor, this.pageSize);
+        const staticParams = this.config.params ?? {};
+
+        const body = await this.doFetch({ ...staticParams, ...paginationParams });
         return this.config.mapResponse(body, cursor);
     }
 
@@ -110,9 +114,24 @@ export class RemoteDataSource {
         }
     }
 
+    /** Busca todos os dados sem paginação (requisição única) */
+    private async fetchSingle(): Promise<void> {
+        const body = await this.doFetch(this.config.params ?? {});
+        const page = this.config.mapResponse(body);
+        if (page.items.length > 0) {
+            this.onData?.(page.items);
+        }
+        this._hasMore = false;
+    }
+
     /** Busca todas as páginas (paralelo quando possível, senão sequencial) */
     async fetchAll(): Promise<void> {
         await this.withLoading(async () => {
+            if (this.config.pagination !== true) {
+                await this.fetchSingle();
+                return;
+            }
+
             const concurrency = this.config.concurrency ?? 1;
 
             if (concurrency <= 1) {
